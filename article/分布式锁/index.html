@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+<meta name="google-site-verification" content="FmCBFeBJWlIl9DVnns-1SQgs2lTet7iXquulOgdsOVY" />
+<meta name="baidu-site-verification" content="EyoMwitrw4" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0"/>
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="为什么使用锁 两个原因：   效率 避免多个客户端重复相同的工作，此时对共享资源的操作需要满足幂等性，操作多次的结果是一样的。这种情况下加锁就是为了避免重复相同的工作。   正确性 避免多个客户端操作同一份共享资源时由于环境原因导致数据不一致，此时对共享资源的操作不满足幂等性，这种情况下加锁就是为了业务逻辑的正确性。   锁的作用的就是确保同一时间只有一个线程可以进入临界区执行代码 什么是锁 Li">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式锁">
+<meta property="og:url" content="http://qiaojiande.fun/article/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/index.html">
+<meta property="og:site_name" content="谯剑的小站">
+<meta property="og:description" content="为什么使用锁 两个原因：   效率 避免多个客户端重复相同的工作，此时对共享资源的操作需要满足幂等性，操作多次的结果是一样的。这种情况下加锁就是为了避免重复相同的工作。   正确性 避免多个客户端操作同一份共享资源时由于环境原因导致数据不一致，此时对共享资源的操作不满足幂等性，这种情况下加锁就是为了业务逻辑的正确性。   锁的作用的就是确保同一时间只有一个线程可以进入临界区执行代码 什么是锁 Li">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-18T09:43:13.000Z">
+<meta property="article:modified_time" content="2021-10-15T01:49:29.000Z">
+<meta property="article:author" content="Qiao.Jian">
+<meta property="article:tag" content="分布式锁">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://qiaojiande.fun/article/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>分布式锁 | 谯剑的小站</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">谯剑的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录...</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br/>
+    
+    首页
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/about/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br/>
+    
+    关于
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/tags/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>
+    
+    标签
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+  
+  
+    
+    
+    
+  
+
+  
+
+  <a href="/archives/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>
+    
+    归档
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/404.html" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br/>
+    
+    公益 404
+  </a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://qiaojiande.fun/article/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Qiao.Jian"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/images/avatar.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谯剑的小站"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">分布式锁
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-18 17:43:13" itemprop="dateCreated datePublished" datetime="2020-05-18T17:43:13+08:00">2020-05-18</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2021-10-15 09:49:29" itemprop="dateModified" datetime="2021-10-15T09:49:29+08:00">2021-10-15</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br/>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="为什么使用锁">为什么使用锁</h3>
+<p>两个原因：</p>
+<ol>
+<li>
+<p>效率</p>
+<p>避免多个客户端重复相同的工作，此时对共享资源的操作需要满足幂等性，操作多次的结果是一样的。这种情况下加锁就是为了避免重复相同的工作。</p>
+</li>
+<li>
+<p>正确性</p>
+<p>避免多个客户端操作同一份共享资源时由于环境原因导致数据不一致，此时对共享资源的操作不满足幂等性，这种情况下加锁就是为了业务逻辑的正确性。</p>
+</li>
+</ol>
+<p><strong>锁的作用的就是确保同一时间只有一个线程可以进入临界区执行代码</strong></p>
+<h3 id="什么是锁">什么是锁</h3>
+<p><strong>Linux 自旋锁</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">单处理器自旋锁的工作流程是:</span><br><span class="line">关闭内核抢占-&gt;运行临界区代码-&gt;开启内核抢占。</span><br><span class="line">更加安全的单处理器自旋锁工作流程是:</span><br><span class="line">保存IF寄存器-&gt;关闭当前CPU中断-&gt;关闭内核抢占-&gt;运行临界区代码-&gt;开启内核抢占-&gt;开启当前CPU中断-&gt;恢复IF寄存器。</span><br><span class="line"></span><br><span class="line">多处理器自旋锁的工作流程是:</span><br><span class="line">关闭内核抢占-&gt;（忙等待-&gt;)获取自旋锁-&gt;运行临界区代码-&gt;释放自旋锁-&gt;开启内核抢占。</span><br><span class="line">更加安全的多处理器自旋锁工作流程是: </span><br><span class="line">保存IF寄存器-&gt;关闭当前CPU中断-&gt;关闭内核抢占-&gt;（忙等待-&gt;)获取自旋锁-&gt;运行临界区代码-&gt;释放自旋锁-&gt;开启内核抢占-&gt;开启当前CPU中断-&gt;恢复IF寄存器。</span><br></pre></td></tr></table></figure>
+<p><strong>Linux 互斥锁</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">互斥锁是基于自旋锁、等待队列、整型变量的引用计数器的结构体封装，</span><br><span class="line">内部的加锁释放锁的逻辑都是基于自旋锁和CPU原子操作完成的</span><br></pre></td></tr></table></figure>
+<p>Java语言层面的锁都是基于Linux锁实现的</p>
+<h3 id="本地锁">本地锁</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//本地锁没有锁超时的机制，一个线程获取到锁后,其他线程只能阻塞等待</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">testThreadPoolException</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">       <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">       <span class="type">Lock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"></span><br><span class="line">       <span class="type">Object</span> <span class="variable">object</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">       <span class="keyword">new</span> <span class="title class_">Thread</span>(()-&gt;&#123;</span><br><span class="line">           <span class="keyword">try</span> &#123;</span><br><span class="line">               System.out.println(Thread.currentThread().getName() + <span class="string">&quot;睡30s后通知&quot;</span>);</span><br><span class="line">               Thread.sleep(<span class="number">30000</span>);</span><br><span class="line">           &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">               e.printStackTrace();</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">               object.notify();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;).start();</span><br><span class="line">       <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">         	<span class="keyword">try</span> &#123;</span><br><span class="line">               lock.lock();</span><br><span class="line">           		System.out.println(Thread.currentThread().getName() + <span class="string">&quot;等待sleep线程30s后通知&quot;</span>);</span><br><span class="line">             	<span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">                   object.wait();</span><br><span class="line">               &#125;</span><br><span class="line">             	System.out.println(Thread.currentThread().getName() + <span class="string">&quot;收到sleep线程30s后通知，退出线程不释放锁&quot;</span>);</span><br><span class="line">           		Thread.currentThread().stop();</span><br><span class="line">       		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">               e.printStackTrace();</span><br><span class="line">           &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">               lock.unlock();</span><br><span class="line">           &#125; </span><br><span class="line">       &#125;);</span><br><span class="line">       thread.start();</span><br><span class="line">       <span class="comment">// 线程池对任务异常默认不作处理</span></span><br><span class="line">       <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">           <span class="comment">// 本地锁没有锁超时的机制，一个线程获取到锁后,其他线程只能阻塞等待</span></span><br><span class="line">           executorService.execute(() -&gt; &#123;</span><br><span class="line">               <span class="keyword">try</span> &#123;</span><br><span class="line">                   lock.lock();</span><br><span class="line">                   System.out.println(Thread.currentThread().getName() + <span class="string">&quot;持有锁&quot;</span>);</span><br><span class="line">                   <span class="comment">//for (;;)&#123;&#125;</span></span><br><span class="line">                   <span class="comment">//Thread.currentThread().interrupt();</span></span><br><span class="line">               &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                   lock.unlock();</span><br><span class="line">               &#125;</span><br><span class="line">               <span class="comment">//System.out.println(1/0);</span></span><br><span class="line">           &#125;);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">       System.out.println(executorService.isTerminated());</span><br><span class="line">       <span class="comment">//线程池里有非daemon线程在运行中，JVM不退出</span></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="读写锁">读写锁</h3>
+<p>读写锁应用在读多写少的场合，比如缓存</p>
+<p>读写锁是两个锁的组合，主要建立了以下关系：</p>
+<ol>
+<li>读锁与写锁互斥（比如：更新缓存时加写锁，读取缓存时加读锁。则更新缓存时，读取缓存的线程要阻塞等待）</li>
+<li>读锁与读锁共享（多个线程可以并发同时读取缓存）</li>
+</ol>
+<h3 id="分布式锁-Spring-Integration-Redis">分布式锁-Spring-Integration-Redis</h3>
+<p>Redis一次只运行一个命令，Lua脚本的运行与其他的Redis命令相同，都是原子操作</p>
+<p><strong>获取锁</strong>（lua脚本执行命令）</p>
+<p>lua脚本逻辑：</p>
+<p>先判断key是否存在？</p>
+<p>key存在，则判断key对应value是否和本次要设置的值一致，一致则设置超时时间</p>
+<p>key不存在或者key对应value不一致，则新设置key-value，并设置超时时间（set的值要保持唯一，可以使用uuid，以防误删其他客户端获取到的锁。场景：【客户端A获取锁成功后，由于操作阻塞较长时间，key过期删除了。然后客户端B获取锁成功，在B操作期间，客户端A又尝试去释放锁，如果没有value判断，就会造成客户端A释放了客户端B获取到的锁】）</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> lockClientId = redis.call(<span class="string">&#x27;GET&#x27;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">if</span> lockClientId == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">  redis.call(<span class="string">&#x27;PEXPIRE&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>])</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line"><span class="keyword">elseif</span> <span class="keyword">not</span> lockClientId <span class="keyword">then</span></span><br><span class="line">  redis.call(<span class="string">&#x27;SET&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>], <span class="string">&#x27;PX&#x27;</span>, ARGV[<span class="number">2</span>])</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">return</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<p><strong>释放锁</strong></p>
+<p>删除key</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 都是删除key</span><br><span class="line">// unlink是先把key从key space删除，然后异步删除</span><br><span class="line">// del是同步删除</span><br><span class="line">// unlink key  / del key</span><br></pre></td></tr></table></figure>
+<p>Spring-Integration-Redis实现分布式锁：（ReentrantLock + Redis）</p>
+<p>在本地使用ReentrantLock来防止：线程1获取redis锁，操作阻塞，redis锁超时被删除，然后线程2来获取锁时会阻塞在获取同一把ReentrantLock上，只有线程1释放redis锁（由于redis锁超时，会throw IllegalStateException: Lock was released in the store due to expiration. The integrity of data protected by this lock may have been compromised）后，ReentrantLock锁才会释放，然后线程2才可以获取到同一把redis锁+ReentrantLock</p>
+<p>但是如果线程1、2不是在同一个JVM里，这种本地锁的方式<strong>无法解决：锁超时引起的两个线程同时进入临界区的问题</strong></p>
+<p><strong>Spring-Integration-Redis 对锁超时没有进行更好的处理，只是抛出异常</strong></p>
+<p>所以，使用Spring-Integration-Redis时，需要慎重设置Key过期时间（默认60s），因为过期时间设置太短会有锁超时问题，过期时间设置太长，如果一个服务在获取锁后崩溃， 其他服务要阻塞很久才可以重新获取锁。</p>
+<p>问题：</p>
+<ol>
+<li>每个锁对应的key都设置了超时时间，锁超时删除会引发<strong>两个线程同时进入临界区的问题</strong></li>
+<li>这种方式是基于单机Redis的实现，还具有单点失败的风险</li>
+<li>即使将Reids架设成主从结构，在主从切换的时候也会出现<strong>两个线程同时进入临界区的问题</strong></li>
+<li>使用RedLock应对Redis高可用环境下分布式锁的获取，也会存在<strong>集群节点崩溃和时间跳跃导致两个线程同时进入临界区的问题</strong>，另外RedLock也没解决锁超时删除会引发<strong>两个线程同时进入临界区的问题</strong></li>
+</ol>
+<p>解决：</p>
+<ol>
+<li>解决锁超时删除：锁续约机制</li>
+<li>解决单点失败：部署Redis集群使用RedLock</li>
+<li>解决RedLock集群节点崩溃问题：延迟重启崩溃节点（类似TCP退避重传机制，延迟时间大于锁的有效时间）</li>
+<li>解决RedLock时间跳跃问题：禁止人为修改系统时间，使用一个不会进行“跳跃”式调整系统时钟的ntpd程序。</li>
+</ol>
+<h3 id="分布式锁-Reddison">分布式锁-Reddison</h3>
+<p><strong>获取锁</strong>（lua脚本执行命令）</p>
+<p>lua脚本逻辑：</p>
+<p>判断HASH key是否存在，</p>
+<p>不存在，则新建HASH Key，设置Field和自增Field，并设置Key过期时间</p>
+<p>判断HASH Key Field是否存在，</p>
+<p>存在，则自增Field，并设置Key过期时间（默认30,000ms=30s）</p>
+<p>返回Key过期时间</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (redis.call(<span class="string">&#x27;exists&#x27;</span>, KEYS[<span class="number">1</span>]) == <span class="number">0</span>) <span class="keyword">then</span> </span><br><span class="line">  redis.call(<span class="string">&#x27;hincrby&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>], <span class="number">1</span>); </span><br><span class="line">  redis.call(<span class="string">&#x27;pexpire&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>]); </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">nil</span>; </span><br><span class="line"><span class="keyword">end</span>; </span><br><span class="line"><span class="keyword">if</span> (redis.call(<span class="string">&#x27;hexists&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>]) == <span class="number">1</span>) <span class="keyword">then</span> </span><br><span class="line">  redis.call(<span class="string">&#x27;hincrby&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>], <span class="number">1</span>); </span><br><span class="line">  redis.call(<span class="string">&#x27;pexpire&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>]); </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">nil</span>; </span><br><span class="line"><span class="keyword">end</span>; </span><br><span class="line"><span class="keyword">return</span> redis.call(<span class="string">&#x27;pttl&#x27;</span>, KEYS[<span class="number">1</span>]);</span><br></pre></td></tr></table></figure>
+<p>为防止锁超时引起的安全问题，Redisson引入锁续约机制：获取锁成功后开启看门狗定时器默认每30,000/3ms=10s刷新一次Key过期时间</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (redis.call(<span class="string">&#x27;hexists&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>]) == <span class="number">1</span>) <span class="keyword">then</span> </span><br><span class="line">  redis.call(<span class="string">&#x27;pexpire&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">1</span>]); </span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>; </span><br><span class="line"><span class="keyword">end</span>; </span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>释放锁</strong></p>
+<p>判断HASH Key-Field是否存在，</p>
+<p>不存在，直接返回空，Throw IllegalMonitorStateException：attempt to unlock lock, not locked by current thread</p>
+<p>存在，递减 HASH Key-Field，并判断递减后返回count是否为0</p>
+<p>为0，则可以释放锁：执行DEL 删除Key，并发布 UNLOCK_MESSAGE 消息（在获取锁时，未马上获取锁成功时会订阅UNLOCK_MESSAGE并同步等待用户指定的tryLock时间）</p>
+<p>不为0，则续约锁</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (redis.call(<span class="string">&#x27;hexists&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">3</span>]) == <span class="number">0</span>) <span class="keyword">then</span> </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line"><span class="keyword">end</span>; </span><br><span class="line"><span class="keyword">local</span> counter = redis.call(<span class="string">&#x27;hincrby&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">3</span>], <span class="number">-1</span>); </span><br><span class="line"><span class="keyword">if</span> (counter &gt; <span class="number">0</span>) <span class="keyword">then</span> </span><br><span class="line">  redis.call(<span class="string">&#x27;pexpire&#x27;</span>, KEYS[<span class="number">1</span>], ARGV[<span class="number">2</span>]); </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line"><span class="keyword">else</span> </span><br><span class="line">  redis.call(<span class="string">&#x27;del&#x27;</span>, KEYS[<span class="number">1</span>]); </span><br><span class="line">  redis.call(<span class="string">&#x27;publish&#x27;</span>, KEYS[<span class="number">2</span>], ARGV[<span class="number">1</span>]); </span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>; </span><br><span class="line"><span class="keyword">end</span>; </span><br><span class="line"><span class="keyword">return</span> <span class="literal">nil</span>;</span><br></pre></td></tr></table></figure>
+<p>优点：解决锁超时问题，支持Redis Cluster环境下的RedLock</p>
+<p>缺点：Redis Cluster的缺点：集群节点崩溃问题、时间跳跃问题</p>
+<h3 id="分布式锁-ZooKeeper">分布式锁-ZooKeeper</h3>
+<p>zookeeper和客户端建立连接后有心跳检测机制，当zookeeper长时间检测不到客户端心跳时，会主动释放客户端创建的临时节点，因此不需要设置锁的过期时间，不依赖于锁过期时间，所以不存在锁超时问题。</p>
+<p>【ZooKeeper检测不到客户端心跳主动释放客户端创建的临时节点】这种机制也可能是由客户端长时间GC所导致的，所以也存在安全问题，但是相比redis的锁超时要可靠多了</p>
+<p>另外ZooKeeper集群的强一致性保证了客户端要么获取不到锁，要么获取到锁后，ZooKeeper的集群节点数据一定是一致的。即不存在Redis集群的节点崩溃和时间跳跃的问题</p>
+<p>优点：强一致性，不需要关心锁超时问题</p>
+<p>缺点：性能不高</p>
+<h3 id="分布式锁-Mysql">分布式锁-Mysql</h3>
+<p>创建一张资源表，获取锁则插入一条记录，释放锁则删除相应的记录。</p>
+<p>有两种方式：</p>
+<p>悲观锁：select for update + insert （一定要加事务）【事务是保证多个SQL语句要么都执行成功提交，要么任意一个失败都全部回滚，for updte是对要更新的行加锁保证更新的逻辑正确性】</p>
+<p>乐观锁：select + update where version=xx  + while循环直到成功</p>
+<p>优点：不引入第三方组件，减少单点失败概率</p>
+<p>缺点：数据库性能较低，支持的并发不高</p>
+<p>另外Mysql提供了get_lock &amp; release_lock函数也可以用于分布式锁，加锁释放锁操作都必须是同一个SqlSession，连接断开Mysql还会自动释放锁。这种锁机制是基于单机数据库的，所以存在单点失败问题。</p>
+<p>基本用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#加锁</span><br><span class="line">SELECT GET_LOCK(key, timeout);</span><br><span class="line">#释放锁</span><br><span class="line">SELECT RELEASE_LOCK(key);</span><br></pre></td></tr></table></figure>
+<h3 id="参考文章">参考文章</h3>
+<h6 id="浅谈分布式锁"><a target="_blank" rel="noopener" href="http://www.linkedkeeper.com/1023.html">浅谈分布式锁</a></h6>
+<h6 id="分布式之抉择分布式锁"><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rjzheng/p/9310976.html">分布式之抉择分布式锁</a></h6>
+<h6 id="万字长文！不为人知的分布式锁实现，全都在这里了！"><a target="_blank" rel="noopener" href="https://www.modb.co/db/14104">万字长文！不为人知的分布式锁实现，全都在这里了！</a></h6>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+	<div>
+  		
+    		<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-handshake-o"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  		
+	</div>
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>Good for you!</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Qiao.Jian 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" rel="tag"># 分布式锁</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/article/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="next" title="SpringBoot启动流程">
+                <i class="fa fa-chevron-left"></i> SpringBoot启动流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/article/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="prev" title="分布式事务">
+                分布式事务 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Qiao.Jian"/>
+  
+  <p class="site-author-name" itemprop="name">Qiao.Jian</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+        
+        
+        <a href="/archives/">
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+          
+          
+          <a href="/tags/">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E9%94%81"><span class="nav-number">1.</span> <span class="nav-text">为什么使用锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%94%81"><span class="nav-number">2.</span> <span class="nav-text">什么是锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E9%94%81"><span class="nav-number">3.</span> <span class="nav-text">本地锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E9%94%81"><span class="nav-number">4.</span> <span class="nav-text">读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81-Spring-Integration-Redis"><span class="nav-number">5.</span> <span class="nav-text">分布式锁-Spring-Integration-Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81-Reddison"><span class="nav-number">6.</span> <span class="nav-text">分布式锁-Reddison</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81-ZooKeeper"><span class="nav-number">7.</span> <span class="nav-text">分布式锁-ZooKeeper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81-Mysql"><span class="nav-number">8.</span> <span class="nav-text">分布式锁-Mysql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-number">9.</span> <span class="nav-text">参考文章</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%85%E8%B0%88%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">9.0.0.1.</span> <span class="nav-text">浅谈分布式锁</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%B9%8B%E6%8A%89%E6%8B%A9%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">9.0.0.2.</span> <span class="nav-text">分布式之抉择分布式锁</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%B8%87%E5%AD%97%E9%95%BF%E6%96%87%EF%BC%81%E4%B8%8D%E4%B8%BA%E4%BA%BA%E7%9F%A5%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%85%A8%E9%83%BD%E5%9C%A8%E8%BF%99%E9%87%8C%E4%BA%86%EF%BC%81"><span class="nav-number">9.0.0.3.</span> <span class="nav-text">万字长文！不为人知的分布式锁实现，全都在这里了！</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qiao.Jian</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v6.3.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.2.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,2586 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+<meta name="google-site-verification" content="FmCBFeBJWlIl9DVnns-1SQgs2lTet7iXquulOgdsOVY" />
+<meta name="baidu-site-verification" content="EyoMwitrw4" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0"/>
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="[toc] 基础 自动装箱和拆箱 部分基础数据类型与对应的包装类进行运算时，编译器自动进行转换（装箱：valueOf，拆箱：intValue、floatValue…） int对应包装类Integer会缓存-128～127范围的整型 short对应包装类Short会缓存-128～127范围的短整型 long对应包装类Long会缓存-128～127范围的长整型 char对应包装类Character会缓">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知识点">
+<meta property="og:url" content="http://qiaojiande.fun/article/%E7%9F%A5%E8%AF%86%E7%82%B9/index.html">
+<meta property="og:site_name" content="谯剑的小站">
+<meta property="og:description" content="[toc] 基础 自动装箱和拆箱 部分基础数据类型与对应的包装类进行运算时，编译器自动进行转换（装箱：valueOf，拆箱：intValue、floatValue…） int对应包装类Integer会缓存-128～127范围的整型 short对应包装类Short会缓存-128～127范围的短整型 long对应包装类Long会缓存-128～127范围的长整型 char对应包装类Character会缓">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/ThreadLocal%E8%A7%A3%E6%9E%90%E5%9B%BE.jpg">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/image-20200416163440212.png">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/jvm-gc-flags.png">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/image-20200420163224499.png">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/image-20200420170520211.png">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-e4599b618e270df9b64a75eb77bfb326_1440w.jpg">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84-%E9%80%9A%E7%94%A8.jpg">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84-%E5%BC%82%E5%9C%B0%E5%AE%B9%E7%81%BE.jpg">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84-%E5%90%8C%E5%9F%8E%E5%AE%B9%E7%81%BE.jpg">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84-%E5%90%8C%E5%9F%8E&amp;%E5%BC%82%E5%9C%B0.jpg">
+<meta property="article:published_time" content="2019-11-26T09:19:11.000Z">
+<meta property="article:modified_time" content="2022-03-28T01:59:30.000Z">
+<meta property="article:author" content="Qiao.Jian">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/ThreadLocal%E8%A7%A3%E6%9E%90%E5%9B%BE.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://qiaojiande.fun/article/%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>知识点 | 谯剑的小站</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">谯剑的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录...</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br/>
+    
+    首页
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/about/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br/>
+    
+    关于
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/tags/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>
+    
+    标签
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+  
+  
+    
+    
+    
+  
+
+  
+
+  <a href="/archives/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>
+    
+    归档
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/404.html" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br/>
+    
+    公益 404
+  </a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://qiaojiande.fun/article/%E7%9F%A5%E8%AF%86%E7%82%B9/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Qiao.Jian"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/images/avatar.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谯剑的小站"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">知识点
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-26 17:19:11" itemprop="dateCreated datePublished" datetime="2019-11-26T17:19:11+08:00">2019-11-26</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2022-03-28 09:59:30" itemprop="dateModified" datetime="2022-03-28T09:59:30+08:00">2022-03-28</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br/>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[toc]</p>
+<h3 id="基础">基础</h3>
+<h4 id="自动装箱和拆箱"><strong>自动装箱和拆箱</strong></h4>
+<p>部分基础数据类型与对应的包装类进行运算时，编译器自动进行转换（装箱：valueOf，拆箱：intValue、floatValue…）</p>
+<p>int对应包装类Integer会缓存-128～127范围的整型</p>
+<p>short对应包装类Short会缓存-128～127范围的短整型</p>
+<p>long对应包装类Long会缓存-128～127范围的长整型</p>
+<p>char对应包装类Character会缓存0～127范围的字符（java的char占两个字节存的是unicode码，表示数据范围0～65525）</p>
+<p>byte对应包装类Byte会缓存-128～127范围的字节，即byte所表示的数据范围都会被缓存</p>
+<p>boolean、float和double没有缓存</p>
+<h4 id="集合">集合</h4>
+<h5 id="List">List</h5>
+<p>ArrayList与LinkedList</p>
+<h5 id="Map">Map</h5>
+<p>HashMap、LinkedHashMap、TreeMap</p>
+<p>LinkedHashMap：了解基本原理、迭代顺序（插入序、访问序）、如何用它实现LRU</p>
+<p>TreeMap：了解数据结构（红黑树，按key排序的二叉查找树）、了解其key对象为什么必须要实现Compare接口、如何用它实现一致性哈希（tailMap方法）</p>
+<h5 id="TreeMap实现一致性Hash">TreeMap实现一致性Hash</h5>
+<p>参考 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/DengGao/p/6387708.html">https://www.cnblogs.com/DengGao/p/6387708.html</a></p>
+<h5 id="Set">Set</h5>
+<p>由对应的map实现</p>
+<h5 id="ThreadLocal">ThreadLocal</h5>
+<ol>
+<li>魔数</li>
+</ol>
+<p>魔数：0x61c88647 （32bit无符号数：2654435769，32bit有符号数：-1640531527），是2^32*0.618（黄金分割点）</p>
+<p>目的：使用斐波拉契散列法，使得散列出的值更均匀</p>
+<ol start="2">
+<li>ThreadLocalMap</li>
+</ol>
+<p>ThreadLocaMap存储的key-value是key为ThreadLocal对象的弱引用，在ThreadLocal被设置为null后，在下次gc时ThreadLocal被回收掉，但是value还被线程的ThreadLocalMap强引用，导致内存泄露。</p>
+<p>一般在使用ThreadLocal时一般将ThreadLocal定义为static属性，这样ThreadLocal一直存在着强引用，key也不能为null，然后在任何时候都可以手动调用remove进行清除。所以在使用时也要注意手动remove。</p>
+<p>​	2.1 ThreadLocalMap在扩容的时候会将entry的key为null所对应的value设为null，help the gc（减轻内存泄露）</p>
+<p>​    2.2 在每次get、set时都会清除key为null所对应的value为null，减轻内存泄露</p>
+<p>​	2.3 不再使用set进ThreadLocal的值后，调用ThreadLocal的remove方法显式地从ThreadLocalMap删除掉，避免内存泄露</p>
+<ol start="3">
+<li>
+<p>ThreadLocal和InheritableThreadLocal区别</p>
+<p>3.1 InheritableThreadLocal里设置的值在子线程可以get到（创建子线程时会从父线程拷贝到子线程）</p>
+</li>
+<li>
+<p>ThreadLocalMap采用数组保存Map.Entry，插入查找值时采用开放地址法</p>
+</li>
+<li>
+<p>由于采用开放地址法，在hash冲突是默认查找相邻下一个位置是否可用，因此在清除null key时会有特别的移动操作来保证hash的顺序正确性（参考方法replaceStaleEntry）</p>
+</li>
+<li>
+<p>ThreadLocal、ThreadLocalMap之间关系图</p>
+</li>
+</ol>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/ThreadLocal%E8%A7%A3%E6%9E%90%E5%9B%BE.jpg" alt=""></p>
+<h4 id="异常">异常</h4>
+<p>checked异常：必须被捕获或抛出，例如IOException。因此这类异常在编写代码时就可以提醒程序员会出错的地方，程序员可以根据实际情况选择捕获或者抛出。</p>
+<p>unchecked异常：例如NPE，运行时异常，不需要被捕获，减少try-catch，代码可读性增强</p>
+<p>自定义异常：</p>
+<p>​	继承自Exception：checked异常，必须被捕获或抛出</p>
+<p>​	继承自RuntimeException：unchecked异常，不需要被捕获，如果抛出异常则静默报错</p>
+<h4 id="Spring">Spring</h4>
+<p>bean的生命周期 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/v1haoge/p/6106456.html">https://www.cnblogs.com/v1haoge/p/6106456.html</a></p>
+<p>循环依赖问题： <a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/766880">https://developer.aliyun.com/article/766880</a></p>
+<p>spring cloud 全家桶、AOP的实现、spring事务传播<br>
+常见问题</p>
+<p>java动态代理和cglib动态代理的区别（经常结合spring一起问所以就放这里了）<br>
+属性注入和构造器注入哪种会有循环依赖的问题？</p>
+<p>BeanFactory与FactoryBean的区别</p>
+<h4 id="Dubbo（或其他Rpc框架）">Dubbo（或其他Rpc框架）</h4>
+<p>了解一个常用RPC框架如Dubbo的实现：服务发现、路由、异步调用、限流降级、失败重试</p>
+<p>常见问题</p>
+<p>Dubbo如何做负载均衡？随机、轮训、加权轮询、加权随机、一致性hash、最少活跃</p>
+<h5 id="加权轮询">加权轮询</h5>
+<h5 id="加权随机">加权随机</h5>
+<ol>
+<li>根据服务器的权重计算总的权重值totalWeight</li>
+<li>计算总权重为上限的一个随机值：random.nextInt(totalWeight)</li>
+<li>判断随机值落在服务器权重哪个区间，并返回相应的服务器信息</li>
+</ol>
+<h5 id="一致性hash">一致性hash</h5>
+<p>hash环、机器映射、数据或调用参数映射、虚拟节点</p>
+<p>实现：需求机器hash值在hash环上排序，数据或调用参数hash值在hash环上找到最近节点</p>
+<p>hash函数要选择散列性能好的</p>
+<p>TreeMap实现排序，taiMap返回大于等于某个hash值的subMap，返回firstKey对于最近阶段hash</p>
+<p>虚拟节点：确定1个真实节点对应多少个虚拟节点，然后确定对应规则（比如真实节点192.168.0.1:1234，虚拟节点5个，对应规则为字符串拼接&amp;&amp;VIR0～5，则虚拟节点为192.168.0.1:1234&amp;&amp;VIR0、192.168.0.1:1234&amp;&amp;VIR1、192.168.0.1:1234&amp;&amp;VIR2、192.168.0.1:1234&amp;&amp;VIR3、192.168.0.1:1234&amp;&amp;VIR4、192.168.0.1:1234&amp;&amp;VIR5）</p>
+<h5 id="最少活跃">最少活跃</h5>
+<ol>
+<li>统计每个服务器的活跃数aciveNum（每次调用前自增，每次调用完成后自减，数值代表正在处理的请求数也就是活跃数，活跃数越小说明服务器负载越小）</li>
+<li>遍历找出最小活跃数的服务器，并返回相应服务器的信息</li>
+</ol>
+<p>Dubbo如何做限流降级？超时、故障、重试（幂等性）、降级（mock）、熔断（开、关、半开关状态）</p>
+<h5 id="幂等性">幂等性</h5>
+<p>​	定义：相同参数多次调用接口和一次调用接口的产生效果是一样的</p>
+<p>​	实现：</p>
+<ol>
+<li>
+<p>业务层面：</p>
+<p>​	一： 使用token机制，每次请求都是一个新的token</p>
+<p>​	二：状态机，只有对应的状态下才允许执行相应的操作，并且在操作成功后转入下一个状态</p>
+<p>​	三： 加锁（如本地锁、分布式锁）</p>
+</li>
+<li>
+<p>数据库层面：</p>
+<p>​	一： 新增操作时进行唯一索引字段判断</p>
+<p>​	二：修改操作时进行时间戳或者旧值判断（乐观锁）</p>
+<p>​	三：悲观锁（select for update）</p>
+</li>
+</ol>
+<p>​</p>
+<p>Dubbo如何优雅的下线服务？<a target="_blank" rel="noopener" href="https://www.cnkirito.moe/dubbo-gracefully-shutdown/">https://www.cnkirito.moe/dubbo-gracefully-shutdown/</a></p>
+<ol>
+<li>
+<p>JVM提供了优雅停机的接口：Runtime.getRuntime().addShutdownHook</p>
+</li>
+<li>
+<p>Dubbo层面注册优雅停机接口：进行服务下线和资源释放</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Registry 注销</span><br><span class="line">等待 -Ddubbo.service.shutdown.wait 秒，等待消费方收到下线通知</span><br><span class="line">Protocol 注销</span><br><span class="line">    DubboProtocol 注销</span><br><span class="line">		NettyServer 注销</span><br><span class="line">			等待处理中的请求完毕</span><br><span class="line">            停止发送心跳</span><br><span class="line">            关闭 Netty 相关资源</span><br><span class="line">		NettyClient 注销</span><br><span class="line">            停止发送心跳</span><br><span class="line">            等待处理中的请求完毕</span><br><span class="line">            关闭 Netty 相关资源</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>Dubbo如何实现异步调用的？</p>
+<p>​	1. Future：获取结果只能阻塞获取或者轮询</p>
+<p>​	2. CompletableFuture：多个异步串联、组合执行，异步指定回调结果处理lambda等</p>
+<h4 id="RocketMq（或其他消息中间件）">RocketMq（或其他消息中间件）</h4>
+<p>了解一个常用消息中间件如RocketMq的实现：如何保证高可用和高吞吐、消息顺序、重复消费、事务消息、延迟消息、死信队列<br>
+常见问题</p>
+<p>RocketMq如何保证高可用的？</p>
+<p>主从配置+同步复制/异步复制、发送端消费端可配置有限次自动失败重试、重试队列、死信队列<br>
+RocketMq如何保证高吞吐的？</p>
+<p>commitLog文件顺序写、单机支持多大5万的消费队列、磁盘文件内存映射零拷贝读取、消费并行度<br>
+RocketMq的消息是有序的吗？</p>
+<p>发往同一个队列的消息是有序的，顺序消息发送使用同步发送，顺序消息消费原子性操作：每次消费一条消息成功后手动提交offset<br>
+RocketMq的消息局部顺序是如何保证的?</p>
+<p>发往同一个队列的消息是有序的</p>
+<p>RocketMq事务消息的实现机制？</p>
+<ol>
+<li>发送半消息</li>
+<li>本地事务执行</li>
+<li>根据本地事务执行结果发送commit或rollback</li>
+<li>3步未收到的话定时任务回查本地事务执行结果状态</li>
+<li>根据3、4的结果确定是否将半消息投递到队列以允许下游消费</li>
+<li>下游消费，失败重试加重试队列+死信队列保证消费成功</li>
+</ol>
+<p>RocketMq会有重复消费的问题吗？如何解决？</p>
+<p>重复发送、重复消费；解决：消费端保证消费接口的幂等性</p>
+<p>RocketMq支持什么级别的延迟消息？如何实现的？</p>
+<p>发送延时<strong>消息</strong>时先把<strong>消息</strong>按照<strong>延迟</strong>时间段发送到指定的队列中(<strong>rocketmq</strong>把每种<strong>延迟</strong>时间段的<strong>消息</strong>都存放到同一个队列中)然后通过一个定时器进行轮训这些队列，查看<strong>消息</strong>是否到期，如果到期就把这个<strong>消息</strong>发送到指定topic的队列中。延时消息支持指定时间间隔的延时：1s、 5s、 10s、 30s、 1m、 2m、 3m、 4m、 5m、 6m、 7m、 8m、 9m、 10m、 20m、 30m、 1h、 2h</p>
+<p>RocketMq是推模型还是拉模型？</p>
+<p>基于长轮询实现：伪推模型、拉模型</p>
+<p>Consumer的负载均衡是怎么样的？</p>
+<p>在集群消费模式下，一个消费组里面有多个消费者订阅了一个主题，此主题有多个消息队列(<code>MessageQueue</code>)，负载均衡组件就将这些消息队列平均分给消费组里面的消费者；策略：平均（默认）、轮询、一致性hash等</p>
+<h4 id="Redis（或其他缓存系统）">Redis（或其他缓存系统）</h4>
+<p>redis工作模型、redis持久化、redis过期淘汰机制、redis分布式集群的常见形式、分布式锁、缓存击穿、缓存雪崩、缓存一致性问题<br>
+常见问题</p>
+<p>redis性能为什么高?<br>
+单线程的redis如何利用多核cpu机器？<br>
+redis的缓存淘汰策略？<br>
+redis如何持久化数据？<br>
+redis有哪几种数据结构？<br>
+redis集群有哪几种形式？<br>
+有海量key和value都比较小的数据，在redis中如何存储才更省内存？<br>
+如何保证redis和DB中的数据一致性？<br>
+如何解决缓存穿透和缓存雪崩？<br>
+如何用redis实现分布式锁？</p>
+<h4 id="Mysql">Mysql</h4>
+<p>事务隔离级别、锁、索引的数据结构、聚簇索引和非聚簇索引、最左匹配原则、查询优化（explain等命令）<br>
+推荐文章：<br>
+<a target="_blank" rel="noopener" href="http://hedengcheng.com/?p=771">http://hedengcheng.com/?p=771</a><br>
+<a target="_blank" rel="noopener" href="https://tech.meituan.com/2014/06/30/mysql-index.html">https://tech.meituan.com/2014/06/30/mysql-index.html</a><br>
+<a target="_blank" rel="noopener" href="http://hbasefly.com/2017/08/19/mysql-transaction/">http://hbasefly.com/2017/08/19/mysql-transaction/</a><br>
+常见问题</p>
+<p>Mysql(innondb 下同) 有哪几种事务隔离级别？<br>
+不同事务隔离级别分别会加哪些锁？<br>
+mysql的行锁、表锁、间隙锁、意向锁分别是做什么的？<br>
+说说什么是最左匹配？<br>
+如何优化慢查询？<br>
+mysql索引为什么用的是b+ tree而不是b tree、红黑树<br>
+分库分表如何选择分表键<br>
+分库分表的情况下，查询时一般是如何做排序的？<br>
+zk</p>
+<p>zk大致原理（可以了解下原理相近的Raft算法）、zk实现分布式锁、zk做集群master选举<br>
+常见问题</p>
+<p>如何用zk实现分布式锁，与redis分布式锁有和优缺点</p>
+<h4 id="java传参方式">java传参方式</h4>
+<ol>
+<li>
+<p>环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ SPRING_APPLICATION_JSON=&#x27;&#123;&quot;acme&quot;:&#123;&quot;name&quot;:&quot;test&quot;&#125;&#125;&#x27; java -jar myapp.jar</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>系统变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -Dspring.application.json=&#x27;&#123;&quot;name&quot;:&quot;test&quot;&#125;&#x27; -jar myapp.jar</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>命令行参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -jar myapp.jar --spring.application.json=&#x27;&#123;&quot;name&quot;:&quot;test&quot;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="QPS估算">QPS估算</h4>
+<p>二八原则：80%的流量集中在20%的时间里</p>
+<p>比如：一天的PV是1000万，则峰值QPS为：1000，0000 * 0.8 / （86400*0.2）= 460</p>
+<p>所以接口的QPS需要达到460</p>
+<h4 id="电脑部件处理时间数量级对比">电脑部件处理时间数量级对比</h4>
+<p>CPU：秒</p>
+<p>内存：分钟</p>
+<p>磁盘：天/月</p>
+<p>局域网：年</p>
+<p>互联网：百年</p>
+<h4 id="1-8-HashMap多线程不安全">1.8 HashMap多线程不安全</h4>
+<p>举例说明：同时put两个 key1-value1 和key2-value2时，如果key1和key2的hash值相同，则产生hash碰撞，将放到同一个index下的链表上，正确情况是：链表上有两个元素：一个是key1-value1节点，一个是key2-value2节点。但是多线程下可能出现都向同一个Node的next去添加新节点的情况，此时前一个添加的node将被后面的覆盖，导致前一个put的key-value丢失</p>
+<h4 id="1-8-ConcurrentHashMap-Bug">1.8 ConcurrentHashMap Bug</h4>
+<p><strong>computeIfAbsent</strong>函数添加节点的时候如果在computeFunction里有递归调用或者修改Map的操作，将导致死循环。1.9修复了此bug，会抛出ConcurrentModifyException</p>
+<h4 id="多线程">多线程</h4>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/image-20200416163440212.png" alt=""></p>
+<h4 id="线程池">线程池</h4>
+<p>​	JDK原生线程池：接收任务大于核心线程数后，会先将任务放到阻塞队列，只有队列满了后才新创建线程。这种线程池模型适合处理CPU密集型任务。</p>
+<p>​	Tomcat/Jetty/Dubbo：自建线程池或者扩展自JDK原生线程池：接收任务大于核心线程数后，会先创建新的线程来处理任务，只有当前活跃线程达到最大线程数后才将任务放到阻塞队列。这种线程池模型适合处理IO密集型任务。</p>
+<h4 id="JVM"><strong>JVM</strong></h4>
+<p>自动内存管理：</p>
+<p>JVM之类加载：java虚拟机是字节码执行引擎，提供跨平台特性。虚拟机读入二进制字节码流（类加载阶段），默认是双亲委托加载模型，SPI接口定义需要bootstrap类加载器去加载第三方接口实现类，但是双亲委托加载模型限制了bootstrap类加载器不可以加载用户类，因此引入了线程上下文类加载器（默认为App类加载器），将第三方类加载到线程上下文加载器中去</p>
+<p>JVM之内存模型：每个线程独享的工作内存、所有线程共享的主内存、并发控制提供语言层面的volatile、synchronized</p>
+<p>JVM之内存区域划分：线程共享：堆内存、直接内存、元数据区；线程独享：线程栈、本地方法栈、程序计数器</p>
+<p>JVM之内存管理：</p>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/jvm-gc-flags.png" alt=""></p>
+<p>​	1. 垃圾回收算法：</p>
+<ul>
+<li>
+<p>年轻代：<u>Serial</u>、<u>ParNew</u>、Parallel Scavenge、G1</p>
+<pre><code>   	* Serial特点：单线程收集，适合单CPU场景，执行GC时完全STW，可以与老年代CMS搭配使用
+</code></pre>
+</li>
+<li>
+<p>ParNew特点：多线程收集，适合多CPU场景，执行GC时完全STW，关注尽量缩短GCSTW时间，可以与老年代CMS搭配使用</p>
+</li>
+<li>
+<p>Parallel Scavenge特点：多线程收集，适合多CPU场景，执行GC时完全STW，关注吞吐量优先，可以使用自适应策略调整年轻代、老年代大小</p>
+<pre><code>   	* G1特点：分代收集，年轻代使用复制算法；将内存分成大小不等的Region，只对需要回收的Region执行GC，提高了并发程度。缺点：Region大小固定对应连续大内存的分配容易导致OOM
+</code></pre>
+</li>
+<li>
+<p>老年代：Serial Old、Parallel Old、<u>CMS</u>、G1</p>
+<ul>
+<li>
+<p>Serial Old特点：Serial的老年代版本</p>
+</li>
+<li>
+<p>Parallel Old特点：Parrallel Scavenge的老年代版本</p>
+</li>
+<li>
+<p>CMS特点：将GC细分为四个步骤，将STW的时间缩短；</p>
+<ul>
+<li>
+<p>初始标记：STW</p>
+</li>
+<li>
+<p>并发标记：GC线程和用户线程并发执行</p>
+</li>
+<li>
+<p>重新标记：STW（为什么要进行重新标记，因为并发标记过程中，用户线程会修改对象间的引用关系，会导致浮动垃圾的产生以及对象的误删除。浮动垃圾可以忍受，但对象的误删除是不能接受的。所以重新标记阶段主要是防止对象引用关系变化导致的误删除，当然也能减少浮动垃圾 。参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/108706654">https://zhuanlan.zhihu.com/p/108706654</a></p>
+</li>
+<li>
+<p>并发清除：GC线程和用户线程并发执行（会继续产生浮动垃圾）</p>
+<p>提高了并发度的同时，CPU、内存占用增加，提供CMSInitiatingOccupancyFraction参数表示老年代使用量达到多大比例就进行FullGC，默认为68%</p>
+<p>基于标记清除算法，导致内存碎片，提供UseCMSCompactAtFullCollection参数表示在FullGC时执行内存碎片整理，提高CMSFullGCBeforeCompaction参数表示几次FullGC后才执行一次内存碎片整理。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>G1特点：分代收集，老年代使用标记整理算法，没有内存碎片。引入可预测的的停顿模型来降低STW时间，提供MaxGCPauseMillis参数设置最大GC停顿时间供JVM参考。参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/54048685">https://zhuanlan.zhihu.com/p/54048685</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p>Java8 默认GC是年轻代：Parallel Scavenge + 老年代：Serial Old；对应的JVM参数是：-XX:+UseParallelGC</p>
+<p>可通过命令查询java的默认GC：java -XX:+PrintCommandLineFlags -version</p>
+<p>可通过命令：jps -v 查出运行中的JVM进程，然后：jinfo -flag UseParallelOldGC pid，即可知道是否使用这个GC</p>
+</li>
+<li>
+<p>G1对大内存更有优势（4核8G以上），java9以上的 默认GC是G1</p>
+</li>
+<li>
+<p><strong>java10以前FullGC都是单线程的，所以调优目标是尽量不要触发FullGC</strong></p>
+</li>
+<li>
+<p>G1最佳实践：</p>
+<ul>
+<li>
+<p>设置堆内存大小：一般将初始堆和最大堆设置一样，避免GC后的内存重新分配。初始堆大小（默认值为机器内存的1/64）： -Xms，最大堆大小（默认值为机器内存的1/4）：-Xmx</p>
+</li>
+<li>
+<p>不要设置年轻代-Xmn大小</p>
+</li>
+<li>
+<p>设置STW最大停顿时间（默认值200ms）：-XX:MaxGCPauseMillis=n</p>
+</li>
+<li>
+<p>设置堆内存占用百分比达到多少时触发一次并发周期（一个并发周期相当于CMS整个周期，期间进行的GC叫混合GC），默认值45：-XX:InitiatingHeapOccupancyPercent=n</p>
+</li>
+<li>
+<p>设置混合GC判定Region为垃圾分区的存活对象比例阈值：-XX:G1MixedGCLiveThresholdPercent=n</p>
+</li>
+<li>
+<p>设置一个并发周期内最多经历几次（默认8）混合GC：-XX:G1MixedGCCountTarget=n</p>
+</li>
+<li>
+<p>增大标记线程数量：-XX:ConcGCThreads=n</p>
+</li>
+<li>
+<p>打印GC日志：</p>
+<ul>
+<li>滚动输出：-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:path-to-gc-log/gc-%t.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=20M</li>
+<li>每天输出一个日志文件：-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:path-to-gc-log/gc-%t.log</li>
+</ul>
+</li>
+<li>
+<p>关闭显示GC：-XX:+DisableExplicitGC</p>
+</li>
+</ul>
+</li>
+<li>
+<p>CMS最佳实践：</p>
+<ul>
+<li>
+<p>设置堆内存大小</p>
+</li>
+<li>
+<p>打开老年代内存碎片整理：-XX:+UseCMSCompactAtFullCollection</p>
+</li>
+<li>
+<p>在打开碎片整理时设置多少次FullGC后进行一次内存碎片整理： -XX:CMSFullGCsBeforeCompaction=n</p>
+</li>
+<li>
+<p>设置老年代占用内存比例达到多少开始进行CMS GC（默认68%），后面的GC是JVM自己决定的，这个只是第一次开始进行CMS GC的阈值：-XX:CMSInitiatingOccupancyFraction=n</p>
+</li>
+<li>
+<p>代码执行显示GC：System.gc时默认会执行完全STW的Full GC，打开此参数使用CMS GC：-XX:+ExplicitGCInvokesConcurrent</p>
+</li>
+<li>
+<p>当CMS GC时间过长且是因为重标记时间过长，可以打开此参数，使得在重标记前进行一次YoungGC减小年轻代对象大小，减小重标记全局扫描对象数：-XX:+CMSScavengeBeforeRemark</p>
+</li>
+<li>
+<p>JDK8以前的版本，永久代不会自动被回收。当类加载卸载频繁时，打开此参数回收无用的类和常量，避免永久代区OOM（JDK8及以后不用设置此参数）：-XX:-CMSClassUnloadingEnabled</p>
+</li>
+<li>
+<p>设置并发CMS线程数(默认值：ConcGCThreads = (ParallelGCThreads + 3)/4，ParallelGCThreads=8+( Processor - 8 ) ( 5/8 ))：-XX:ConcGCThreads=n</p>
+</li>
+</ul>
+</li>
+<li>
+<p>JVM参数调优最佳实践：</p>
+<ul>
+<li>
+<p>确定程序稳定运行时活跃数据（多次FullGC后老年代大小）占用的内存总大小：activity_num</p>
+</li>
+<li>
+<p>设置堆内存总大小：4 * activity_num （初始堆大小和最大堆大小设置一样避免内存分配）</p>
+</li>
+<li>
+<p>YoungGC频繁：增大年轻代大小，年轻代晋升老年代动态策略（1、晋升年龄阈值：默认15；2、当累积某个年龄的对象大小超过survivor区的一半时，直接晋升老年代）</p>
+</li>
+<li>
+<p>FullGC频繁：原因：1、老年代不足；2、元数据区限制了大小且新生成类频繁导致频繁FullGC；3、大量年轻代晋升到老年代且老年代存不下；4、主动执行FullGC</p>
+<ol start="2">
+<li>
+<p>堆内存划分：年轻代（eden区，survivor1、2区）、老年代、永久代（元数据区，JDK8以后元数据区不使用堆内存，使用本地内存，且根据加载类 的数量动态调整大小，不需要设置参数，如果设置了-XX:MaxMetaspaceSize=n来限制元数据区的最大内存，则可能出现OOM：Metaspace）</p>
+</li>
+<li>
+<p>JVM默认参数查看：java -XX:+PrintFlagsFinal -version | grep HeapSize</p>
+</li>
+<li>
+<p>工具使用：</p>
+<ol>
+<li>查看堆内存使用情况：jmap -heap pid</li>
+<li>查看堆中对象数量和大小：jmap -histo pid</li>
+<li>生成当前java进程的线程方法调用栈快照：jstack pid</li>
+<li>生成堆内存dump文件：jmap -dump:format=b,file=heap.bin pid，然后传回本地使用visualVM分析</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p>java -XX:+PrintCommandLineFlags -version 只打印JVM启动时有修改的参数</p>
+<p>java -XX:+PrintFlagsInitial -version 打印JVM所有默认的初始参数</p>
+<p>java -XX:+PrintFlagsFinal -version 打印JVM启动后的最终设置的所有参数</p>
+<h4 id="JVM监控">JVM监控</h4>
+<ol>
+<li>
+<p>jmx（线上环境不推荐）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false </span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>登陆线上机器cmd</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">top</span><br><span class="line">jps</span><br><span class="line">jinfo</span><br><span class="line">jstack</span><br><span class="line">jmap</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>arthas（推荐）</p>
+</li>
+</ol>
+<h4 id="JVM命令行参数">JVM命令行参数</h4>
+<p>标准选项： - 开头</p>
+<p>非标准选项： -X开头</p>
+<p>开发选项：-XX开头</p>
+<p>命令行参数指定值的三种方式：</p>
+<p>-XX:+<em>OptionName</em></p>
+<p>-XX:-<em>OptionName</em></p>
+<p>and -XX:<em>OptionName</em>=</p>
+<p>命令行参数指定整数大小比如内存大小时可以在数值后加上后缀表示单位如k、m、g</p>
+<h4 id="JVM生命周期">JVM生命周期</h4>
+<ol>
+<li>
+<p>Launcher</p>
+<p>典型的Launcher：java命令</p>
+<p>Launcher的作用：</p>
+<ul>
+<li>解析命令行参数</li>
+<li>建立堆空间，设置编译模式（client 或 server）</li>
+<li>读取环境变量设置，如CLASSPATH</li>
+<li>读取Main-Class</li>
+<li>创建并初始化VM（JNI_CreateJavaVM）</li>
+<li>加载Main-Class（CallStaticVoidMethod）</li>
+<li>执行完main方法后，检查并清除可能出现的pending exceptions，然后返回相应的exit status</li>
+<li>销毁VM（DestroyJavaVM）</li>
+</ul>
+</li>
+</ol>
+<h5 id="JNI-CreateJavaVM执行流程">JNI_CreateJavaVM执行流程</h5>
+<ol>
+<li>1个java进程只能创建1个VM实例，确保不会有两个线程调用JNI_CreateJavaVM方法</li>
+<li>检查支持的JNI版本，初始化gc logging输出流，初始化用到的OS模块如随机数生成器、内存页等</li>
+<li>解析传入的命令行参数</li>
+<li>根据传入的参数进一步创建和初始化相关OS模块，加载相应的lib库</li>
+<li>gc logging输出流初始化完成，代理库hprof、jdi初始化完成</li>
+<li>初始化线程相关数据结构</li>
+<li>初始化全局数据结构如event log，synchronization primitives等</li>
+<li>创建Java main 线程，初始化Java级别的同步器</li>
+<li>初始化剩余的全局模块</li>
+<li>初始化VMThread线程（执行VM关键操作的线程）</li>
+<li>加载Java系统类</li>
+<li>开启Signal Handler线程等。准备好VM环境了，提高JNI服务</li>
+</ol>
+<h5 id="DestroyJavaVM执行流程">DestroyJavaVM执行流程</h5>
+<p>Launcher和VM自己都可以调用此方法来结束VM</p>
+<ol>
+<li>等待直到最后个non-daemon线程执行完成（Springboot应用不退出：使用Async或创建了线程池都会导致有non-daemon线程存在而不会退出；另外同理使用tomcat webserver也不会退出）</li>
+<li>调用Java层面的优雅关机接口shutdown hook</li>
+<li>调用finalizers</li>
+<li>调用VM层面的优雅关机接口shutdown hook</li>
+<li>关闭各种统计线程、信号处理线程、GC线程等</li>
+<li>释放JNI调用处理模块，至此，不能再执行Java代码</li>
+<li>停止编译线程，停止VM线程</li>
+<li>释放IO、内存资源</li>
+<li>返回调用者</li>
+</ol>
+<h5 id="类加载">类加载</h5>
+<p>类加载的作用：映射全路径类名或接口名到相应的Class对象</p>
+<p>JVM会在启动时预先加载核心类如Object、Thread等</p>
+<p>VM和特定的ClassLoader类一起配合完成类的加载</p>
+<p>类加载阶段：</p>
+<ol>
+<li>加载阶段：根据类或接口名称查找符合类文件格式的二进制流</li>
+<li>连接阶段：检查类文件格式，给类静态字段赋值类型默认值</li>
+<li>初始化阶段：开始执行Java代码，先执行静态初始化</li>
+</ol>
+<p>一般只有主动使用类的时候才会出发类的加载和初始化。</p>
+<p>类加载委托模型：</p>
+<p>Java SE的类加载顺序依次是： the bootstrap class loader, the extension class loader and the system class loader 。</p>
+<p>其中bootstrap是JVM实现的类加载器，它负责加载bootpath下的类比如rt.jar包</p>
+<p>其中extension class loader加载JRE目录/lib/ext下的类。</p>
+<p>其中system class loader是默认的应用类加载器，它负责加载main函数所在类和classpath下的类。</p>
+<p>类加载器和类的全路径限定名一起唯一确定一个类。</p>
+<p>JVM保证类加载是串行化的，因此类加载也是线程安全的。</p>
+<p>JVM锁：java对象锁：java monitor，java对象头：mark word（锁信息、gc年龄、对象hashcode）、类指针、[数组长度]</p>
+<p>JVM内部线程：单例VMThread、单例WacherThread、多个GC threads、多个Compiler threads、单例Signal Dispatcher Thread、Finalizer线程和Reference Handler线程</p>
+<p>C10K： <a target="_blank" rel="noopener" href="http://www.kegel.com/c10k.html">http://www.kegel.com/c10k.html</a></p>
+<p>BIO、NIO、Netty</p>
+<p>nc、strace</p>
+<h4 id="Netty">Netty</h4>
+<h5 id="特性">特性</h5>
+<ol>
+<li>
+<p>IO模型（Linux epoll）</p>
+</li>
+<li>
+<p>线程模型（reactor模式），ChannelPipeline.addLast添加handler时可以提供一个处理业务的线程池（类型：EventExecutorGroup），也可以使用netty之外的自定义业务线程池</p>
+<p>区别：</p>
+<ol>
+<li>netty提供的业务线程池可以保证同一个channel的消息可以顺序处理</li>
+<li>自定义业务线程池，不可以保证以上的顺序，所以要处理资源竞争的问题。</li>
+</ol>
+</li>
+<li>
+<p>高性能队列框架Jctools（类似Disruptor，环形数组+缓存伪共享解决+CAS操作）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">环形数组：内存连续分配充分利用缓存</span><br><span class="line">解决缓存伪共享：属性之间插入long pading，空间换时间，防止属性变化使得不必要的相邻属性缓存失效</span><br><span class="line">CAS操作：MPSC队列（多生产者单消费者队列），在生产者入队列时，需要操作数组使用CAS操作避免锁竞争</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>零拷贝</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">零拷贝一般大众所知是 Linux 中一种用于减少在文件（网络）读写过程中用户态与内核态互相切换，内核态数据需要 copy 到用户态的优化手段。在 Java 的中是以 FileChannel.transferTo 来体现。</span><br><span class="line">Netty 的零拷贝分为两种：</span><br><span class="line">一种是使用 FileReigon 封装了 FileChannel.transferTo 操作使得网络读写性能得到优化（基于操作系统的零拷贝技术实现）；</span><br><span class="line">另一种是使用 CompositeByteBuf 使用单个 ByteBuf 一样操作多个 ByteBuf 而不需要任何 copy，通过 slice 方法可以讲单个 ByteBuf 拆分为多个 ByteBuf 操作，但是其本质为操作一个 copy。更多的是指代 Netty 中对于数据高效率操作方式。与内核态用户态切换无关。</span><br><span class="line">Netty 对于 ByteBuf 的零拷贝让多种数据组合更加方便。零拷贝最多能减少两次无意义的 copy 操作且大幅减少内核态与用户态的上下文切换。</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>提供基于传输层协议（TCP、UDP）的支持和各种配置</p>
+</li>
+<li>
+<p>提供各种开箱即用的Handler （编解码Codec，流分割LengthFieldBasedFrameDecoder等，空闲检测IdleStateHandler，序列化）</p>
+</li>
+</ol>
+<h5 id="epoll惊群">epoll惊群</h5>
+<p>​	惊群：多个线程等待同一个事件发生，在事件到来时，所有线程都被唤醒来竞争事件的处理，最后只有1个线程成功获得事件处理，其他线程又回到等待状态，等待下次事件的发生。</p>
+<p>epoll_wait设计为等待多种类型事件（accept、read、write、connect）的发生，accept事件只能由1个线程处理，但其他事件比如read事件是可以由多个线程处理的，所以内核对此不做处理，由用户程序处理。</p>
+<p>所以在epoll_wait处理accept事件时依然会有惊群问题，netty自己限制只有1个boss线程来处理accept事件，避免了惊群问题。</p>
+<ul>
+<li>accept 不会有惊群，epoll_wait 才会。</li>
+<li>Nginx 的 accept_mutex，并不是解决 accept 惊群问题，而是解决 epoll_wait 惊群问题。</li>
+<li>说Nginx 解决了 epoll_wait 惊群问题，也是不对的，它只是控制是否将监听套接字加入到 epoll 中。监听套接字只在一个子进程的 epoll 中，当新的连接来到时，其他子进程当然不会惊醒了。</li>
+</ul>
+<p>参考文章<a target="_blank" rel="noopener" href="https://pureage.info/2015/12/22/thundering-herd.html">https://pureage.info/2015/12/22/thundering-herd.html</a></p>
+<h4 id="SpringBoot启动流程">SpringBoot启动流程</h4>
+<p>**SpringBoot 监听器：**SpringApplicationRunListeners</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">EventPublishingRunListener 类在SpringBoot启动时读取AppClassLoader加载目录下的SpringBoot框架JAR包的META-INF/spring.factories文件实例化的</span><br><span class="line"></span><br><span class="line">EventPublishingRunListener类实例化的时候会初始化它的两个属性：</span><br><span class="line">初始化事件多播器：SimpleApplicationEventMulticaster</span><br><span class="line">并向此多播器添加实现了接口SpringApplicationRunListener的监听器</span><br><span class="line"></span><br><span class="line">然后使用实例化的EventPublishingRunListener初始化类SpringApplicationRunListeners并生成其实例</span><br><span class="line"></span><br><span class="line">类SpringApplicationRunListeners实例化后，调用其方法starting，starting方法又会调用其属性EventPublishingRunListener的starting方法</span><br><span class="line"></span><br><span class="line">EventPublishingRunListener的starting方法调用其属性初始化事件多播器的multicastEvent方法，此方法会遍历初始化EventPublishingRunListener时添加的监听器，通知他们事件  </span><br></pre></td></tr></table></figure>
+<p><strong>SpringBoot配置环境：</strong> ConfigurableEnvironment</p>
+<p>**SpringBoot应用配置上下文：**ConfigurableApplicationContext</p>
+<p><strong>SpringBoot 自动化配置</strong>：</p>
+<p>spring-boot-xxoo-starter实际上没有任何java代码，只有个pom文件指定了依赖spring-boot-starter，</p>
+<p>spring-boot-starter也没有任何java代码，只有个pom文件指定了依赖spring-boot-autoconfigure，</p>
+<p>而spring-boot-autoconfigure里则包含了所有springboot官方的starter包所需要的外部依赖及自动配置文件和META_INF/spring.factories</p>
+<p>非官方的starter的结构和spring-boot-autoconfigure一样包含了需要的外部依赖及自动配置文件和META_INF/spring.factories</p>
+<p>SpringFactoriesLoader类的loadFactoryNames方法，入参为factoryClass和classLoader，根据指定的classLoader，加载该类加载器搜索路径下的META_INF/spring.factories文件，传入的工厂类为接口，而文件中对应的类则是接口的实现类；loadFactoryNames方法返回类名集合，方法调用方得到这些集合后，再通过反射获取这些类的类对象、构造方法，最终生成实例</p>
+<h4 id="SpringMVC执行流程">SpringMVC执行流程</h4>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/image-20200420163224499.png" alt=""></p>
+<h3 id="Redis-HyperLogLog">Redis-HyperLogLog</h3>
+<p><strong>HyperLogLog</strong>：redis-HyperLogLog 不精确（0.81%的错误率）的去重统计，比如：网站UV数、访问IP数等</p>
+<p>原理：基数估算算法-伯努利实验-根据n次独立实验：抛掷硬币首次出现正面（或反面）所需要的最大次数k_max来估算实验的总次数n：<br>
+$$<br>
+n = 2^(k_max)<br>
+$$<br>
+分桶平均：将统计数据划分为m个桶，每个桶分别统计各自的k_max并能得到各自的基数预估值 n ，最终对这些 n 求调和平均得到整体的基数估计值：<br>
+$$<br>
+n = m * \frac{m}{\sum_{i=1}^{m}{\frac{1}{2^(k_m)}}}<br>
+$$</p>
+<p>16384=2^14个桶数组，每个桶6bit，一共16384*6/8/1024=12KB，一个key占用内存12KB</p>
+<p>pfadd key value：将value取hash生成64bit的字符串，取hash值的前14位来计算桶数组下标，取hash的后50位中首次出现1的位数（0～50之间，6bit可存放到数值64，因此够用），然后放入对应的桶中</p>
+<p>pfcount key：根据估算公式：修正因子 * 桶数 * 调和平均数；m为桶的个数16384，得到估算值<br>
+$$<br>
+const * m * \frac{m}{\sum_{i=1}^{m}{\frac{1}{2^(k_m)}}}<br>
+$$<br>
+为了节省内存空间，redis不会直接用16384个6bit桶存储1个HyperLogLog对象，而是先用稀疏存储（针对连续多个桶的计数为0进行存储优化，针对连续多个桶的计数都不为0且相等也进行存储优化），再用密集存储（12K，设定稀疏存储转密集存储的阈值）的方式</p>
+<h3 id="去重数据结构">去重数据结构</h3>
+<p>布隆过滤器Bloom Filter：存在判断不精确、不支持删除</p>
+<p>原理：当一个元素被加入集合时，通过K个<strong>相互独立</strong>的Hash函数将这个元素映射成一个位阵列（Bit array）中的K个点，把它们置为1。</p>
+<p>计数式布隆过滤器Counting Bloom Filter：存在判断不精确、支持删除</p>
+<p>原理：将位阵列扩展成byte阵列，用多余的bit来存储设置为1的计数器以支持删除操作</p>
+<p>布谷鸟过滤器Cuckoo Filter：存在判断精确，支持删除</p>
+<p>原理：有两个<strong>相关</strong>的hash算法将新来的元素映射到数组的两个位置。如果两个位置中有一个位置为空，那么就可以把元素放进去；但是如果这两个位置都满了，那么会随机踢走一个，然后自己霸占这个位置。</p>
+<p>bitmap：存在判断精确，支持删除</p>
+<h3 id="日志框架使用">日志框架使用</h3>
+<p>面向程序员的只是日志门面，具体需要哪个日志框架，选择相应的桥接器和日志实现框架。</p>
+<ol>
+<li>刚开始： 第三方日志系统：log4j等</li>
+<li>JDK自带log： JUL（Java Util Log）加入</li>
+<li>日志门面JCL（Java Common Logging）问世，其他日志实现自己桥接到JCL(桥接器)</li>
+<li>日志门面SLF4J问世，加上自带日志实现Logback，其他日志实现自己桥接到SLF4J（桥接器 xxx-over-slf4j）</li>
+<li>Log4j2问世，自带日志门面log4j2-api，加上日志实现log4j2-core</li>
+</ol>
+<p>至此，日志门面有三个了：JCL、SLF4J、log4j2-api，日志实现有4个：JUL、log4j、logback、log4j2-core</p>
+<p>一个字：乱</p>
+<p>实际项目中使用日志，应该遵循以下规则：</p>
+<ol>
+<li>总是使用日志门面：推荐SLF4J</li>
+<li>只添加一个日志实现的依赖：推荐log4j2</li>
+<li>使用第三方库，有必要排出第三方库中的日志实现依赖</li>
+<li>每一个日志的实现框架都有自己的配置文件。使用slf4j以后，<strong>配置文件还是做成日志实现框架自己本身的配置文件；比如使用slf4j+log4j2，则需要的配置文件为log4j2.xml</strong></li>
+</ol>
+<p>Spring-boot项目默认使用：SLF4J + logback，且把其他的日志都替换成了slf4j</p>
+<p>SpringBoot项目使用slf4j+log4j2配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-logging<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-log4j2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="单点登录">单点登录</h3>
+<h3 id="秒杀平台设计">秒杀平台设计</h3>
+<p>问题：高并发、超卖、恶意请求、链接暴露</p>
+<p>思路：</p>
+<p><strong>应对高并发</strong>：微服务、分布式、集群、</p>
+<p>缓存穿透：请求一个不存在的数据（解决：1. 缓存空值并设置过期时间 2. bloomfilter先查询是否存在然后再走缓存-&gt;DB）、</p>
+<p>缓存击穿：大量请求同时请求同一个失效的key（解决：分布式锁+写缓存）、</p>
+<p>缓存雪崩：大量key同时失效（解决：分布式锁+写缓存，设置不同的失效时间、服务限流降级）</p>
+<p><strong>应对超卖</strong>：幂等性、分布式事务、分布式锁</p>
+<p><strong>恶意请求</strong>：屏蔽特定use-agent、屏蔽频繁访问的ip（guava RateLimiter）</p>
+<p><strong>链接暴露</strong>：动态url（url加入md5验证）</p>
+<p>将请求尽量拦截在系统上游（用户页面-cdn缓存-Nginx负载均衡-服务器集群-Redis-消息队列-Mysql）</p>
+<p><strong>业务逻辑优化</strong>：要将秒杀商品先加入购物车才可以下单等</p>
+<p><strong>容错处理</strong>：限流、降级、熔断</p>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/image-20200420170520211.png" alt=""></p>
+<h3 id="算法">算法</h3>
+<p>单链表反转</p>
+<p>动态规划-完全背包问题</p>
+<h4 id="排序">排序</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">冒泡排序：</span><br><span class="line">&lt;1&gt;.比较相邻的元素。如果第一个比第二个大，就交换它们两个；</span><br><span class="line">&lt;2&gt;.对每一对相邻元素作同样的工作，从开始第一对到结尾的最后一对，这样在最后的元素应该会是最大的数；</span><br><span class="line">&lt;3&gt;.针对所有的元素重复以上的步骤，除了最后一个；</span><br><span class="line">&lt;4&gt;.重复步骤1~3，直到排序完成。</span><br><span class="line"></span><br><span class="line">改进1: 设置一标志性变量pos,用于记录每趟排序中最后一次进行交换的位置。由于pos位置之后的记录均已交换到位,故在进行下一趟排序时只要扫描到pos位置即可。</span><br><span class="line"></span><br><span class="line">改进2: 传统冒泡排序中每一趟排序操作只能找到一个最大值或最小值,我们考虑利用在每趟排序中进行正向和反向两遍冒泡的方法一次可以得到两个最终值(最大者和最小者) , 从而使排序趟数几乎减少了一半。</span><br><span class="line"></span><br><span class="line">时间复杂度：O(n²)</span><br><span class="line">空间复杂度：O(1) (in-place，不需要额外空间)</span><br><span class="line">稳定排序：稳定</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">选择排序：首先在未排序序列中找到最小（大）元素，存放到排序序列的起始位置，然后，再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。以此类推，直到所有元素均排序完毕。</span><br><span class="line"></span><br><span class="line">时间复杂度：O(n²)</span><br><span class="line">空间复杂度：O(1) (in-place，不需要额外空间)</span><br><span class="line">稳定排序：每次从未排序的数中选择最小的与未排序的第一个交换，破坏了相对顺序（比如未排序的第一个是3，第二个也是3，第三个是2也是未排序中最小的，此时交换第三个和第一个，会破坏第一个和第二个之间的相对顺序），所以不是稳定的排序</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">插入排序：采用in-place在数组上实现。具体算法描述如下：</span><br><span class="line">1. 从第一个元素开始，该元素可以认为已经被排序</span><br><span class="line">2. 取出下一个元素，在已经排序的元素序列中从后向前扫描</span><br><span class="line">3. 如果该元素（已排序）大于新元素，将该元素移到下一位置</span><br><span class="line">4. 重复步骤3，直到找到已排序的元素小于或者等于新元素的位置</span><br><span class="line">5. 将新元素插入到该位置后</span><br><span class="line">6. 重复步骤2~5</span><br><span class="line"></span><br><span class="line">改进： 二分插入排序：查找插入位置时使用二分查找的方式</span><br><span class="line"></span><br><span class="line">时间复杂度：O(n²) （虽然平均时间复杂度都一样，但不一定都一样快，一般：插入排序快于选择排序快于冒泡排序）</span><br><span class="line">空间复杂度：O(1) (in-place，不需要额外空间)</span><br><span class="line">稳定排序：稳定</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">希尔排序：改进的插入排序，引入一个增量序列(比如：length/2, length/2/2, ... ,1)，增量依次递减，每次依据增量对原数组进行分组直接插入排序，待到增量为1时最后一趟插入排序后即完成整个数组的排序。</span><br><span class="line"></span><br><span class="line">时间复杂度：O(nlogn)</span><br><span class="line">空间复杂度：O(1) (in-place，不需要额外空间)</span><br><span class="line">稳定性：在不同的分组中多次插入排序导致不稳定</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">归并排序：采用分治法，将已有序的子序列合并，得到完全有序的序列；类似增量序列（length/2, length/2/2, ... ,1）当增量为1时的分组自然有序，然后递归合并2，4，8长度分组，由于合并的两个分组已经有序，合并操作很简单如下：</span><br><span class="line">1. 申请空间，使其大小为两个已经排序序列之和，该空间用来存放合并后的序列</span><br><span class="line">2. 设定两个指针，最初位置分别为两个已经排序序列的起始位置</span><br><span class="line">3. 比较两个指针所指向的元素，选择相对小的元素放入到合并空间，并移动指针到下一位置</span><br><span class="line">4. 重复步骤3直到某一指针到达序列尾</span><br><span class="line">5. 将另一序列剩下的所有元素直接复制到合并序列尾</span><br><span class="line"></span><br><span class="line">平均时间复杂度：O(nlogn)</span><br><span class="line">最坏时间复杂度：O（n^2）</span><br><span class="line">空间复杂度：O(n) (需要额外数组长度的空间)</span><br><span class="line">稳定性：稳定</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">快速排序：也是采用分治法，在待排序的数列中，首先要找一个数字作为基准数。为了方便，我们一般选择第1个数字作为基准数（其实选择第几个并没有关系）。接下来我们需要把这个待排序的数列中小于基准数的元素移动到待排序的数列的左边，把大于基准数的元素移动到待排序的数列的右边。这时，左右两个分区的元素就相对有序了；接着把两个分区的元素分别按照上面两种方法继续对每个分区找出基准数，然后移动，直到各个分区只有一个数时为止。</span><br><span class="line">比如待排序数组为：6 1 2 7 9 3 4 5 10 8</span><br><span class="line">1、选取基准数：6</span><br><span class="line">2、然后先从右往左找一个小于 6 的数，再从左往右找一个大于 6 的数，然后交换他们。直到左右index相遇，此时再和基准数交换，得到序列：3 1 2 5 4 6 9 7 10 8</span><br><span class="line">3、再对基准数6两边的序列递归应用上述方法</span><br><span class="line">4、比如左边以3为基准数继续进行比较交换，最终得到序列：2 1 3 5 4 6 9 7 10 8</span><br><span class="line">5、继续左边，最终得到序列：1 2 3 4 5 6 9 7 10 8</span><br><span class="line">6、换右边，最终得到序列：1 2 3 4 5 6 7 8 9 10</span><br><span class="line">利用MapReduce的思想左右两边的操作可以同时进行。</span><br><span class="line"></span><br><span class="line">时间复杂度：O(nlogn)</span><br><span class="line">空间复杂度：O(n) (in-place，不需要额外空间，递归调用最坏需要O(n))</span><br><span class="line">稳定性：左右跳步交换导致不稳定</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">堆排序：</span><br><span class="line">堆：此处只讨论二叉堆，实为一颗完全二叉树，具有以下性质。</span><br><span class="line"></span><br><span class="line">任意节点小于（或大于）它的所有后裔，最小元（或最大元）在堆的根上（堆序性）。</span><br><span class="line">堆总是一棵完全树。即除了最底层，其他层的节点都被元素填满，且最底层尽可能地从左到右填入。</span><br><span class="line">将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆。</span><br><span class="line">二叉堆可以用数组实现：任意节点下标i，则左节点下标为2i+1，右节点下标为2i+2，父节点下标为floor((i-1)/2)</span><br><span class="line"></span><br><span class="line">堆排序：</span><br><span class="line">1. 先将无序数组组织成二叉堆</span><br><span class="line">2. 先將堆顶元素和已排好元素前一位做交换</span><br><span class="line">3. 将交换剩下的元素继续调整成二叉堆</span><br><span class="line">4. 重复2～3步骤，直到交换完毕（共交换len-2次）</span><br><span class="line">时间复杂度：O(nlogn)</span><br><span class="line">空间复杂度：O(1) </span><br><span class="line">稳定性：不稳定</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TimSort：稳定的自适应的归并排序</span><br><span class="line">原则：</span><br><span class="line">1. 待排序数组元素个数不多的情况下，使用二分查找插入排序</span><br><span class="line">2. 充分利用待排数组里已经有序的元素，将已经有序（升序、降序）的元素归类到一个run数组，每个run数组都是天然有序的，然后对降序的数组直接倒序，然后利用归并排序对多个run数组排序</span><br><span class="line">3. 多个run数组排序时避免很大的run和很小的run合并产生不必要的比较，将run按大小入栈排序，然后保证出栈合并的两个run数组是大小接近的 </span><br></pre></td></tr></table></figure>
+<h4 id="正排索引">正排索引</h4>
+<p>根据文档ID找到对应的文档</p>
+<h4 id="倒排索引">倒排索引</h4>
+<p>根据文档内容的分词找到出现该分词的文档列表</p>
+<p><img src="https://pic3.zhimg.com/80/v2-e4599b618e270df9b64a75eb77bfb326_1440w.jpg" alt="img"></p>
+<p>图片来源地址:<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/33671444">https://zhuanlan.zhihu.com/p/33671444</a></p>
+<ol>
+<li>trie树（字典树）：找到分词对应于2中的索引offset</li>
+<li>hashmap（内存）或者b-tree（磁盘）：根据分词的索引offset快速定位找到文档list</li>
+<li>文档list可以用skiplist，方便进行并集、交集等运算</li>
+<li>文档list其实是文档ID的list，另外可以加入分词的出现频率、出现位置等信息，用于对搜索结果进行一个打分排序</li>
+</ol>
+<h3 id="集群与分布式">集群与分布式</h3>
+<p>集群：多台服务器运行同一个服务，处理同一件事</p>
+<p>分布式：多台服务器各自运行不同的服务，不同的服务之间有相互调用</p>
+<h4 id="分布式技术">分布式技术</h4>
+<p><strong>初期</strong></p>
+<p>单体应用：（nginx + server + redis + mysql）一台机器</p>
+<p><strong>数据越来越大</strong></p>
+<p>单体应用+应用数据分离+mysql主从高可用部署+redis集群高可用部署： （nginx） + （server）+ （redis）+ （mysql）</p>
+<p><strong>QPS越来越高</strong></p>
+<p>集群应用： （nginx）+ 负载均衡  + （servers）+ （redis）+ （mysql）</p>
+<p><strong>应用越来越复杂</strong></p>
+<p>应用拆分：（nginx）+ 负载均衡  + （server1s）+ （server2s）+ （server…s）+ （redis）+ （mysql）</p>
+<p>应用拆分后就需要：</p>
+<p>跨服务调用：RPC、服务统一注册和发现、负载均衡、</p>
+<p>服务统一入口：网关和路由</p>
+<p>服务容错：熔断、限流、降级</p>
+<p>服务间的解耦和异步：消息队列</p>
+<p>应用拆分后服务设计原则：无状态、分布式事务、分布式锁</p>
+<p>dubbo = RPC + 服务统一注册和发现 + 软负载均衡 + 监控</p>
+<h4 id="分布式一致性">分布式一致性</h4>
+<p>分布式一致性通过共识算法来达成</p>
+<p>共识算法有个拜占庭问题</p>
+<p>共识算法分两类：</p>
+<ul>
+<li>
+<p><strong>非拜占庭容错类算法</strong>:  Paxos、Raft（<a target="_blank" rel="noopener" href="http://thesecretlivesofdata.com/raft/%EF%BC%89">http://thesecretlivesofdata.com/raft/）</a></p>
+</li>
+<li>
+<p><strong>拜占庭容错类算法</strong>: 实用拜占庭容错算法PBFT（Practical Byzantine Fault Tolerance）、代理拜占庭容错算法DBFT(Delegated Byzantine Fault Tolerant)、工作量证明PoW（Proof of Work）、股权证明PoS（Proof of Stake）、代理股权证明DPoS（Delegated Proof of Stake）</p>
+</li>
+</ul>
+<p>区块链【电子签名、工作量证明（拜占庭容错）、密码哈希函数；分布式一致性、去中心化】：sha256、Merkle 哈希树、非对称加密、签名验签</p>
+<h4 id="云上容灾架构">云上容灾架构</h4>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84-%E9%80%9A%E7%94%A8.jpg" alt=""></p>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84-%E5%BC%82%E5%9C%B0%E5%AE%B9%E7%81%BE.jpg" alt=""></p>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84-%E5%90%8C%E5%9F%8E%E5%AE%B9%E7%81%BE.jpg" alt=""></p>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84-%E5%90%8C%E5%9F%8E&amp;%E5%BC%82%E5%9C%B0.jpg" alt=""></p>
+<h3 id="LinkedHashMap实现LRU算法">LinkedHashMap实现LRU算法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 继承LinkedHashMap</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LRUCache</span>&lt;K, V&gt; <span class="keyword">extends</span> <span class="title class_">LinkedHashMap</span>&lt;K, V&gt; &#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> MAX_CACHE_SIZE;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">LRUCache</span><span class="params">(<span class="type">int</span> cacheSize)</span> &#123;</span><br><span class="line">		<span class="comment">// 使用构造方法 public LinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder)</span></span><br><span class="line">		<span class="comment">// initialCapacity、loadFactor都不重要</span></span><br><span class="line">		<span class="comment">// accessOrder要设置为true，按访问排序</span></span><br><span class="line">		<span class="built_in">super</span>((<span class="type">int</span>) Math.ceil(cacheSize / <span class="number">0.75</span>) + <span class="number">1</span>, <span class="number">0.75f</span>, <span class="literal">true</span>);</span><br><span class="line">		MAX_CACHE_SIZE = cacheSize;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">removeEldestEntry</span><span class="params">(Map.Entry eldest)</span> &#123;</span><br><span class="line">		<span class="comment">// 超过阈值时返回true，进行LRU淘汰</span></span><br><span class="line">		<span class="keyword">return</span> size() &gt; MAX_CACHE_SIZE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Springboot-java-jar-执行原理">Springboot java -jar 执行原理</h3>
+<p>JVM实例创建成功后，判断执行方式是jar方式还是class方式，jar方式则会读取jar包META-INF/MANIFEST.MF文件的Main-Class主类名，然后加载并执行</p>
+<p>SpringBoot  Jar包 Manifest文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Manifest-Version: 1.0</span><br><span class="line">Implementation-Title: webadmin-server</span><br><span class="line">Implementation-Version: 1.0.0</span><br><span class="line">Start-Class: com.App</span><br><span class="line">Spring-Boot-Classes: BOOT-INF/classes/</span><br><span class="line">Spring-Boot-Lib: BOOT-INF/lib/</span><br><span class="line">Build-Jdk-Spec: 1.8</span><br><span class="line">Spring-Boot-Version: 2.1.6.RELEASE</span><br><span class="line">Created-By: Maven Archiver 3.4.0</span><br><span class="line">Main-Class: org.springframework.boot.loader.JarLauncher</span><br></pre></td></tr></table></figure>
+<p>可知Springboot  jar包执行的入口main函数在org.springframework.boot.loader.JarLauncher类</p>
+<p>JarLuancher类 main函数读取jar包的Manifest文件指定的Start-Class，然后执行真正的Start-Class类的main函数</p>
+<h3 id="SpringMVC-执行流程">SpringMVC 执行流程</h3>
+<ol>
+<li>Spring容器启动时注册Filter到Spring容器，初始化Filter（调用init方法）；注册Interceptor到Spring容器</li>
+<li>web容器（tomcat）接收请求时，首先调用servlet的init方法，此处创建WebApplicationContext，初始化HandlerMappings、HandlerAdapters、ViewResolvers等</li>
+<li>创建FilterChain，并将Filter加入FilterChain</li>
+<li>Filter过滤链前置处理</li>
+<li>DispatcherServlet.doService</li>
+<li>Interceptor.preHandle拦截器前置处理</li>
+<li>Controller业务处理</li>
+<li>Interceptor.postHandle拦截器后置处理</li>
+<li>Interceptor.afterCompletion拦截器完成处理</li>
+<li>Filter过滤链后置处理</li>
+</ol>
+<h3 id="缓存一致性协议MESI">缓存一致性协议MESI</h3>
+<p><a target="_blank" rel="noopener" href="https://www.scss.tcd.ie/Jeremy.Jones/VivioJS/caches/MESIHelp.htm">https://www.scss.tcd.ie/Jeremy.Jones/VivioJS/caches/MESIHelp.htm</a></p>
+<h3 id="高性能队列Disruptor">高性能队列Disruptor</h3>
+<p>ArrayBlockingQueue，入队列和出队列都要加锁。</p>
+<p>Disruptor：</p>
+<ol>
+<li>使用环形数组<strong>RingBuffer</strong>+利用缓存行64KB的特性用空间换时间让不变的值尽量留在缓存中提供效率</li>
+<li>数组长度为2的n次方，利用位运算提高效率</li>
+<li>出队列和入队列通过CAS操作，避免锁开销</li>
+</ol>
+<h3 id="Caffeine本地缓存">Caffeine本地缓存</h3>
+<p>原理：</p>
+<ol>
+<li>Window-TinyLFU</li>
+</ol>
+<p>LFU：Least Frequently Used 一段时间周期内最少使用，淘汰最少访问频率的数据（基于访问频率）</p>
+<p>LRU：Least Recently Used 最近最少使用，淘汰最旧的数据（基于访问时间）</p>
+<p>Window-TinyLFU：分段 LRU（三级LRU队列：Eden, Probation, Protected; 应对突发流量） + Count-Min Sketch（类似布隆过滤器，频率统计）</p>
+<ol start="2">
+<li>三级LRU队列</li>
+<li>读写队列分开，使用RingBuffer作为队列</li>
+<li>过期策略：
+<ol>
+<li>expireAfterWrite：写后多久过期</li>
+<li>expireAfterAccess：最后一次访问过后多久过期</li>
+<li>expireAfter：自由指定过期时间</li>
+</ol>
+</li>
+<li>更新策略：refreshAfterWrite：写后多久再次访问时会去刷新该缓存</li>
+<li>以上基于时间的策略都是基于<strong>时间轮</strong>实现的延时任务</li>
+<li>实时监控：recordStats，参考 <a target="_blank" rel="noopener" href="https://github.com/ben-manes/caffeine/tree/master/examples/stats-metrics/">https://github.com/ben-manes/caffeine/tree/master/examples/stats-metrics/</a></li>
+<li>淘汰监听：removalListener</li>
+</ol>
+<h3 id="java类加载与卸载">java类加载与卸载</h3>
+<ol>
+<li>
+<p>类加载器：Bootstrap ClassLoader、ExtClassLoader、AppClassLoader、自定义ClassLoader</p>
+</li>
+<li>
+<p>类加载默认模型：双亲委托模型</p>
+</li>
+<li>
+<p>系统类加载用户类：线程上下文类加载器（SPI机制就会使用到）</p>
+</li>
+<li>
+<p>Tomcat类加载模型：Common ClassLoader（加载各个webapp和tomcat共同使用的class）、Shared ClassLoader（加载各个webapp共同使用的class）、WebApp ClassLoader（加载每个webapp自己的class）、JasperClassLoader（每个jsp文件对应一个JasperClassLoader）。 JSP热更新就是通过卸载旧的JSP文件的JasperClassLoader，创建新的JasperCLassLoader来加载更新后的JSP文件的。</p>
+</li>
+<li>
+<p>类卸载(GC回收类的Class对象)：必须满足条件：</p>
+<ol>
+<li>不存在引用该Class对象的实例对象</li>
+<li>该Class对象没在任何地方被引用</li>
+<li>加载该Class对象的ClassLoader已经被回收</li>
+</ol>
+<p>由此可见类卸载条件是很苛刻的，尤其是条件3，很多类都是AppClassLoader加载的，而AppClassLoader在应用程序生命周期内都是一直存在的。只有一些由自定义的ClassLoader加载的类才有可能会被卸载。而且GC时间不可控，即使三个条件都满足，类Class对象也不一定能被及时卸载。</p>
+</li>
+</ol>
+<h3 id="面试">面试</h3>
+<hr>
+<ol>
+<li>
+<p>简单自我介绍</p>
+</li>
+<li>
+<p>项目经验-用两三句话说清楚项目</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">比如光速APP：</span><br><span class="line">客户端：tun2sock（将app的流量全转到代理软件上来）</span><br><span class="line">服务端：提供的方式：SS（协议加密方式）、V2RAY</span><br><span class="line">线路：自动部署、记时、流量统计、限速</span><br></pre></td></tr></table></figure>
+<p>tun是操作系统支持的虚拟网卡，参考 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/bakari/p/10450711.html">https://www.cnblogs.com/bakari/p/10450711.html</a> 和 <a target="_blank" rel="noopener" href="http://arloor.com/posts/other/android-vpnservice-and-vpn-dev/">http://arloor.com/posts/other/android-vpnservice-and-vpn-dev/</a></p>
+<p>tun2sock要做的事可以分成三个部分：</p>
+<ol>
+<li>通过tun网卡拿到手机的所有IP数据包</li>
+<li>将数据包用sock协议封装</li>
+<li>将封装后的数据包发送给代理服务器，完成数据的转发</li>
+</ol>
+<p>v2ray dns模块参考 <a target="_blank" rel="noopener" href="https://medium.com/@TachyonDevel/%E6%BC%AB%E8%B0%88%E5%90%84%E7%A7%8D%E9%BB%91%E7%A7%91%E6%8A%80%E5%BC%8F-dns-%E6%8A%80%E6%9C%AF%E5%9C%A8%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8-62c50e58cbd0">https://medium.com/@TachyonDevel/%E6%BC%AB%E8%B0%88%E5%90%84%E7%A7%8D%E9%BB%91%E7%A7%91%E6%8A%80%E5%BC%8F-dns-%E6%8A%80%E6%9C%AF%E5%9C%A8%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8-62c50e58cbd0</a></p>
+</li>
+<li>
+<p>SpringBoot优点、自动配置原理、启动流程（干了什么事，用到了什么设计模式）</p>
+</li>
+<li>
+<p>java集合、并发、多线程、JVM</p>
+</li>
+<li>
+<p>netty</p>
+</li>
+<li>
+<p>dubbo vs spring cloud：各自特点，区别，RPC原理（通信方式http、tcp，数据协议hession、json、pb…）</p>
+</li>
+<li>
+<p>消息队列MQ</p>
+</li>
+<li>
+<p>分布式：一致性协议：最终一致性：两阶段提交、TCC、paxo、raft；一致性HASH</p>
+</li>
+<li>
+<p>mysql：事务级别、建表原则、优化方式、分库分表、HA方案（主从备份，读写分离，集群部署）</p>
+</li>
+<li>
+<p>redis：数据类型和各自应用场景，redis实现分布式锁，redis内存50%，redis 哨兵 和 cluster，淘汰策略LRU实现</p>
+</li>
+<li>
+<p>服务运维和监控（限流、降级、熔断）</p>
+</li>
+<li>
+<p>负载均衡方式（分层，DNS【DNS智能解析，DNS污染、DNSSec】…）</p>
+</li>
+<li>
+<p>接口分版本方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 域名分版本：v1.api.com  v2.api.com</span><br><span class="line">2. URL分版本：/api/v1/hello  /api/v2/hello</span><br><span class="line">3. 参数分版本：参数加上version字段</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>性能测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//参考 陈皓博客：性能测试应该怎么做 https://coolshell.cn/articles/17381.html</span><br><span class="line">1. 响应时间考量目标综合选择：平均值、中位值、TP值（Top Percentile，TP50，TP90，TP99）</span><br><span class="line">2. 吞吐量（QPS）必须和响应时间挂钩：比如TP99小于100ms时的QPS是1000</span><br><span class="line">3. 吞吐量、响应时间还必须和成功率挂钩：关键系统成功率必须保证100%</span><br><span class="line"></span><br><span class="line">//具体步骤</span><br><span class="line">1. 定好前提比如：机器配置，模拟并发请求数（多少个客户端多少时间内多少个请求），TP99值必须在100ms以内，平均响应时间在500ms以内，100%请求成功</span><br><span class="line">2. 在1的限制下测试系统找到最高QPS</span><br><span class="line">3. 用2的最高QPS连续压测系统一段时间，收集系统的指标（CPU、内存、IO等），判断系统的稳定性</span><br></pre></td></tr></table></figure>
+<ul>
+<li>性能测试可以在本机做，得到一个基准值，再和生产环境机器测试一次数据作对比，大概得到一个性能比值，下次性能优化目标就可以定量到本机测试</li>
+<li>使用Profile工具定位到每个方法的处理时长，对方法进行优化</li>
+<li>单机优化方式：加本地缓存、本地异步任务线程池配置、Redis Client线程池配置（区分是Netty NIO还是BIO，Netty NIO只需要少量线程池数量，而BIO只能堆线程池数量了），JDBC Client线程池（区分是NIO还是BIO）配置</li>
+<li>线程池的配置参数: 核心线程数、最大线程数、队列长度的设置要综合考虑CPU、内存、JDBC线程池、REDIS线程池的配置</li>
+<li>再提升性能，就要上分布式+集群了</li>
+</ul>
+</li>
+<li>
+<p>压力测试</p>
+</li>
+<li>
+<p>浏览器访问www.google.com整个流程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. DNS解析、hosts文件、DNS Server、DNS缓存、DNS记录（A、CNAME）DNS负载均衡</span><br><span class="line">2. http vs https（证书，单向认证【浏览器访问网址都是单向认证】，双向认证）</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>自己完成的最有挑战性、最难忘、最成功的事</p>
+</li>
+</ol>
+<h3 id="Linux-CMD">Linux CMD</h3>
+<p>pcstat（page cache统计）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go get golang.org/x/sys/unix</span><br><span class="line">go get github.com/tobert/pcstat/pcstat</span><br></pre></td></tr></table></figure>
+<p>strace</p>
+<p>nc</p>
+<p>lsof</p>
+<p>netstat</p>
+<p>tcpdump</p>
+<p>pidof</p>
+<p>pidstat</p>
+<p>sysctl -a ｜ grep xxoo</p>
+<p>系统文件描述符限制查看修改：</p>
+<p>查看系统配置项意义：man 5 proc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 1. 系统级</span><br><span class="line">系统内所有进程可打开的fd总限制（一般设置为内存Kb大小的10%）：/proc/sys/fs/file-max （echo 123456 &gt; /proc/sys/fs/file-max）</span><br><span class="line">sysctl fs.file-max</span><br><span class="line">//系统当前已使用fd：</span><br><span class="line">sysctl fs.file-nr</span><br><span class="line">cat /proc/sys/fs/file-nr</span><br><span class="line">// 2. 进程级</span><br><span class="line">ulimit -SHn</span><br><span class="line">vim /etc/security/limits.conf</span><br><span class="line">//单个进程可分配的最大fd数目</span><br><span class="line">sysctl fs.nr_open</span><br><span class="line">cat /proc/sys/fs/nr_open</span><br><span class="line">// 3. 应用级</span><br></pre></td></tr></table></figure>
+<h3 id="docker-update容器">docker update容器</h3>
+<p>docker update --restart=no container-name</p>
+<p>docker update --restart=always container-name</p>
+<h3 id="Mac本机压测">Mac本机压测</h3>
+<ol>
+<li>
+<p>launchctl limit 查看打开文件进程限制</p>
+</li>
+<li>
+<p>修改打开文件进程限制，解决too many open files</p>
+<p>sudo vim /Library/LaunchDaemons/limit.maxfiles.plist</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">plist</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//Apple//DTD PLIST 1.0//EN&quot;</span> <span class="string">&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">&quot;1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">key</span>&gt;</span>Label<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>limit.maxfiles<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">key</span>&gt;</span>ProgramArguments<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">string</span>&gt;</span>launchctl<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">string</span>&gt;</span>limit<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">string</span>&gt;</span>maxfiles<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">string</span>&gt;</span>65536<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">string</span>&gt;</span>65536<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">key</span>&gt;</span>RunAtLoad<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">key</span>&gt;</span>ServiceIPC<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">false</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">plist</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>sudo vim /Library/LaunchDaemons/limit.maxproc.plist</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple/DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span><br><span class="line">  &lt;plist version=&quot;1.0&quot;&gt;</span><br><span class="line">    &lt;dict&gt;</span><br><span class="line">      &lt;key&gt;Label&lt;/key&gt;</span><br><span class="line">        &lt;string&gt;limit.maxproc&lt;/string&gt;</span><br><span class="line">      &lt;key&gt;ProgramArguments&lt;/key&gt;</span><br><span class="line">        &lt;array&gt;</span><br><span class="line">          &lt;string&gt;launchctl&lt;/string&gt;</span><br><span class="line">          &lt;string&gt;limit&lt;/string&gt;</span><br><span class="line">          &lt;string&gt;maxproc&lt;/string&gt;</span><br><span class="line">          &lt;string&gt;4096&lt;/string&gt;</span><br><span class="line">          &lt;string&gt;4096&lt;/string&gt;</span><br><span class="line">        &lt;/array&gt;</span><br><span class="line">      &lt;key&gt;RunAtLoad&lt;/key&gt;</span><br><span class="line">        &lt;true /&gt;</span><br><span class="line">      &lt;key&gt;ServiceIPC&lt;/key&gt;</span><br><span class="line">        &lt;false /&gt;</span><br><span class="line">    &lt;/dict&gt;</span><br><span class="line">  &lt;/plist&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>空接口压测到最高8500QPS的参数</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[qiaojian@Mac Documents ]% wrk -t5 -c500 -d30s http://127.0.0.1:9091/hello/test1\?name\=qiaojian</span><br><span class="line">Running 30s test @ http://127.0.0.1:9091/hello/test1?name=qiaojian</span><br><span class="line">  5 threads and 500 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency    59.07ms   35.59ms   1.41s    91.11%</span><br><span class="line">    Req/Sec     1.70k   266.61     2.74k    75.99%</span><br><span class="line">  254568 requests in 30.09s, 31.60MB read</span><br><span class="line">  Socket errors: connect 0, read 246, write 41, timeout 0</span><br><span class="line">Requests/sec:   8459.55</span><br><span class="line">Transfer/sec:      1.05MB</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>使用上一步的参数作为本机压测的基准参数和基准值，去压测其他接口</li>
+</ol>
+<h3 id="Object-Wait-Notify">Object Wait/Notify</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. 首先每个java对象都可以当作锁使用，synchronized即是基于java对象内置锁monitor的</span><br><span class="line">2. Wait语义</span><br><span class="line">	 2.1 首先调用object.wait()的线程需要获取object对象的monitor锁</span><br><span class="line">	 2.2 object.wait()调用会释放object对象的monitor锁，并进入阻塞状态，等待其他线程调用notify()的唤醒，然后重新竞争获取object的monitor锁，如果重新获取到锁，则恢复继续执行，否则继续处于阻塞状态等待下次被唤醒</span><br><span class="line">3. Notify语义</span><br><span class="line">	3.1 首先调用object.notify()的线程需要获取object对象的monitor锁</span><br><span class="line">	3.2 object.notify()调用后并执行完synchronized代码块会释放object对象的monitor锁，然后其他阻塞等待获取object的monitor锁的线程竞争获取锁，其他线程重新竞争获取object的monitor锁，其中只有1个线程成功重新获取到锁，然后恢复继续执行 </span><br></pre></td></tr></table></figure>
+<h3 id="Maybatis一级缓存与二级缓存">Maybatis一级缓存与二级缓存</h3>
+<h4 id="一级缓存">一级缓存</h4>
+<ol>
+<li>
+<p>MyBatis一级缓存的生命周期和SqlSession一致，默认开启。</p>
+</li>
+<li>
+<p>MyBatis一级缓存内部设计简单，只是一个没有容量限定的HashMap，在缓存的功能性上有所欠缺。</p>
+</li>
+<li>
+<p>MyBatis的一级缓存最大范围是SqlSession内部，有多个SqlSession或者分布式的环境下，数据库写操作会引起脏数据，建议设定缓存级别为Statement。</p>
+<ul>
+<li>
+<p>全局关闭：设置 <code>mybatis.configuration.local-cache-scope=statement</code></p>
+</li>
+<li>
+<p>指定 mapper 关闭：在 <code>mapper.xml</code> 的指定 statement 上标注 <code>flushCache=&quot;true&quot;</code></p>
+</li>
+<li>
+<p>另类的办法：在 statement 的 SQL 上添加一串随机数(select * from table where #{random} = #{random})</p>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MyBatis 的一级缓存默认开启，属于 SqlSession 作用范围。在事务开启的期间，同样的数据库查询请求只会查询一次数据库，之后重复查询会从一级缓存中获取。当不开启事务时，同样的多次数据库查询都会发送数据库请求。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mybatis:</span><br><span class="line">  configuration:</span><br><span class="line">    cache-enabled: false #禁用二级缓存</span><br><span class="line">    local-cache-scope: statement #通过将一级缓存级别设置为statement，可以达到禁用一级缓存的效果</span><br></pre></td></tr></table></figure>
+<h4 id="二级缓存">二级缓存</h4>
+<ol>
+<li>MyBatis的二级缓存相对于一级缓存来说，实现了<code>SqlSession</code>之间缓存数据的共享，同时粒度更加的细，能够到<code>namespace</code>级别，通过Cache接口实现类不同的组合，对Cache的可控性也更强，默认未开启。</li>
+<li>MyBatis在多表查询时，极大可能会出现脏数据，有设计上的缺陷，安全使用二级缓存的条件比较苛刻。</li>
+<li>在分布式环境下，由于默认的MyBatis Cache实现都是基于本地的，分布式环境下必然会出现读取到脏数据，需要使用集中式缓存将MyBatis的Cache接口实现，有一定的开发成本，直接使用Redis、Memcached等分布式缓存可能成本更低，安全性也更高。</li>
+</ol>
+<h3 id="缓存和数据库一致性">缓存和数据库一致性</h3>
+<ol>
+<li>
+<p>经典模型：Cache Aside Pattern</p>
+<p>读：先读缓存，缓存没有，再读数据库并更新缓存</p>
+<p>写：先写数据库，再删除缓存</p>
+<p>存在问题：删除缓存失败（虽然很少碰到），会导致缓存的旧数据和数据库中的新数据不一致的情况</p>
+<p>解决方案：2</p>
+</li>
+<li>
+<p>写数据改为：先删除缓存，再写数据库</p>
+<p>存在问题：数据发生了变更，先删除了缓存，然后要去修改数据库，此时还没修改。一个请求过来，去读缓存，发现缓存空了，去查询数据库，查到了修改前的旧数据，放到了缓存中。随后数据变更的程序完成了数据库的修改。此时，缓存和数据库的数据又不一致了。</p>
+<p>解决方案：3</p>
+</li>
+<li>
+<p>将<strong>读缓存为空需要读数据库并更新缓存</strong>的读操作和写数据的操作放到本地队列或分布式队列排队并顺序执行</p>
+<p>存在问题：性能瓶颈在队列串行化执行</p>
+</li>
+<li>
+<p>如果允许数据暂时的不一致，可以在1或2的基础之上增加定时任务：从DB刷新数据到缓存</p>
+</li>
+</ol>
+<h3 id="HTTP1-0与2-0特性">HTTP1.0与2.0特性</h3>
+<h3 id="Stream-ParallelStream">Stream ParallelStream</h3>
+<p>Stream ParallelStream默认使用ForkJoinPool线程池，线程数为CPU核数</p>
+<h3 id="nohup">nohup</h3>
+<p>java进程接收到SIGHUP（kill -1 process-no）时，进程会退出。nohup启动可以屏蔽SIGHUP信号</p>
+<h3 id="Linux性能分析">Linux性能分析</h3>
+<h4 id="CPU">CPU</h4>
+<p>上下文切换、top、cpu使用率100%、不可中断进程、僵尸进程、软中断、perf工具</p>
+<h4 id="内存">内存</h4>
+<p>内存buffer与cache、内存泄露定位、swap变高</p>
+<h4 id="IO">IO</h4>
+<p>磁盘IO优化、狂打日志、C10K、C1000K、怎样评估系统的网络性能、DNS解析慢、tcpdump、DDos攻击、网络请求延迟大解决、网络性能优化、网络收发包缓存区</p>
+<p>tcpdump教程</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mylxsw/growing-up/blob/master/doc/tcpdump%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B.md">https://github.com/mylxsw/growing-up/blob/master/doc/tcpdump简明教程.md</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">在服务端进行抓包分析，使用tcpdump</span><br><span class="line"></span><br><span class="line">tcpdump -tttt -s0 -X -vv tcp port 8080 -w captcha.cap</span><br><span class="line">这里的参数是这样的</span><br><span class="line"></span><br><span class="line">-tttt 输出最大程度可读的时间戳</span><br><span class="line">-s0 指定每一个包捕获的长度，单位是byte，使用-s0可以捕获整个包的内容</span><br><span class="line">-X 以hex和ASCII两种形式显示包的内容</span><br><span class="line">-vv 显示更加多的包信息</span><br><span class="line">tcp 指我们只捕获tcp流量</span><br><span class="line">port 8080 指我们只捕获端口8080的流量</span><br><span class="line">-w captcha.cap 指定捕获的流量结果输出到captcha.cap文件，便于分析使用</span><br></pre></td></tr></table></figure>
+<h4 id="综合">综合</h4>
+<p>系统监控、应用监控</p>
+<h3 id="Time-Wait-Close-Wait">Time_Wait&amp;Close_Wait</h3>
+<p>time_wait是服务器发起主动关闭连接后，连接进入等待2msl的状态，之后才关闭</p>
+<p>time_wait等待2msl原因：</p>
+<ol>
+<li>保证连接被正常关闭</li>
+<li>防止收到旧连接的数据包</li>
+</ol>
+<p>服务器time_wait状态连接太多，解决办法：调整服务器配置参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">通过调整内核参数解决</span><br><span class="line">vi /etc/sysctl.conf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">编辑文件，加入以下内容：</span><br><span class="line">net.ipv4.tcp_syncookies = 1</span><br><span class="line">net.ipv4.tcp_tw_reuse = 1</span><br><span class="line">net.ipv4.tcp_tw_recycle = 1</span><br><span class="line">net.ipv4.tcp_fin_timeout = 30</span><br><span class="line"> </span><br><span class="line">然后执行/sbin/sysctl -p让参数生效。</span><br></pre></td></tr></table></figure>
+<p>close_wait是服务器收到被动关闭连接后，连接进入等待应用程序发送fin包关闭连接的状态</p>
+<p>服务器close_wait状态连接太多，解决办法：查看应用程序使用socket的地方是否正确关闭了连接</p>
+<h3 id="MAC设置测试环境IP转发到本地">MAC设置测试环境IP转发到本地</h3>
+<p>开发测试中可能会使用远程的机器地址如172.17.5.49，由于公司安全限制本地连不上或者搭建了本地的环境使用，此时可以添加端口转发，将from 127.0.0.1到172.17.5.49-6379的流量转发到127.0.0.1-6379上来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">一、修改/etc/pf.conf</span><br><span class="line"></span><br><span class="line">在rdr-anchor &quot;com.apple/*&quot;后添加</span><br><span class="line"> rdr on lo0 inet proto tcp from any to 172.17.5.49 port 6379 -&gt; 127.0.0.1 port 6379</span><br><span class="line"></span><br><span class="line">二、使转发生效</span><br><span class="line">依次执行以下命令</span><br><span class="line">    sudo pfctl -d (貌似没用)</span><br><span class="line">    sudo pfctl -f /etc/pf.conf  </span><br><span class="line">    sudo pfctl -e </span><br><span class="line">三、查看手册 man pfctl、man pf.conf </span><br></pre></td></tr></table></figure>
+<h3 id="计算与存储分离">计算与存储分离</h3>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904055840440333%EF%BC%8C%E9%98%BF%E9%87%8CPolarDB">https://juejin.cn/post/6844904055840440333，阿里PolarDB</a></p>
+<p><strong>任务调度azkaban</strong></p>
+<p><strong>分布式链路追踪sleuth</strong></p>
+<p><strong>大数据-hdfs+hive+hbase</strong></p>
+<p><strong>消息队列-kafka-RocketMQ</strong></p>
+<p><strong>线程池TaskDecorator</strong></p>
+<h3 id="大数据">大数据</h3>
+<p>![image-20210831162836310](/Users/qiaojian/Library/Application Support/typora-user-images/image-20210831162836310.png)</p>
+<p>底层分布式存储：分布式文件系统HDFS</p>
+<p>资源动态调度层：yarn</p>
+<p>计算（离线、实时）框架：MapReduce、Spark、Storm、Spark-Streaming、Flink</p>
+<p>将SQL转成MapReduce计算函数然后提交给hadoop执行：Hive</p>
+<p>大数据NOSQL：</p>
+<p>底层分布式存储：分布式文件系统HDFS</p>
+<p>NOSQL数据库：HBase</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">所有这些技术在实际部署的时候，通常会部署在同一个集群中，也就是说，在由很多台服务器组成的服务器集群中，某台服务器可能运行着 HDFS 的 DataNode 进程，负责 HDFS 的数据存储；同时也运行着 Yarn 的 NodeManager，负责计算资源的调度管理；而 MapReduce、Spark、Storm、Flink 这些批处理或者流处理大数据计算引擎则通过 Yarn 的调度，运行在 NodeManager 的容器（container）里面。至于 Hive、Spark SQL 这些运行在 MapReduce 或者 Spark 基础上的大数据仓库引擎，在经过自身的执行引擎将 SQL 语句解析成 MapReduce 或者 Spark 的执行计划以后，一样提交给 Yarn 去调度执行。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这里相对比较特殊的是 HBase，作为一个 NoSQL 存储系统，HBase 的应用场景是满足在线业务数据存储访问需求，通常是 OLTP（在线事务处理）系统的一部分，为了保证在线业务的高可用性和资源独占性，一般是独立部署自己的集群，和前面的 Hadoop 大数据集群分离部署。</span><br></pre></td></tr></table></figure>
+<h3 id="使用iperf3工具测试局域网带宽">使用iperf3工具测试局域网带宽</h3>
+<h3 id="Filter-vs-HandlerInterceptor-vs-Aspect">Filter vs HandlerInterceptor vs Aspect</h3>
+<h3 id="消息队列选型">消息队列选型</h3>
+<p>kafka：高吞吐量（顺序读写磁盘、MMAP内存映射文件、零拷贝 、生产者消费者批量发送sendfile、GZIP或Snappy压缩【减少网络传输数据量】）</p>
+<p>RocketMQ：高可靠性</p>
+<table>
+<thead>
+<tr>
+<th>Kafka</th>
+<th>RocketMQ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Broker是个物理概念, Master/Slave是个逻辑概念，Master/Slave是通过zookeeper选举产生的。一个Boker对应一台机器。</td>
+<td>Broker是个逻辑概念, Master/Slave是个物理概念。Master/Slave的角色是通过配置固定的。一个Master或一个Slave对应一台机器。</td>
+</tr>
+<tr>
+<td>使用zookeeper管理Topic/queue和物理机器的映射关系</td>
+<td>使用NameServer管理Topic/queue和物理机器的映射关系</td>
+</tr>
+<tr>
+<td>异步刷盘（可配置异步刷盘时间间隔、消息数阈值）</td>
+<td>同步刷盘，异步刷盘</td>
+</tr>
+<tr>
+<td>同步Replication，异步Replication</td>
+<td>同步Replication，异步Replication</td>
+</tr>
+<tr>
+<td>单机写入TPS约在百万条/秒（批量发送）</td>
+<td>单机写入TPS单实例约7万条/秒（不支持批量发送）</td>
+</tr>
+<tr>
+<td>单机超过64个队列/分区，Load会发生明显的飙高现象，队列越多，Load越高</td>
+<td>单机支持最高5万个队列</td>
+</tr>
+<tr>
+<td>0.8版本后消费端支持长轮询pull</td>
+<td>消费端长轮询pull</td>
+</tr>
+<tr>
+<td>消费失败不支持重试</td>
+<td>消费失败支持定时重试，每次重试间隔时间顺延</td>
+</tr>
+<tr>
+<td>单个partition里的消息是有序的</td>
+<td>单个message queue里的消息是有序的</td>
+</tr>
+<tr>
+<td>不支持定时消息</td>
+<td>支持定时消息</td>
+</tr>
+<tr>
+<td>不支持消息查询</td>
+<td>支持消息查询</td>
+</tr>
+<tr>
+<td>不支持分布式事务</td>
+<td>支持分布式事务</td>
+</tr>
+<tr>
+<td>不支持Broker端的消息过滤</td>
+<td>支持Broker端的消息过滤</td>
+</tr>
+<tr>
+<td>消费并行度依赖Topic配置的分区数，如分区数为10，那么最多10台机器来并行消费，每台机器只能开启一个线程</td>
+<td>顺序消费方式并行度同Kafka完全一致；乱序方式并行度取决于Consumer的线程数，如Topic配置10个队列，10台机器消费，每台机器100个线程，那么并行度为1000；</td>
+</tr>
+</tbody>
+</table>
+<p>Kafka存储结构：一个Topic对应多个Partition，每个Partition一个目录，Partition目录下由多个Segment文件和索引组成</p>
+<p>RocketMQ存储结构：所有Topic的消息写入CommitLog文件，将Topic/Queue的Offset写入对应的每个ConsumerQueue文件</p>
+<p>![image-20211015174029613](/Users/qiaojian/Library/Application Support/typora-user-images/image-20211015174029613.png)</p>
+<p><strong>Spring-Kafka提供了消费失败重试机制和死信队列机制</strong></p>
+<p>Linux文件IO：read/write（适用场景：对单个文件不频繁的少量读写）、mmap（适用场景：对单个大文件的频繁大量读写）、sendfile（这个系统调用将 <code>mmap()</code> + <code>write()</code> 这两个系统调用合二为一；适用场景：无需修改文件内容，仅仅将文件数据发送到网络）、splice（功能上和 <code>sendfile()</code> 非常相似，但是能够实现在任意类型的两个文件描述符时之间传输数据；而在底层实现上，<code>splice()</code>又比 <code>sendfile()</code> 少了一次 CPU 拷贝）</p>
+<p>IO参考文章：<a target="_blank" rel="noopener" href="https://www.jiqizhixin.com/articles/2019-01-21-19%E3%80%81https://zhuanlan.zhihu.com/p/308054212">https://www.jiqizhixin.com/articles/2019-01-21-19、https://zhuanlan.zhihu.com/p/308054212</a></p>
+<p>文件存储结构：</p>
+<p>B-Tree：按页写入存在内存碎片，按索引读取历史数据性能更好，数据key在索引文件中只有一份能很好的支持事务</p>
+<p>LSM-Tree：将随机写转化为顺序写。牺牲了部分读性能，以此来换取写入的最大化性能，特别适用于读需求低，会产生大量插入操作的应用环境。</p>
+<p>使用工具sysbench测试机器cpu、内存、mysql、文件io性能</p>
+<p>网络IO测试工具：iperf</p>
+<p>文件IO测试工具：fio</p>
+<h3 id="Redis-vs-RocksDB-vs-LevelDB">Redis vs RocksDB vs LevelDB</h3>
+<h3 id="Apache-Arrow">Apache Arrow</h3>
+<p>零拷贝序列化框架，大数据不同机器间协调合作数据传输统一格式：最好的序列化就是没有序列化</p>
+<h3 id="Huffman编码">Huffman编码</h3>
+<p>只有在数据的次数或者频率分布不均匀的时候，编码才能产生压缩的作用，若数据分布较为均匀，则压缩效果不明显</p>
+<h3 id="gitlab-ci-cd-ansible-playbook-supervisorctl">gitlab ci/cd &amp; ansible-playbook &amp; supervisorctl</h3>
+<p>gitlab：代码仓库</p>
+<p>gitlab ci/cd：gitlab持续集成/持续部署</p>
+<p>ansible：自动化运维工具（批量自动配置、部署、运行命令）</p>
+<p>Supervisor: 进程管理</p>
+<h3 id="Mysql流式查询">Mysql流式查询</h3>
+<h5 id="MySQL-JDBC-StreamResult通信原理浅析"><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000016724645">MySQL JDBC StreamResult通信原理浅析</a></h5>
+<h3 id="SpringCloudNetflix超时时间配置">SpringCloudNetflix超时时间配置</h3>
+<p>参考： <a target="_blank" rel="noopener" href="https://zhongpan.tech/2020/03/23/029-hystrix-ribbon-feign-relationship/">https://zhongpan.tech/2020/03/23/029-hystrix-ribbon-feign-relationship/</a></p>
+<p>Feign超时配置：针对偏底层的网络超时配置，粒度可以精确到service</p>
+<p>Hystrix超时配置：针对命令执行的熔断超时配置，粒度可以精确到method</p>
+<p>ribbon超时配置：针对负载均衡+重试超时配置，粒度可以精确到service</p>
+<p>超时设置准则：Hystrix的熔断是在ribbon和http请求超时或失败达到多大比例后进行的操作，所以Hystrix的熔断超时时间一定要大于ribbon和http请求加起来的总时间，不然请求还没完成Hystrix熔断超时时间就触发了熔断。</p>
+<p>![image-20210810202202141](/Users/qiaojian/Library/Application Support/typora-user-images/image-20210810202202141.png)</p>
+<h3 id="Linux后台运行进程">Linux后台运行进程</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@VM-0-3-centos ~]# shopt | grep huponexit</span><br><span class="line">huponexit      	off</span><br></pre></td></tr></table></figure>
+<p>进程id：pid</p>
+<p>进程组id：pgid （一系列命令组合在一起形成进程组）</p>
+<p>父进程id：ppid</p>
+<p>会话id：sid （会话管理多个进程组）</p>
+<p>huponexit为off时，会话<strong>正常注销退出</strong>时，shell后台运行的子进程不会退出，而是变成init进程的子进程。但是会话异常退出时，shell后台运行的子进程还是会退出。</p>
+<p>避免会话退出子进程也退出的方式：nohup（或者setsid、disown、()、screen、tmux）</p>
+<p>nohup command &gt;/dev/null 2&gt;&amp;1 &amp;</p>
+<p>另外注意：默认的输入输出都是创建进程的会话的输入输出设备，因此会话关闭时，程序的输入输出会异常，因此启动命令上要进行输入输出重定向（一般程序没有使用标准输入，因此指定输出重定向即可）</p>
+<p>Linux C语言实现daemon进程：<a target="_blank" rel="noopener" href="https://ixyzero.com/blog/archives/3111.html">https://ixyzero.com/blog/archives/3111.html</a></p>
+<p>Redis实现daemon进程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">daemonize</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">int</span> fd;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (fork() != <span class="number">0</span>) <span class="built_in">exit</span>(<span class="number">0</span>); <span class="comment">/* parent exits */</span></span><br><span class="line">    setsid(); <span class="comment">/* create a new session */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Every output goes to /dev/null. If Redis is daemonized but</span></span><br><span class="line"><span class="comment">     * the &#x27;logfile&#x27; is set to &#x27;stdout&#x27; in the configuration file</span></span><br><span class="line"><span class="comment">     * it will not log at all. */</span></span><br><span class="line">    <span class="keyword">if</span> ((fd = open(<span class="string">&quot;/dev/null&quot;</span>, O_RDWR, <span class="number">0</span>)) != <span class="number">-1</span>) &#123;</span><br><span class="line">        dup2(fd, STDIN_FILENO);</span><br><span class="line">        dup2(fd, STDOUT_FILENO);</span><br><span class="line">        dup2(fd, STDERR_FILENO);</span><br><span class="line">        <span class="keyword">if</span> (fd &gt; STDERR_FILENO) close(fd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Tomcat配置">Tomcat配置</h3>
+<p>![image-20210819151604148](/Users/qiaojian/Library/Application Support/typora-user-images/image-20210819151604148.png)</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1674556">https://cloud.tencent.com/developer/article/1674556</a></p>
+<p>Acceptor线程：处理accept事件，完成tcp三次握手创建socket，然后将Socket封装成PollerEvent事件放入ClientPoller的事件队列</p>
+<p>ClientPoller线程：Selector轮训遍历可读和可写事件，然后将可读或可写的Socket传给IO线程池里的IO线程进行处理</p>
+<p>IO线程池：真正处理Socket读写以及业务逻辑的地方</p>
+<p>BlockPoller线程：用于当IO线程的Socket数据需要多次读写的时候，监测注册在原始 socket 上的读写事件是否发生。BlockerPoller会和IO线程进程交互，防止IO线程忙等待消耗CPU</p>
+<h3 id="HiKariCP连接池">HiKariCP连接池</h3>
+<p>为什么快？</p>
+<ol>
+<li>
+<p>使用第三方字节码修改库Javassist来生成动态代理类</p>
+</li>
+<li>
+<p>ConcurrentBag &amp; FastList</p>
+</li>
+</ol>
+<p>ConcurrentBag ：无锁设计、ThreadLocal 缓存、  CopyOnWriteArrayList、SynchronousQueue队列窃取</p>
+<p>FastList：去除index检验、删除modCount统计、list遍历由后往前、扩容优化（容量够直接插入，必须扩容时直接扩容为*2）、只实现必要的接口</p>
+<p><strong>优化</strong>：根据sql执行复杂度分成长事务和短事务sql。长事务和短事务sql使用不同的连接池（多数据源配置）。长事务的连接池连接数可以设置的大一点，短事务的连接池连接数可以设置的小一点。</p>
+<h3 id="在Bash-Shell中打开或关闭TCP-UDP套接字">在Bash Shell中打开或关闭TCP / UDP套接字</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 打开文件描述符6，关联到Socket tcp wwww.baidu.com 80，可读可写</span><br><span class="line">exec 6&lt;&gt; /dev/tcp/www.baidu.com/80</span><br><span class="line">// 发送http请求</span><br><span class="line">echo -e  &#x27;GET /index.html HTTP/1.1\n&#x27; &gt;&amp;6</span><br><span class="line">// 接收响应</span><br><span class="line">cat &lt;&amp;6</span><br></pre></td></tr></table></figure>
+<h3 id="Spring-Cloud-应用如何注册到多个注册中心">Spring Cloud 应用如何注册到多个注册中心</h3>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1425751">https://cloud.tencent.com/developer/article/1425751</a></p>
+<h3 id="Mysql单表数据量不超过500万">Mysql单表数据量不超过500万</h3>
+<p>为什么说建议msyql单表数据量不超过500万？这得从Mysql InnoDB存储引擎结构说起。Mysql InnoDB默认页大小是16KB，Mysql InnoDB的数据结构是B-Tree。一个高度为3的B-Tree能存储的数据量计算：</p>
+<p>InnoDB默认是以主键建立聚族索引，叶子结点存储真正的数据，根节点和内部阶段只存储主键和指针。所以：16KB的页存储根节点Key个数大概是：16KB/8B（主键大小）+8B（指针大小）+8B（其他冗余）= 666，其中每个Key的指针指向1个中间结点，因此可以有666个中间结点，同理每个中间结点里的每个Key的指针也指向1个叶子结点，因此一共有666*666=443556个叶子结点。叶子结点存储真正的行数据和链表指针（方便范围查询）。以下面的Table举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `t_ada_app_task` (</span><br><span class="line">  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `task_no` bigint(20) unsigned DEFAULT NULL COMMENT &#x27;任务号&#x27;,</span><br><span class="line">  `task_name` varchar(100) NOT NULL COMMENT &#x27;任务名&#x27;,</span><br><span class="line">  `user_name` varchar(100) DEFAULT NULL COMMENT &#x27;用户名称&#x27;,</span><br><span class="line">  `user_source` int(11) NOT NULL COMMENT &#x27;用户来源&#x27;,</span><br><span class="line">  `import_time` datetime DEFAULT NULL COMMENT &#x27;上报时间&#x27;,</span><br><span class="line">  `task_status` int(11) NOT NULL DEFAULT &#x27;1&#x27; COMMENT &#x27;跑数任务状态 1：持续 2：停止&#x27;,</span><br><span class="line">  `task_type` varchar(100) DEFAULT NULL COMMENT &#x27;任务类型&#x27;,</span><br><span class="line">  `remark` varchar(512) DEFAULT NULL COMMENT &#x27;备注&#x27;,</span><br><span class="line">  `org_no` int(10) unsigned DEFAULT NULL COMMENT &#x27;机构号&#x27;,</span><br><span class="line">  `update_time` datetime DEFAULT NULL COMMENT &#x27;更新时间&#x27;,</span><br><span class="line">  `create_time` datetime NOT NULL COMMENT &#x27;创建时间&#x27;,</span><br><span class="line">  PRIMARY KEY (`id`) USING BTREE,</span><br><span class="line">  UNIQUE KEY `uk_data_source_name` (`org_no`,`user_name`) USING BTREE,</span><br><span class="line">) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;</span><br></pre></td></tr></table></figure>
+<p>每个字段占用空间相加为：854+16（pre、next指针）+ 30（冗余）=900B（注意：由此可见varchar很占空间，尽量不要定义太大又无用的varchar字段），因此1个页可以存储的行为：16KB/900B=17。因此一颗高度为3的B-Tree叶子结点总共可以存储的数据行为：443556*17=750万</p>
+<h3 id="JMH函数级别性能测试">JMH函数级别性能测试</h3>
+<h3 id="精准广告投放-Cookie-Mapping">精准广告投放-Cookie-Mapping</h3>
+<p>![image-20211108152036486](/Users/qiaojian/Library/Application Support/typora-user-images/image-20211108152036486.png)</p>
+<p>①用户访问某个媒体（APP）的页面</p>
+<p>②媒体（APP）向ADX发送广告请求（有时APP会向SSP发送请求，SSP再向ADX发送请求）</p>
+<p>③ADX收到请求后，向对接的DSP分发请求</p>
+<p>④DSP收到请求后，对请求带上的信息进行分析，然后向ADX返回竞价信息</p>
+<p>⑤ADX根据DSP返回的竞价信息，通过一系列的判断，决定哪家竞价成功获得广告曝光机会，并将创意素材返回给媒体（APP）</p>
+<p>⑥媒体（APP）收到ADX返回的创意素材信息后展现在用户访问的页面上</p>
+<h3 id="单机定时任务">单机定时任务</h3>
+<p>JDK - Timer-单线程</p>
+<p>JDK - ScheduledThreadPoolExecutor-线程池</p>
+<p>Netty - HashedWheelTimer-时间轮、单线程、适用于对时效性不高的，可快速执行的，大量这样的“小”任务</p>
+<p>Kafka - HashedWheelTimer-时间轮，1. 解决了Netty时间轮如果长时间没有到期任务，那么会存在时间轮空推进的现象（引入JDK的DelayQueue保存每个Bucket）。2. 解决了时间跨度大的问题（引入层级时间轮类似时针分针秒针的功能）</p>
+<h3 id="装饰器模式vs适配器模式">装饰器模式vs适配器模式</h3>
+<p>装饰器模式不改变要装饰的接口参数：例如：BufferedReader装饰Reader接口，并不修改接口，只做增强（Buffered）</p>
+<p>适配器模式会将不同的输入参数适配到待适配到接口：例如InputStreamReader适配char数组输入到byte数组输入接口</p>
+<h3 id="模版方法vs策略模式">模版方法vs策略模式</h3>
+<p>模版方法：一般在抽象类中定义好一种算法的执行流程骨架，具体每个步骤细节由子类继承实现：例如很多的抽象类AbstractCollection等</p>
+<p>策略模式：不同的策略实现同一个接口，不同策略之间可以相互替换：例如不同的比较方式都实现Comparator接口</p>
+<h3 id="DNS">DNS</h3>
+<h5 id="DNS放大攻击">DNS放大攻击</h5>
+<p>DNS 放大可分为四个步骤：</p>
+<ol>
+<li>攻击者使用受损的端点将有欺骗性 IP 地址的 <a target="_blank" rel="noopener" href="https://www.cloudflare.com/learning/ddos/glossary/user-datagram-protocol-udp/">UDP</a> 数据包发送到 DNS 递归服务器。数据包上的欺骗性地址指向受害者的真实 IP 地址。</li>
+<li>每个 UDP 数据包都向 DNS 解析器发出请求，通常传递一个参数（例如“ANY”）以接收尽可能最大的响应。</li>
+<li>DNS 解析器收到请求后，会向欺骗性 IP 地址发送较大的响应。</li>
+<li>目标的 IP 地址接收响应，其周边的网络基础设施被大量流量淹没，从而导致拒绝服务。</li>
+</ol>
+<h5 id="预防DNS放大攻击">预防DNS放大攻击</h5>
+<ol>
+<li>减少开放DNS解析器数目</li>
+<li>源IP地址验证</li>
+</ol>
+<h5 id="DNS泛洪攻击">DNS泛洪攻击</h5>
+<p>恶意攻击者向允许递归的开放DNS解析器发送大量伪造的查询请求，达到DDos效果</p>
+<h5 id="预防DNS泛洪攻击">预防DNS泛洪攻击</h5>
+<p>丢弃未经请求或突发的DNS请求、白名单、黑名单等</p>
+<h5 id="DNS劫持">DNS劫持</h5>
+<p>分本地DNS劫持、路由DNS劫持和直接攻击DNS服务器，目的就是向目标域名解析请求返回错误的IP地址</p>
+<h5 id="HTTPDNS">HTTPDNS</h5>
+<p>通过 IP 直接请求 HTTP 获取服务器 A 记录地址，不存在向本地运营商询问 domain 解析过程</p>
+<ol>
+<li>从根本上避免了DNS劫持问题</li>
+<li>提高域名解析效率</li>
+<li>精确定位客户端地理位置、运营商信息，从而有效改进调度精确性。</li>
+</ol>
+<h3 id="Condition-vs-Object-wait-notify">Condition vs Object wait/notify</h3>
+<p>参考Conditon.java的注释说明，主要区别两点：</p>
+<ol>
+<li>Conditon可以在一个lock对象上提供多个Condition等待队列，比如生产者消费者模型中可以把notFull和notEmpty的等待队列设置为分开的两个，而使用Object的wait/notify只能使用一个等待队列来通知notFull和notEmpty事件</li>
+<li>Conditon提供了超时wait的方法和屏蔽中断的wait方法，而Object的wait/notify没有</li>
+</ol>
+<h3 id="Thread-State">Thread State</h3>
+<p>NEW</p>
+<p>RUNNABLE</p>
+<p>BLOCK （synchronized）</p>
+<p>WAITING （wait、join、LockSupport.park）</p>
+<p>TIMED_WAITING（wait with timeout、join with timeout、LockSupport.park with timeout）</p>
+<p>TERMINATED</p>
+<p>ReentrantLock是基于AQS实现的，AQS又是基于LockSupport实现的，所以ReentrantLock锁的状态是没有Block的，只有waiting或timed_waiting</p>
+<h3 id="Spring-WebFlux">Spring WebFlux</h3>
+<p>webflux基于netty的线程模型，利用少量的线程和等待队列来提高CPU的利用率；</p>
+<p>webmvc基于多线程模型，利用开辟大量线程来提高CPU利用率；</p>
+<p>对比下来：webmvc在线程数量太多的情况下，CPU耗时在线程切换上的时间增加，线程栈的内存使用量也增加，导致性能降低；而webflux只需要少量线程即可提高CPU利用率，且几乎没有多余的内存消耗，使得机器负载维持在一个稳定的水平。</p>
+<h3 id="Linux系统级配置">Linux系统级配置</h3>
+<p>启动应用前一般需要对系统进行一些配置：</p>
+<p>启动web监听端口一般需要设置：</p>
+<ol>
+<li>
+<p>fcntl设置O_NONBLOCK，</p>
+</li>
+<li>
+<p>setsockopt设置SO_REUSEADDR，SO_REUSEPORT</p>
+</li>
+<li>
+<p>设置TCP_NODELAY关闭Nagle算法，适用于实时性高的场景（Nagel算法会延迟小包的发送）</p>
+</li>
+<li>
+<p>listen传递设置全连接队列backlog，其中backlog生效值为min(/proc/sys/net/core/somaxconn, listen param backlog)，/proc/sys/net/core/somaxconn：系统限制每个端口的最大监听队列长度，默认128，太小，应该修改</p>
+</li>
+<li>
+<p>使用netty-epoll的话，默认水平触发，根据情况设置水平触发还是边沿触发，select、poll实现的都是水平触发</p>
+</li>
+<li>
+<p>系统参数设置半连接队列backlog：/proc/sys/net/ipv4/tcp_max_syn_backlog</p>
+</li>
+<li>
+<p>系统设置/etc/sysctl.conf TCP接收缓存、发送缓存大小、keepalive_time、tcp_fin_timeout、tcp_tw_reuse、tcp_max_syn_backlog等</p>
+</li>
+<li>
+<p>设置进行系统资源限制：可打开文件数，系统限制设置/etc/sysctl.conf fs.file-max，进程限制设置/etc/security/limits.conf</p>
+</li>
+<li>
+<p>使用epoll时关注系统参数：/proc/sys/fs/epoll/max_user/watches</p>
+<p>![image-20220105175845236](/Users/qiaojian/Library/Application Support/typora-user-images/image-20220105175845236.png)</p>
+</li>
+<li>
+<p>防火墙设置旧版本iptables vs 新版本firewalld，底层都是基于Netfilter</p>
+</li>
+<li>
+<p>web运行用户权限配置</p>
+</li>
+</ol>
+<h3 id="select、poll、epoll">select、poll、epoll</h3>
+<p>select、poll<strong>每次均要</strong>把需要监控的fds传递给内核进行遍历然后返回有事件响应的fds，select限制1024个文件描述符（但是可以传超过1024个fds，只是会存在数据覆盖不安全，参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/dog250/article/details/105896693">https://blog.csdn.net/dog250/article/details/105896693</a>  <a target="_blank" rel="noopener" href="https://programmer.group/5eb00f8e1ec61.html%EF%BC%89%EF%BC%8Cpoll%E6%B2%A1%E6%9C%89%E8%BF%99%E4%B8%AA%E9%99%90%E5%88%B6">https://programmer.group/5eb00f8e1ec61.html），poll没有这个限制</a></p>
+<p>epoll，利用回调机制通过epoll_ctl添加fd感兴趣的事件，<strong>只需要添加这一次</strong>，epoll_wait返回有相应事件响应的fds</p>
+<h3 id="部署方式">部署方式</h3>
+<ul>
+<li>
+<p>蓝绿部署</p>
+<p>特点：同时存在两个集群，两个集群中只有一个集群真正提供服务，另外一个集群测试、验证或待命</p>
+<p>优势：服务文档，版本回退简单，适用于各种场景的升级，大版本不兼容升级的或迭代兼容升级</p>
+<p>劣势：浪费硬件资源，需要同时有两个集群，如果集群比较大，比如有 1000 个节点，这种方式几乎不可用</p>
+</li>
+<li>
+<p>金丝雀</p>
+<p>特点：逐点部署，逐步替换线上服务</p>
+<p>优势：小步快跑，快速迭代</p>
+<p>劣势：只能适用于兼容迭代的方式，如果是大版本不兼容的场景，就没办法使用这种方式了</p>
+</li>
+</ul>
+<ul>
+<li>AB 测试和上面两个不是一个范畴，不做比较。AB 测试是线上同时运行多个不同版本的服务，这些服务更多的是用户侧的体验不同，比如页面布局、按钮颜色，交互方式等，通常底层业务逻辑还是一样的，也就是通常说的换汤不换药。但是需要说明的一点，AB 测试可以采用上面两种部署方式的手法。</li>
+</ul>
+<h3 id="VIP">VIP</h3>
+<p>VIP即Virtual IP Address，是实现HA（高可用）系统的一种方案，高可用的目的是通过技术手段避免因为系统出现故障而导致停止对外服务，一般实现方式是部署备用服务器，在主服务器出现故障时接管业务。 VIP用于向客户端提供一个固定的“虚拟”访问地址，以避免后端服务器发生切换时对客户端的影响。</p>
+<p><strong>VIP的实现原理</strong></p>
+<ol>
+<li>Master选举： 集群创建或者Master出现故障时，集群通过选举协议得到一个Master作为对外服务的节点</li>
+<li>配置VIP： HA软件将VIP配置到Master节点的网卡上</li>
+<li>ARP广播： 主动对外广播ARP消息，声明VIP对应的MAC地址为Master的网卡MAC地址</li>
+</ol>
+<p>Nginx+Keepalived高可用集群即使用了VIP技术</p>
+<h3 id="服务监控">服务监控</h3>
+<p>![image-20220220123603042](/Users/qiaojian/Library/Application Support/typora-user-images/image-20220220123603042.png)</p>
+<p>链路追踪监控：zipkin、skywalking、pinpoint</p>
+<hr>
+<p>Mysql各大主要版本及特性</p>
+<p>安数使用：Mysql 5.7.26-29-log</p>
+<p>Redis各大主要版本及特性</p>
+<p>安数使用：Redis 3.2.3</p>
+<p>MongoDB各大主要版本及特性</p>
+<p>安数使用：Mongo 4.4.10</p>
+<p>Kafka各大主要版本及特性</p>
+<p>安数使用:</p>
+<p>这些组件怎么做扩容所容？</p>
+<hr>
+<p>代码仓库：GitHub、GitLab、BitBucket</p>
+<p>CI/CD：Jenkins 、GitLab CI</p>
+<p>代码质量平台：SonarQube</p>
+<p>配置管理工具：Ansible</p>
+<p>性能测试：JMeter、wrk、ab</p>
+<p>单元测试：JUnit、Mockito</p>
+<p>监控：Prometheus + Grafana</p>
+<p>项目管理工具：Jira、Trello、TAPD</p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+	<div>
+  		
+    		<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-handshake-o"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  		
+	</div>
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>Good for you!</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Qiao.Jian 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/article/java%E6%B2%99%E7%AE%B1/" rel="next" title="java沙箱">
+                <i class="fa fa-chevron-left"></i> java沙箱
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/article/%E7%AE%97%E6%B3%95-%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/" rel="prev" title="算法-归并排序">
+                算法-归并排序 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Qiao.Jian"/>
+  
+  <p class="site-author-name" itemprop="name">Qiao.Jian</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+        
+        
+        <a href="/archives/">
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+          
+          
+          <a href="/tags/">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1%E5%92%8C%E6%8B%86%E7%AE%B1"><span class="nav-number">1.1.</span> <span class="nav-text">自动装箱和拆箱</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E5%90%88"><span class="nav-number">1.2.</span> <span class="nav-text">集合</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#List"><span class="nav-number">1.2.1.</span> <span class="nav-text">List</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Map"><span class="nav-number">1.2.2.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TreeMap%E5%AE%9E%E7%8E%B0%E4%B8%80%E8%87%B4%E6%80%A7Hash"><span class="nav-number">1.2.3.</span> <span class="nav-text">TreeMap实现一致性Hash</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Set"><span class="nav-number">1.2.4.</span> <span class="nav-text">Set</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ThreadLocal"><span class="nav-number">1.2.5.</span> <span class="nav-text">ThreadLocal</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8"><span class="nav-number">1.3.</span> <span class="nav-text">异常</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Spring"><span class="nav-number">1.4.</span> <span class="nav-text">Spring</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dubbo%EF%BC%88%E6%88%96%E5%85%B6%E4%BB%96Rpc%E6%A1%86%E6%9E%B6%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">Dubbo（或其他Rpc框架）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2"><span class="nav-number">1.5.1.</span> <span class="nav-text">加权轮询</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E9%9A%8F%E6%9C%BA"><span class="nav-number">1.5.2.</span> <span class="nav-text">加权随机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7hash"><span class="nav-number">1.5.3.</span> <span class="nav-text">一致性hash</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%80%E5%B0%91%E6%B4%BB%E8%B7%83"><span class="nav-number">1.5.4.</span> <span class="nav-text">最少活跃</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%82%E7%AD%89%E6%80%A7"><span class="nav-number">1.5.5.</span> <span class="nav-text">幂等性</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RocketMq%EF%BC%88%E6%88%96%E5%85%B6%E4%BB%96%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">RocketMq（或其他消息中间件）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis%EF%BC%88%E6%88%96%E5%85%B6%E4%BB%96%E7%BC%93%E5%AD%98%E7%B3%BB%E7%BB%9F%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">Redis（或其他缓存系统）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mysql"><span class="nav-number">1.8.</span> <span class="nav-text">Mysql</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#java%E4%BC%A0%E5%8F%82%E6%96%B9%E5%BC%8F"><span class="nav-number">1.9.</span> <span class="nav-text">java传参方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#QPS%E4%BC%B0%E7%AE%97"><span class="nav-number">1.10.</span> <span class="nav-text">QPS估算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%B5%E8%84%91%E9%83%A8%E4%BB%B6%E5%A4%84%E7%90%86%E6%97%B6%E9%97%B4%E6%95%B0%E9%87%8F%E7%BA%A7%E5%AF%B9%E6%AF%94"><span class="nav-number">1.11.</span> <span class="nav-text">电脑部件处理时间数量级对比</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-8-HashMap%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%AE%89%E5%85%A8"><span class="nav-number">1.12.</span> <span class="nav-text">1.8 HashMap多线程不安全</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-8-ConcurrentHashMap-Bug"><span class="nav-number">1.13.</span> <span class="nav-text">1.8 ConcurrentHashMap Bug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.14.</span> <span class="nav-text">多线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">1.15.</span> <span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM"><span class="nav-number">1.16.</span> <span class="nav-text">JVM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E7%9B%91%E6%8E%A7"><span class="nav-number">1.17.</span> <span class="nav-text">JVM监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="nav-number">1.18.</span> <span class="nav-text">JVM命令行参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">1.19.</span> <span class="nav-text">JVM生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#JNI-CreateJavaVM%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.19.1.</span> <span class="nav-text">JNI_CreateJavaVM执行流程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DestroyJavaVM%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.19.2.</span> <span class="nav-text">DestroyJavaVM执行流程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.19.3.</span> <span class="nav-text">类加载</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Netty"><span class="nav-number">1.20.</span> <span class="nav-text">Netty</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E6%80%A7"><span class="nav-number">1.20.1.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#epoll%E6%83%8A%E7%BE%A4"><span class="nav-number">1.20.2.</span> <span class="nav-text">epoll惊群</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">1.21.</span> <span class="nav-text">SpringBoot启动流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.22.</span> <span class="nav-text">SpringMVC执行流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-HyperLogLog"><span class="nav-number">2.</span> <span class="nav-text">Redis-HyperLogLog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%BB%E9%87%8D%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">去重数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">日志框架使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95"><span class="nav-number">5.</span> <span class="nav-text">单点登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%92%E6%9D%80%E5%B9%B3%E5%8F%B0%E8%AE%BE%E8%AE%A1"><span class="nav-number">6.</span> <span class="nav-text">秒杀平台设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">7.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F"><span class="nav-number">7.1.</span> <span class="nav-text">排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E6%8E%92%E7%B4%A2%E5%BC%95"><span class="nav-number">7.2.</span> <span class="nav-text">正排索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95"><span class="nav-number">7.3.</span> <span class="nav-text">倒排索引</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F"><span class="nav-number">8.</span> <span class="nav-text">集群与分布式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%8A%80%E6%9C%AF"><span class="nav-number">8.1.</span> <span class="nav-text">分布式技术</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">8.2.</span> <span class="nav-text">分布式一致性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%91%E4%B8%8A%E5%AE%B9%E7%81%BE%E6%9E%B6%E6%9E%84"><span class="nav-number">8.3.</span> <span class="nav-text">云上容灾架构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedHashMap%E5%AE%9E%E7%8E%B0LRU%E7%AE%97%E6%B3%95"><span class="nav-number">9.</span> <span class="nav-text">LinkedHashMap实现LRU算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Springboot-java-jar-%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86"><span class="nav-number">10.</span> <span class="nav-text">Springboot java -jar 执行原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringMVC-%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">11.</span> <span class="nav-text">SpringMVC 执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AEMESI"><span class="nav-number">12.</span> <span class="nav-text">缓存一致性协议MESI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E9%98%9F%E5%88%97Disruptor"><span class="nav-number">13.</span> <span class="nav-text">高性能队列Disruptor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Caffeine%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98"><span class="nav-number">14.</span> <span class="nav-text">Caffeine本地缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%8D%B8%E8%BD%BD"><span class="nav-number">15.</span> <span class="nav-text">java类加载与卸载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%A2%E8%AF%95"><span class="nav-number">16.</span> <span class="nav-text">面试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-CMD"><span class="nav-number">17.</span> <span class="nav-text">Linux CMD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-update%E5%AE%B9%E5%99%A8"><span class="nav-number">18.</span> <span class="nav-text">docker update容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mac%E6%9C%AC%E6%9C%BA%E5%8E%8B%E6%B5%8B"><span class="nav-number">19.</span> <span class="nav-text">Mac本机压测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-Wait-Notify"><span class="nav-number">20.</span> <span class="nav-text">Object Wait&#x2F;Notify</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Maybatis%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98%E4%B8%8E%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="nav-number">21.</span> <span class="nav-text">Maybatis一级缓存与二级缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="nav-number">21.1.</span> <span class="nav-text">一级缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="nav-number">21.2.</span> <span class="nav-text">二级缓存</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">22.</span> <span class="nav-text">缓存和数据库一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP1-0%E4%B8%8E2-0%E7%89%B9%E6%80%A7"><span class="nav-number">23.</span> <span class="nav-text">HTTP1.0与2.0特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stream-ParallelStream"><span class="nav-number">24.</span> <span class="nav-text">Stream ParallelStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nohup"><span class="nav-number">25.</span> <span class="nav-text">nohup</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-number">26.</span> <span class="nav-text">Linux性能分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU"><span class="nav-number">26.1.</span> <span class="nav-text">CPU</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98"><span class="nav-number">26.2.</span> <span class="nav-text">内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IO"><span class="nav-number">26.3.</span> <span class="nav-text">IO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%BC%E5%90%88"><span class="nav-number">26.4.</span> <span class="nav-text">综合</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Time-Wait-Close-Wait"><span class="nav-number">27.</span> <span class="nav-text">Time_Wait&amp;Close_Wait</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MAC%E8%AE%BE%E7%BD%AE%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83IP%E8%BD%AC%E5%8F%91%E5%88%B0%E6%9C%AC%E5%9C%B0"><span class="nav-number">28.</span> <span class="nav-text">MAC设置测试环境IP转发到本地</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E4%B8%8E%E5%AD%98%E5%82%A8%E5%88%86%E7%A6%BB"><span class="nav-number">29.</span> <span class="nav-text">计算与存储分离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE"><span class="nav-number">30.</span> <span class="nav-text">大数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8iperf3%E5%B7%A5%E5%85%B7%E6%B5%8B%E8%AF%95%E5%B1%80%E5%9F%9F%E7%BD%91%E5%B8%A6%E5%AE%BD"><span class="nav-number">31.</span> <span class="nav-text">使用iperf3工具测试局域网带宽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Filter-vs-HandlerInterceptor-vs-Aspect"><span class="nav-number">32.</span> <span class="nav-text">Filter vs HandlerInterceptor vs Aspect</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E9%80%89%E5%9E%8B"><span class="nav-number">33.</span> <span class="nav-text">消息队列选型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-vs-RocksDB-vs-LevelDB"><span class="nav-number">34.</span> <span class="nav-text">Redis vs RocksDB vs LevelDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Apache-Arrow"><span class="nav-number">35.</span> <span class="nav-text">Apache Arrow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Huffman%E7%BC%96%E7%A0%81"><span class="nav-number">36.</span> <span class="nav-text">Huffman编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gitlab-ci-cd-ansible-playbook-supervisorctl"><span class="nav-number">37.</span> <span class="nav-text">gitlab ci&#x2F;cd &amp; ansible-playbook &amp; supervisorctl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql%E6%B5%81%E5%BC%8F%E6%9F%A5%E8%AF%A2"><span class="nav-number">38.</span> <span class="nav-text">Mysql流式查询</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#MySQL-JDBC-StreamResult%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90"><span class="nav-number">38.0.1.</span> <span class="nav-text">MySQL JDBC StreamResult通信原理浅析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringCloudNetflix%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4%E9%85%8D%E7%BD%AE"><span class="nav-number">39.</span> <span class="nav-text">SpringCloudNetflix超时时间配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E8%BF%9B%E7%A8%8B"><span class="nav-number">40.</span> <span class="nav-text">Linux后台运行进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tomcat%E9%85%8D%E7%BD%AE"><span class="nav-number">41.</span> <span class="nav-text">Tomcat配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HiKariCP%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-number">42.</span> <span class="nav-text">HiKariCP连接池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8Bash-Shell%E4%B8%AD%E6%89%93%E5%BC%80%E6%88%96%E5%85%B3%E9%97%ADTCP-UDP%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-number">43.</span> <span class="nav-text">在Bash Shell中打开或关闭TCP &#x2F; UDP套接字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-Cloud-%E5%BA%94%E7%94%A8%E5%A6%82%E4%BD%95%E6%B3%A8%E5%86%8C%E5%88%B0%E5%A4%9A%E4%B8%AA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="nav-number">44.</span> <span class="nav-text">Spring Cloud 应用如何注册到多个注册中心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql%E5%8D%95%E8%A1%A8%E6%95%B0%E6%8D%AE%E9%87%8F%E4%B8%8D%E8%B6%85%E8%BF%87500%E4%B8%87"><span class="nav-number">45.</span> <span class="nav-text">Mysql单表数据量不超过500万</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMH%E5%87%BD%E6%95%B0%E7%BA%A7%E5%88%AB%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95"><span class="nav-number">46.</span> <span class="nav-text">JMH函数级别性能测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E5%87%86%E5%B9%BF%E5%91%8A%E6%8A%95%E6%94%BE-Cookie-Mapping"><span class="nav-number">47.</span> <span class="nav-text">精准广告投放-Cookie-Mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="nav-number">48.</span> <span class="nav-text">单机定时任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8Fvs%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">49.</span> <span class="nav-text">装饰器模式vs适配器模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E7%89%88%E6%96%B9%E6%B3%95vs%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">50.</span> <span class="nav-text">模版方法vs策略模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS"><span class="nav-number">51.</span> <span class="nav-text">DNS</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DNS%E6%94%BE%E5%A4%A7%E6%94%BB%E5%87%BB"><span class="nav-number">51.0.1.</span> <span class="nav-text">DNS放大攻击</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%84%E9%98%B2DNS%E6%94%BE%E5%A4%A7%E6%94%BB%E5%87%BB"><span class="nav-number">51.0.2.</span> <span class="nav-text">预防DNS放大攻击</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DNS%E6%B3%9B%E6%B4%AA%E6%94%BB%E5%87%BB"><span class="nav-number">51.0.3.</span> <span class="nav-text">DNS泛洪攻击</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%84%E9%98%B2DNS%E6%B3%9B%E6%B4%AA%E6%94%BB%E5%87%BB"><span class="nav-number">51.0.4.</span> <span class="nav-text">预防DNS泛洪攻击</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DNS%E5%8A%AB%E6%8C%81"><span class="nav-number">51.0.5.</span> <span class="nav-text">DNS劫持</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HTTPDNS"><span class="nav-number">51.0.6.</span> <span class="nav-text">HTTPDNS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Condition-vs-Object-wait-notify"><span class="nav-number">52.</span> <span class="nav-text">Condition vs Object wait&#x2F;notify</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Thread-State"><span class="nav-number">53.</span> <span class="nav-text">Thread State</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-WebFlux"><span class="nav-number">54.</span> <span class="nav-text">Spring WebFlux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E7%B3%BB%E7%BB%9F%E7%BA%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">55.</span> <span class="nav-text">Linux系统级配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select%E3%80%81poll%E3%80%81epoll"><span class="nav-number">56.</span> <span class="nav-text">select、poll、epoll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E6%96%B9%E5%BC%8F"><span class="nav-number">57.</span> <span class="nav-text">部署方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VIP"><span class="nav-number">58.</span> <span class="nav-text">VIP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7"><span class="nav-number">59.</span> <span class="nav-text">服务监控</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qiao.Jian</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v6.3.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.2.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>

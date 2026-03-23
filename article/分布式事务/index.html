@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+<meta name="google-site-verification" content="FmCBFeBJWlIl9DVnns-1SQgs2lTet7iXquulOgdsOVY" />
+<meta name="baidu-site-verification" content="EyoMwitrw4" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0"/>
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="什么是事务 事务是数据库的术语，表示事务范围内的操作不成功便成仁【要么成功，要么失败，没有中间状态】。单条sql的执行默认都是事务的，也即单条sql的执行要么成功，要么失败，不存在中间状态。对于多条sql的事务，则需要显式的开启和关闭事务。比如下单减库存的操作： 12345678#开启事务begin;#新增订单insert into order values (...);#修改库存update s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式事务">
+<meta property="og:url" content="http://qiaojiande.fun/article/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/index.html">
+<meta property="og:site_name" content="谯剑的小站">
+<meta property="og:description" content="什么是事务 事务是数据库的术语，表示事务范围内的操作不成功便成仁【要么成功，要么失败，没有中间状态】。单条sql的执行默认都是事务的，也即单条sql的执行要么成功，要么失败，不存在中间状态。对于多条sql的事务，则需要显式的开启和关闭事务。比如下单减库存的操作： 12345678#开启事务begin;#新增订单insert into order values (...);#修改库存update s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/Mysql%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%94%AF%E6%8C%81-XA%E5%AE%9E%E7%8E%B0.jpg">
+<meta property="og:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/RocketMQ%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.jpg">
+<meta property="article:published_time" content="2020-05-19T03:12:47.000Z">
+<meta property="article:modified_time" content="2021-08-02T07:52:12.000Z">
+<meta property="article:author" content="Qiao.Jian">
+<meta property="article:tag" content="分布式事务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/Mysql%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%94%AF%E6%8C%81-XA%E5%AE%9E%E7%8E%B0.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://qiaojiande.fun/article/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>分布式事务 | 谯剑的小站</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">谯剑的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录...</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br/>
+    
+    首页
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/about/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br/>
+    
+    关于
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/tags/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>
+    
+    标签
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+  
+  
+    
+    
+    
+  
+
+  
+
+  <a href="/archives/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>
+    
+    归档
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/404.html" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br/>
+    
+    公益 404
+  </a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://qiaojiande.fun/article/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Qiao.Jian"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/images/avatar.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谯剑的小站"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">分布式事务
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-19 11:12:47" itemprop="dateCreated datePublished" datetime="2020-05-19T11:12:47+08:00">2020-05-19</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2021-08-02 15:52:12" itemprop="dateModified" datetime="2021-08-02T15:52:12+08:00">2021-08-02</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br/>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="什么是事务">什么是事务</h3>
+<p>事务是数据库的术语，表示事务范围内的操作不成功便成仁【要么成功，要么失败，没有中间状态】。单条sql的执行默认都是事务的，也即单条sql的执行要么成功，要么失败，不存在中间状态。对于多条sql的事务，则需要显式的开启和关闭事务。比如下单减库存的操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#开启事务</span><br><span class="line">begin;</span><br><span class="line">#新增订单</span><br><span class="line">insert into order values (...);</span><br><span class="line">#修改库存</span><br><span class="line">update stock set amount = amount -1 where goods_name = &#x27;xxoo&#x27;;</span><br><span class="line">#提交 或 根据业务逻辑主动失败回滚</span><br><span class="line">commit; # rollback;</span><br></pre></td></tr></table></figure>
+<p>和事务密切关联的是数据库的隔离级别。数据库的隔离级别定义了不同事务中看到的数据的差异。Mysql有四种隔离级别：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">隔离级别</th>
+<th style="text-align:center">脏读</th>
+<th style="text-align:center">不可重复读</th>
+<th style="text-align:center">幻读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">读未提交</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">是</td>
+</tr>
+<tr>
+<td style="text-align:center">读已提交</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">是</td>
+</tr>
+<tr>
+<td style="text-align:center">可重复读</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">是（实际测试，发现此隔离级别下是解决了幻读问题的，测试mysql版本：5.7.34-log）</td>
+</tr>
+<tr>
+<td style="text-align:center">串行化</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">否</td>
+</tr>
+</tbody>
+</table>
+<p>不同的隔离级别下，不同事务的数据一致性不一样。Mysql默认隔离级别是可重复读。可以通过【show variables like ‘%transaction%’;】查看默认隔离级别。此隔离级别下的语义是多次select的结果对其他事务的update屏蔽（可重复读），但是其他事务的insert、delete是可以看到的（幻读）。</p>
+<p>因此对于一个涉及查询更新的多条sql事务，由于查询的结果对其他事务的update屏蔽，因此有可能更新后的结果并不是我们想要的。比如：业务逻辑：执行当库存大于0时减库存，如果按以下查询更新执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from stock where goods_name = &#x27;xxoo&#x27; and amount &gt; 0;</span><br><span class="line">#业务逻辑判断select结果不为空，则递减amount</span><br><span class="line">update stock set amount = amount -1 where goods_name = &#x27;xxoo&#x27;;</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
+<p>此时，如果amount字段类型可以为负数，则事务执行成功，但是由于其他事务也执行了相同的操作并且先一步递减了amount，则此时amount变成了负值，不符合我们的业务逻辑。</p>
+<p>因此事务并不能保证多条sql语句的执行在业务逻辑上的正确性。</p>
+<p>如果只是sql操作，可以通过sql语句层面的悲观锁和乐观锁来解决。</p>
+<p>悲观锁：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from stock where goods_name = &#x27;xxoo&#x27; and amount &gt; 0 for update;</span><br><span class="line">#业务逻辑判断select结果不为空，则递减amount</span><br><span class="line">update stock set amount = amount -1 where goods_name = &#x27;xxoo&#x27;;</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
+<p>此时，其他事务的select for update操作会被阻塞直到此事务提交或回滚，由此可以保证业务逻辑的正确性。</p>
+<p>乐观锁：旧值判断或者新增版本号、时间戳字段来判断</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from stock where goods_name = &#x27;xxoo&#x27; and amount &gt; 0;</span><br><span class="line">#业务逻辑判断select结果不为空，则递减amount</span><br><span class="line">update stock set amount = amount -1 where goods_name = &#x27;xxoo&#x27; and amount &gt; 0;</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
+<p>此时，其他事务的update操作会被阻塞直到此事务提交或回滚，由此保证业务逻辑的正确性。</p>
+<p>如果sql操作中间还有业务逻辑，比如下面的对Account.amount的累加操作放在业务代码里执行而不是sql语句中执行，则要另外加语言层面的锁保证多线程下的安全性。</p>
+<h3 id="Transactional注解">Transactional注解</h3>
+<p>Transactional注解基于AOP，通过动态代理，生成代理类，在执行Transactional注解标注的方法前开启事务，在执行Transactional注解标注的方法后提交事务。并提供了方法执行过程中碰到何种异常执行回滚的属性rollbackFor，所以方法中如果有try-catch捕获异常会导致事务无法正确回滚。</p>
+<p>问题：在Transactional注解标注的方法内加锁，导致锁失效的问题</p>
+<p>描述：有个递增更新amount字段的操作如下，为了保证递增操作在多线程下的安全，加了锁。但是测试的时候发现amount的更新值不对，锁住的代码块还是并发执行了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional(rollbackFor = Throwable.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">updateLoginInfo</span><span class="params">(String deviceString, String packageFlag,String version, AccountParam param)</span> &#123;</span><br><span class="line">    <span class="type">Account</span> <span class="variable">update</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Account</span>();</span><br><span class="line">    update.setLoginpackageflag(packageFlag);</span><br><span class="line">    update.setPackageType(<span class="number">0</span>);</span><br><span class="line">    update.setLastLoginTime( LocalDateTime.now().format( DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy/MM/dd HH:mm:ss&quot;</span>)));</span><br><span class="line">    update.setLoginDevString(deviceString);</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">        <span class="type">Account</span> <span class="variable">oldAccount</span> <span class="operator">=</span> <span class="built_in">this</span>.accountMapper.getByUserName(deviceString);</span><br><span class="line">        <span class="type">int</span> <span class="variable">oldAmount</span> <span class="operator">=</span> oldAccount.getAmount() == <span class="literal">null</span> ? <span class="number">0</span> : oldAccount.getAmount();</span><br><span class="line">        update.setAccid(oldAmount + <span class="number">1</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="built_in">this</span>.accountMapper.updateByExampleSelective(update, param);</span><br><span class="line">        <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分析：由于Transactional注解是基于Spring的AOP，会在执行方法之前开启事务，之后再加锁，当锁住的代码执行完成后，再提交事务，因此锁住的代码块执行是在事务之内执行的，因此在synchronized代码块执行完后，事务还未提交，锁已经被释放，此时其他线程可以开启新的事务并拿到锁之后执行锁住的代码块，导致并发问题。</p>
+<p>解决：将锁放到Transactional标注的方法外面</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">updateLoginInfo</span><span class="params">(String deviceString, String packageFlag,String version, AccountParam param)</span> &#123;</span><br><span class="line">    <span class="type">Account</span> <span class="variable">update</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Account</span>();</span><br><span class="line">    update.setLoginpackageflag(packageFlag);</span><br><span class="line">    update.setPackageType(<span class="number">0</span>);</span><br><span class="line">    update.setLastLoginTime( LocalDateTime.now().format( DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy/MM/dd HH:mm:ss&quot;</span>)));</span><br><span class="line">    update.setLoginDevString(deviceString);</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">        amountMapper.transactionalUpdate(deviceString, update, param);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional(rollbackFor = Throwable.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">transactionalUpdate</span><span class="params">(String deviceString, Account update, AccountParam param)</span> &#123;</span><br><span class="line">    <span class="type">Account</span> <span class="variable">oldAccount</span> <span class="operator">=</span> <span class="built_in">this</span>.accountMapper.getByUserName ( deviceString );</span><br><span class="line">    <span class="type">int</span> <span class="variable">oldAcid</span> <span class="operator">=</span> oldAccount.getAccid () == <span class="literal">null</span> ? <span class="number">0</span> : oldAccount.getAccid ();</span><br><span class="line">    update.setAccid ( oldAcid + <span class="number">1</span> );</span><br><span class="line">    <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="built_in">this</span>.accountMapper.updateByExampleSelective ( update, param );</span><br><span class="line">    <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UpdateException</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="分布式事务">分布式事务</h3>
+<p>分布式事务就是为了保证不同数据库的数据一致性。</p>
+<p>分布式环境下的系统不可能同时满足C（一致性）、A（可用性）、P（分区容错性）；而分布式环境下P是必然要保证的。 所以分布式系统要么侧重于AP，要么侧重于CP。</p>
+<p>由于CAP理论对一致性、可用性的定义太精准，现实的系统不可能同时满足100%的一致性和可用性，又提出了BASE（基本可用、软状态、最终一致性）理论。</p>
+<h4 id="Mysql-XA">Mysql XA</h4>
+<p>mysql 5.7及以上提供对分布式事务的支持，实现了XA规范，XA规范定义了分布式事务：</p>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/Mysql%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%94%AF%E6%8C%81-XA%E5%AE%9E%E7%8E%B0.jpg" alt=""></p>
+<p>RM：资源管理者，要具备commit/rollback的能力。</p>
+<p>TM：事务管理者，要具备协调通知各个RM是执行commit还是rollback的能力。</p>
+<p>一个全局事务是由若干个本地事务分支组成的，每个RM内部的操作就是一个本地事务分支。</p>
+<p>TM通过XID来协调各个本地事务的操作。</p>
+<p>TM和RMs之间使用两阶段提交协议来运行：</p>
+<p>第一阶段：</p>
+<p>TM向所有RMs发起prepare commit请求，每个RM根据自身情况回复TM是否可以commit，如果可以则预留本地事务需要的资源然后回复OK，如果不可以则回复FAIL</p>
+<p>第二阶段：</p>
+<p>TM根据回复情况，如果全部回复OK则向所有RMs发起commit请求，每个RM执行commit并回复TM操作结果。如果有一个回复FAIL则向所有RMs发起rollback请求，每个RM执行rollback并回复TM操作结果。</p>
+<p>由于Mysql XA强依赖于数据库版本，所以实际上应用很少。更多是通过中间件来实现分布式事务。</p>
+<h4 id="两阶段提交2PC">两阶段提交2PC</h4>
+<p>定义来自维基百科：</p>
+<h5 id="第一阶段-提交请求阶段">第一阶段(提交请求阶段)</h5>
+<ol>
+<li>协调者节点向所有参与者节点询问是否可以执行提交操作，并开始等待各参与者节点的响应。</li>
+<li>参与者节点执行询问发起为止的所有事务操作，并将<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Undo%E4%BF%A1%E6%81%AF&amp;action=edit&amp;redlink=1">Undo信息</a>和<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Redo%E4%BF%A1%E6%81%AF&amp;action=edit&amp;redlink=1">Redo信息</a>写入日志。</li>
+<li>各参与者节点响应协调者节点发起的询问。如果参与者节点的事务操作实际执行成功，则它返回一个&quot;同意&quot;消息；如果参与者节点的事务操作实际执行失败，则它返回一个&quot;中止&quot;消息。</li>
+</ol>
+<p>有时候，第一阶段也被称作<strong>投票阶段</strong>，即各参与者投票是否要继续接下来的提交操作。</p>
+<h5 id="第二阶段-提交执行阶段">第二阶段(提交执行阶段)</h5>
+<h6 id="成功">成功</h6>
+<p>当协调者节点从所有参与者节点获得的响应消息都为&quot;同意&quot;时：</p>
+<ol>
+<li>协调者节点向所有参与者节点发出&quot;正式提交&quot;的请求。</li>
+<li>参与者节点正式执行提交，并释放在整个事务期间内占用的资源。</li>
+<li>参与者节点向协调者节点发送&quot;完成&quot;消息。</li>
+<li>协调者节点收到所有参与者节点反馈的&quot;完成&quot;消息后，完成事务。</li>
+</ol>
+<h6 id="失败">失败</h6>
+<p>如果任一参与者节点在第一阶段返回的响应消息为&quot;终止&quot;，或者协调者节点在第一阶段的询问超时之前无法获取所有参与者节点的响应消息时：</p>
+<ol>
+<li>协调者节点向所有参与者节点发出&quot;回滚操作&quot;的请求。</li>
+<li>参与者节点利用之前写入的Undo信息执行回滚，并释放在整个事务期间内占用的资源。</li>
+<li>参与者节点向协调者节点发送&quot;回滚完成&quot;消息。</li>
+<li>协调者节点收到所有参与者节点反馈的&quot;回滚完成&quot;消息后，取消事务。</li>
+</ol>
+<p>有时候，第二阶段也被称作<strong>完成阶段</strong>，因为无论结果怎样，协调者都必须在此阶段结束当前事务。</p>
+<p>缺点：</p>
+<ol>
+<li>执行过程中第一阶段和第二阶段参与节点均处于阻塞状态。【解决：阿里Fescar的解决方案，直接在第一阶段执行commit并写undo log；然后在第二阶段：如果第一阶段commit成功，则异步删除相应的undo log即可；如果第一阶段commit失败，则根据undo log异步执行rollback并删除相应的undo log】</li>
+<li>在第二阶段部分参与者执行失败时，数据会不一致。【解决：在协调者引入重试机制】</li>
+<li>协调者单点失败问题。【解决：由第三方集群部署的中间件来充当协调者】</li>
+<li>协调者崩溃后或者网络问题参与者和协调者失联后，导致参与者一直阻塞。【解决：在参与者引入重试机制】</li>
+</ol>
+<h4 id="TCC">TCC</h4>
+<p>TCC(Try-Confirm-Cancle)又叫补偿事务。相当于把2PC第二阶段的成功、失败两种情况拆分成Confirm和Cancle两个阶段。因此它存在的问题和2PC存在的问题一样。</p>
+<h4 id="RocketMQ分布式事务消息方案">RocketMQ分布式事务消息方案</h4>
+<p>在分布式环境下，多个服务之间通过消息队列进行异步调用，在这种环境下如何保证多个上下游消息调用之间的事务性（ACID）。由于异步解耦，通常会采用可靠消息最终一致性方案。</p>
+<p>RocketMQ事务消息的原理图大致如下，RocketMQ充当了分布式事务中的协调者，并且在协调者中引入了重试机制，在消费者侧也引入了重试机制，所以整个分布式事务的一致性可用性最后就只取决于RocketMQ中间件的高可用性。另外由于引入了重试机制，需要服务提供的接口满足幂等性，避免重复调用引起的数据不一致。</p>
+<p><img src="https://qiaojiande-1259482780.cos.ap-chengdu.myqcloud.com/201908/RocketMQ%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.jpg" alt=""></p>
+<h3 id="参考">参考</h3>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000018057083">阿里开源分布式事务解决方案 Fescar 全解析</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/91263461">面试官：了解分布式事务？讲讲你理解的2PC和3PC原理</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/5bf201f7f265da610f63528a">拜托，面试请不要再问我TCC分布式事务的实现原理</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.javazhiyin.com/31853.html">分布式事务之如何基于RocketMQ的事务消息特性实现分布式系统的最终一致性</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36153160">分布式一致性事务看这篇就够了</a></p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+	<div>
+  		
+    		<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-handshake-o"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  		
+	</div>
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>Good for you!</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Qiao.Jian 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="tag"># 分布式事务</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/article/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" rel="next" title="分布式锁">
+                <i class="fa fa-chevron-left"></i> 分布式锁
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/article/java%E9%9B%86%E5%90%88-ArrayList/" rel="prev" title="java集合-ArrayList">
+                java集合-ArrayList <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Qiao.Jian"/>
+  
+  <p class="site-author-name" itemprop="name">Qiao.Jian</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+        
+        
+        <a href="/archives/">
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+          
+          
+          <a href="/tags/">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">什么是事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Transactional%E6%B3%A8%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">Transactional注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">分布式事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Mysql-XA"><span class="nav-number">3.1.</span> <span class="nav-text">Mysql XA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A42PC"><span class="nav-number">3.2.</span> <span class="nav-text">两阶段提交2PC</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5-%E6%8F%90%E4%BA%A4%E8%AF%B7%E6%B1%82%E9%98%B6%E6%AE%B5"><span class="nav-number">3.2.1.</span> <span class="nav-text">第一阶段(提交请求阶段)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5-%E6%8F%90%E4%BA%A4%E6%89%A7%E8%A1%8C%E9%98%B6%E6%AE%B5"><span class="nav-number">3.2.2.</span> <span class="nav-text">第二阶段(提交执行阶段)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%88%90%E5%8A%9F"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">成功</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%A4%B1%E8%B4%A5"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">失败</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCC"><span class="nav-number">3.3.</span> <span class="nav-text">TCC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RocketMQ%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%E6%96%B9%E6%A1%88"><span class="nav-number">3.4.</span> <span class="nav-text">RocketMQ分布式事务消息方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qiao.Jian</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v6.3.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.2.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>

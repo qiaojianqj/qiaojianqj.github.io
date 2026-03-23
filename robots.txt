@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /archives/
+Allow: /categories/
+Allow: /tags/ 
+Allow: /resources/ 
+
+Sitemap: http://qiaojiande.fun/sitemap.xml
+Sitemap: http://qiaojiande.fun/baidusitemap.xml

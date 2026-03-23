@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+<meta name="google-site-verification" content="FmCBFeBJWlIl9DVnns-1SQgs2lTet7iXquulOgdsOVY" />
+<meta name="baidu-site-verification" content="EyoMwitrw4" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0"/>
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="查看mysql 用户的连接权限 123456789101112131415mysql&gt; use mysql;Reading table information for completion of table and column namesYou can turn off this feature to get a quicker startup with -ADatabase change">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql笔记">
+<meta property="og:url" content="http://qiaojiande.fun/article/mysql%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="谯剑的小站">
+<meta property="og:description" content="查看mysql 用户的连接权限 123456789101112131415mysql&gt; use mysql;Reading table information for completion of table and column namesYou can turn off this feature to get a quicker startup with -ADatabase change">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-15T14:59:11.000Z">
+<meta property="article:modified_time" content="2021-12-06T03:50:15.000Z">
+<meta property="article:author" content="Qiao.Jian">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://qiaojiande.fun/article/mysql%E7%AC%94%E8%AE%B0/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>mysql笔记 | 谯剑的小站</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">谯剑的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录...</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br/>
+    
+    首页
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/about/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br/>
+    
+    关于
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/tags/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>
+    
+    标签
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+  
+  
+    
+    
+    
+  
+
+  
+
+  <a href="/archives/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>
+    
+    归档
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/404.html" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br/>
+    
+    公益 404
+  </a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://qiaojiande.fun/article/mysql%E7%AC%94%E8%AE%B0/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Qiao.Jian"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/images/avatar.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谯剑的小站"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">mysql笔记
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-15 22:59:11" itemprop="dateCreated datePublished" datetime="2019-10-15T22:59:11+08:00">2019-10-15</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2021-12-06 11:50:15" itemprop="dateModified" datetime="2021-12-06T11:50:15+08:00">2021-12-06</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br/>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="查看mysql-用户的连接权限">查看mysql 用户的连接权限</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use mysql;</span><br><span class="line">Reading table information for completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line">mysql&gt; select host , user  from user;</span><br><span class="line">+-----------+---------------+</span><br><span class="line">| host      | user          |</span><br><span class="line">+-----------+---------------+</span><br><span class="line">| %         | root          |</span><br><span class="line">| localhost | mysql.session |</span><br><span class="line">| localhost | mysql.sys     |</span><br><span class="line">| localhost | root          |</span><br><span class="line">+-----------+---------------+</span><br><span class="line">4 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>可见允许root用户在任何IP段下连接数据库实例</p>
+<h3 id="mysql连接方式">mysql连接方式</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. TCP/IP方式：本地或远程登录</span><br><span class="line">mysql -hhost -uname -ppassword</span><br><span class="line">2. socket方式：本地登录</span><br><span class="line">[root@localhost ~]# ps -ef | grep mysql</span><br><span class="line">root      3076     1  0 Oct14 ?        00:00:00 /bin/sh /usr/bin/mysqld_safe --datadir=/var/lib/mysql --socket=/var/lib/mysql/mysql.sock --pid-file=/var/run/mysqld/mysqld.pid --basedir=/usr --user=mysql</span><br><span class="line">mysql -uname -S/var/lib/mysql/mysql.sock</span><br></pre></td></tr></table></figure>
+<h3 id="InnoDB-存储结构：B-树">InnoDB 存储结构：B+树</h3>
+<p>MyIsam引擎是默认存储引擎，对应磁盘上三个文件：.frm（存储表定义） .MYD（存储数据） .MYI（存储索引）</p>
+<p>InnoDB引擎，对应磁盘上两个文件：.frm（存储表定义）.ibd（存储聚集索引，叶子节点即数据）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">InnoDB的一张表的数据和索引都存在表空间，一个表空间对应一个ibd文件</span><br><span class="line"></span><br><span class="line">表空间由段、区、页组成</span><br><span class="line">段由多个区组成</span><br><span class="line">区由连续的多个页组成（页大小默认为16KB）</span><br><span class="line">页存放table的行数据</span><br><span class="line"></span><br><span class="line">B+树叶子节点：存储 数据段</span><br><span class="line">B+树非叶子节点：存储 索引段</span><br></pre></td></tr></table></figure>
+<h3 id="索引">索引</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">1. 聚集索引：</span><br><span class="line">一张表只有一个聚集索引，因为InnoDB的数据存储就是按照主键顺序存放的一颗B+树，此时B+树的叶子节点存放的是整张表的行记录数据。</span><br><span class="line">聚集索引，适合基于主键的排序查找和范围查找</span><br><span class="line"></span><br><span class="line">2. 辅助索引：</span><br><span class="line">辅助索引的叶子节点不存储数据，而是存储聚集索引的主键值（因此主键不宜是占太大的空间的字段）。</span><br><span class="line">当通过辅助索引查找数据时，需要先在辅助索引B+树找到对应的聚集索引的主键值，再到聚集索引B+树查找指定主键值所对应的数据</span><br><span class="line"></span><br><span class="line">3. 建立索引的原则：</span><br><span class="line">选择取值重复度低（区分度高）的字段建立索引，比如用户名适合建立索引，性别就不适合建立索引</span><br><span class="line">不要重复创建索引</span><br><span class="line">尽量扩展已有索引，而不是添加新的多余的索引</span><br><span class="line">mysql优化器会对使用索引对语句进行判断，当使用辅助索引的语句扫描行数超过30%（大概值）时，mysql优化器会选择走聚集索引的全表扫描</span><br><span class="line"></span><br><span class="line">4. 只select 需要的字段（可能会用到覆盖索引，只需要从辅助索引检索即可查到所需数据，更快），不要select *</span><br><span class="line"></span><br><span class="line">5. 联合索引依照最左匹配的顺序来检索B+树，直到遇到范围查询（&gt; &lt; between like）停止匹配，所以经常进行范围查询的字段在联合索引中要放在最后。比如a = 1 and b = 2 and c &gt; 3 and d = 4 如果建立(a,b,c,d)顺序的索引，d是用不到索引的，如果建立(a,b,d,c)的索引则都可以用到，a,b,d的顺序可以任意调整</span><br><span class="line"></span><br><span class="line">6. 使用explain/desc 查看执行计划，找出扫描行很多（rows）的语句，修改sql语句使得扫描行尽量少即可</span><br></pre></td></tr></table></figure>
+<p>查看索引(Cardinality：基数值越大，区分度越高，适合建立索引)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show index from table_name;</span><br></pre></td></tr></table></figure>
+<p>添加索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 普通索引</span><br><span class="line">alter table table_name add index index_name(column_list);</span><br><span class="line">create index index_name on table_name(column_list);</span><br><span class="line">// 唯一索引</span><br><span class="line">alter table table_name add unique(column_list);</span><br><span class="line">create unique index index_name on table_name(column_list);</span><br><span class="line">// 主键索引</span><br><span class="line">alter table table_name add primary key(column_list);</span><br></pre></td></tr></table></figure>
+<p>explain/desc 查看执行计划：</p>
+<p>±—±-----------------±--------±-------------±--------±-------------------±------±-----------±-----±-------±---------±-----------+<br>
+| id | select_type | table | partitions | type | possible_keys | key | key_len | ref | rows | filtered | Extra  |</p>
+<p>±—±-----------------±--------±--------------±-------±--------------------±------±-----------±-----±-------±---------±----------+</p>
+<blockquote>
+<p>id: 查询序号</p>
+<p><strong>id相同</strong>：执行顺序由上至下</p>
+<p><strong>id不同</strong>：如果是子查询，id的序号会递增，id值越大优先级越高，越先被执行</p>
+<p><strong>id相同又不同（两种情况同时存在）</strong>：id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行</p>
+</blockquote>
+<blockquote>
+<p>select_type：查询类型</p>
+<p><strong>SIMPLE</strong>：简单的select查询，查询中不包含子查询或者union</p>
+<p><strong>PRIMARY</strong>：查询中包含任何复杂的子部分，最外层查询则被标记为primary</p>
+<p><strong>SUBQUERY</strong>：在select 或 where列表中包含了子查询</p>
+<p><strong>DERIVED</strong>：在from列表中包含的子查询被标记为derived（衍生），mysql或递归执行这些子查询，把结果放在临时表里</p>
+</blockquote>
+<blockquote>
+<p>table：查询的数据表，当从衍生表中查数据时会显示<code>&lt;derivedx&gt;</code>， <code>x</code> 表示对应的执行计划<code>id</code></p>
+</blockquote>
+<blockquote>
+<p>partitions：表分区，表创建的时候可以指定通过那个列进行表分区</p>
+</blockquote>
+<blockquote>
+<p>type：访问类型，性能由好到坏依次是：</p>
+<p><strong>system</strong> &gt; <strong>const</strong> &gt; <strong>eq_ref</strong> &gt; <strong>ref</strong> &gt; fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; <strong>range</strong> &gt; <strong>index</strong> &gt; <strong>ALL</strong></p>
+<p><strong>system</strong>：表只有一行记录</p>
+<p><strong>const</strong>：表示通过索引一次就找到了，且只有一条匹配记录；const用于比较primary key 或者 unique索引</p>
+<p><strong>eq_ref</strong>：唯一性索引或主键扫描</p>
+<p><strong>ref</strong>：非唯一性索引扫描，返回匹配某个单独值的所有行</p>
+<p><strong>range</strong>：只检索给定范围的行，使用一个索引来选择行</p>
+<p><strong>index</strong>：Full Index Scan，遍历索引</p>
+<p><strong>ALL</strong>：Full Table Scan，遍历全表</p>
+</blockquote>
+<blockquote>
+<p>possible_keys：查询涉及到的字段上存在索引，则该索引将被列出，但不一定被查询实际使用</p>
+</blockquote>
+<blockquote>
+<p>key：实际使用的索引，如果为NULL，则没有使用索引</p>
+</blockquote>
+<blockquote>
+<p>key_len：查询中使用到的索引的最大可能长度</p>
+</blockquote>
+<blockquote>
+<p>ref：显示使用到的索引字段或常量查询（const）</p>
+</blockquote>
+<blockquote>
+<p>rows：估算找到所需的记录所需要读取的行数</p>
+</blockquote>
+<blockquote>
+<p>extra：额外信息</p>
+<p><strong>Using filesort</strong> ：使用非索引列进行排序时出现，非常耗性能</p>
+<p><strong>Using temporary</strong>： 使用临时表保存中间结果，常见于order by 和 group by 、join子查询</p>
+<p><strong>Using index</strong>：使用了覆盖索引，避免了访问聚集索引数据行，效率高</p>
+<p><strong>Using where</strong>：使用了where子句来过滤结果集</p>
+</blockquote>
+<h3 id="Limit查询">Limit查询</h3>
+<p>mysql通过limit实现分页查询，语法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 返回前10条记录</span><br><span class="line">select * from user limit 10;</span><br><span class="line">// 返回从offset=50000开始的前10条记录</span><br><span class="line">// 性能低的limit offset count查询</span><br><span class="line">select * from user limit 50000, 10;</span><br></pre></td></tr></table></figure>
+<p>当offset过大时，分页查询性能急剧下降（抛开mysql的查询缓存），为了提升limit查询的性能，优化方向有以下种：</p>
+<ol>
+<li>
+<p>使用覆盖索引子查询，查询所需offset的最小主键值，然后通过主键范围查询的where子句来得到结果，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 覆盖索引子查询 + where 范围查询 + limit count查询</span><br><span class="line">select * from user where user_id &gt;= (select user_id from user order by user_id limit 50000, 1) limit 10;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>使用覆盖索引子查询，查询所需offset的最小主键值，然后通过JOIN联表查询的where子句来得到结果，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 覆盖索引子查询 + JOIN + where + limit count 查询</span><br><span class="line">select * from user as t1 inner join (select user_id from user order by user_id limit 50000, 1) as t2 where t1.user_id &gt;= t2.user_id limit 10;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select t1.* from user_task t1 where t1.task_no in (100, 110, 120, 130, 140) limit 46000, 10; --- 百万数据查询耗时2～3秒</span><br><span class="line">select t1.* from user_task t1 inner join (select id from user_task where task_no in (100, 110, 120, 130, 140) order by id asc limit 46000, 10) t2 on t1.id=t2.id;  --- 百万数据查询耗时0.1秒左右</span><br><span class="line">---性能提升20～30倍</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>业务优化，根据业务逻辑确定其他字段的值来代替limit的offset值</p>
+</li>
+</ol>
+<h3 id="优化">优化</h3>
+<ol>
+<li>查看sql具体执行时间，具体查看官方文档</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; set profiling=1;</span><br><span class="line">mysql&gt; select * from test;</span><br><span class="line">mysql&gt; show profiles;</span><br><span class="line">mysql&gt; show profile;</span><br><span class="line">mysql&gt; show profile for query 1;</span><br><span class="line">mysql&gt; show profile all for query 2;</span><br><span class="line">mysql&gt; show status like &quot;last_query_cost&quot;;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>mysql 性能监控performance_schema，具体查看官方文档</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">mysql&gt; use performance_schema;</span><br></pre></td></tr></table></figure>
+<h3 id="事务查询">事务查询</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show full processlist;</span><br><span class="line">mysql&gt; select * from information_schema.innodb_trx\G</span><br><span class="line">mysql&gt; select * from information_schema.innodb_locks\G</span><br><span class="line">mysql&gt; select * from information_schema.innodb_lock_waits\G</span><br><span class="line">mysql&gt; select * from sys.innodb_lock_waits\G</span><br></pre></td></tr></table></figure>
+<p>InnoDB在Repeatable Read事务隔离级别下，使用<strong>快照读</strong>，快照读不会占用和等待表锁</p>
+<p>应该显示的使用事务，不要使用autocommit</p>
+<h3 id="数据库更新丢失问题">数据库更新丢失问题</h3>
+<p><strong>并发事务中进行查询并更新可能会导致更新丢失。说白了就是查询并更新两条sql不是一个原子操作，而且更新语句中使用了查询出来的旧值，或者更新语句是根据查询语句的旧值进行业务逻辑的更新，此时其他事务的更新才会被覆盖。如果更新语句和查询语句的结果不要建立关系，则没问题，比如 update bank set money = money - 100 where id = 123;</strong></p>
+<p>例如：mysql 事务级别Repeatable Read下：</p>
+<p>SET AUTOCOMMIT=0;</p>
+<p>CREATE TABLE <code>bank</code> (<br>
+<code>id</code> int(10) NOT NULL AUTO_INCREMENT,<br>
+<code>money</code> int(10) NOT NULL,<br>
+PRIMARY KEY (<code>id</code>)<br>
+);</p>
+<p>INSERT INTO <code>bank</code> VALUES (1, 900);</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">事务1（存100元）</th>
+<th style="text-align:center">事务2（取100元）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">begin;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">begin;</td>
+</tr>
+<tr>
+<td style="text-align:center">select * from bank where id=1;（900）</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">select * from bank where id=1; （900）</td>
+</tr>
+<tr>
+<td style="text-align:center">update bank set money=1000 where id=1;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">update bank set money=800 where id=1;（阻塞直到事务1commit）</td>
+</tr>
+<tr>
+<td style="text-align:center">commit;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">commit; (事务1的更新被覆盖)</td>
+</tr>
+</tbody>
+</table>
+<p>解决办法1：悲观锁（select for update）</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">事务1（存100元）</th>
+<th style="text-align:center">事务2（取100元）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">begin;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">begin;</td>
+</tr>
+<tr>
+<td style="text-align:center">select * from bank where id=1 for update;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">select * from bank where id=1 for update;（阻塞直到事务1commit）（1000）</td>
+</tr>
+<tr>
+<td style="text-align:center">update bank set money=1000 where id=1;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">update bank set money=900 where id=1;（基于1000减去100）</td>
+</tr>
+<tr>
+<td style="text-align:center">commit;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">commit;</td>
+</tr>
+</tbody>
+</table>
+<p>解决办法2：乐观锁-旧值判断</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">事务1（存100元）</th>
+<th style="text-align:center">事务2（取100元）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">begin;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">begin;</td>
+</tr>
+<tr>
+<td style="text-align:center">select * from bank where id=1;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">select * from bank where id=1;</td>
+</tr>
+<tr>
+<td style="text-align:center">update bank set money=1000 where id=1 and money=900;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">update bank set money=800 where id=1 and money=900;（阻塞直到事务1commit，但是此条更新会失败）</td>
+</tr>
+<tr>
+<td style="text-align:center">commit;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">commit;</td>
+</tr>
+</tbody>
+</table>
+<p>解决办法3：乐观锁-表上增加版本字段</p>
+<p>CREATE TABLE <code>bank</code> (<br>
+<code>id</code> int(10) NOT NULL AUTO_INCREMENT,<br>
+<code>money</code> int(10) NOT NULL,<br>
+<code>timeStamp</code> int(10) DEFAULT NULL,<br>
+PRIMARY KEY (<code>id</code>)<br>
+);</p>
+<p>INSERT INTO <code>bank</code> VALUES (1, 900, 1571129028);</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">事务1（存100元）</th>
+<th style="text-align:center">事务2（取100元）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">begin;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">begin;</td>
+</tr>
+<tr>
+<td style="text-align:center">select * from bank where id=1;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">select * from bank where id=1;</td>
+</tr>
+<tr>
+<td style="text-align:center">update bank set money=1000, timeStamp=1571129243 where id=1 and timeStamp=1571129028;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">update bank set money=800, timeStamp=1571129246 where id=1 and timeStamp=1571129028;（阻塞直到事务1commit，但是此条更新会失败）</td>
+</tr>
+<tr>
+<td style="text-align:center">commit;</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">commit;</td>
+</tr>
+</tbody>
+</table>
+<h3 id="一致读vs当前读">一致读vs当前读</h3>
+<p>参考：<a target="_blank" rel="noopener" href="https://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/08%20%20%E4%BA%8B%E5%8A%A1%E5%88%B0%E5%BA%95%E6%98%AF%E9%9A%94%E7%A6%BB%E7%9A%84%E8%BF%98%E6%98%AF%E4%B8%8D%E9%9A%94%E7%A6%BB%E7%9A%84%EF%BC%9F.md">事务到底是隔离的还是不隔离的</a></p>
+<p>可重复读的核心就是一致性读（consistent read）；而<strong>事务更新数据的时候，只能用当前读</strong>。如果当前的记录的行锁被其他事务占用的话，就需要进入锁等待。</p>
+<p>而读提交的逻辑和可重复读的逻辑类似，它们最主要的区别是：</p>
+<ul>
+<li>在可重复读隔离级别下，只需要在事务开始的时候创建一致性视图，之后事务里的其他查询都共用这个一致性视图；</li>
+<li>在读提交隔离级别下，每一个语句执行前都会重新算出一个新的视图。</li>
+</ul>
+<h3 id="清空表">清空表</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">truncate vs delete vs drop</span><br><span class="line">truncate 是ddl操作，仅删除数据，不支持条件过滤，不能回滚，较快</span><br><span class="line">delete 是dql操作，仅删除数据，支持条件过滤，可以回滚，慢</span><br><span class="line">drop 是ddl操作，删除数据同时删除表结构，最快</span><br></pre></td></tr></table></figure>
+<h3 id="分库分表">分库分表</h3>
+<p>分库database：<strong>分库的目的是降低单台服务器负载，切分原则是根据业务紧密程度拆分，缺点是跨数据库无法联表查询</strong></p>
+<p>分表table：<strong>当单表数据量超大的时候，B-Tree索引就无法起作用了。除非是覆盖索引查询，否则数据库服务器需要根据索引扫描的结果回表（回主键索引查询叶子节点行记录），查询所有符合条件的记录，如果数据量巨大，这将产生大量随机I/O，随之，数据库的响应时间将大到不可接受的程度。另外，索引维护（磁盘空间、I/O操作）的代价也非常高</strong></p>
+<p>分表分为：垂直分表和水平分表</p>
+<p>垂直分表：就是表的字段太多，将字段拆分到不同的表中。</p>
+<p>水平分表：每个表的字段一样，存储的记录不一样，可以根据业务逻辑进行拆分（user_id，地区，时间，hash等）</p>
+<p>水平分表后的问题：</p>
+<p>​	怎么设置全局唯一主键（现成方案：snowflake等）</p>
+<p>​	怎么保证数据均匀存储，没有热点问题（根据业务逻辑来）</p>
+<p>​	怎么方便扩容和缩容（一致性hash）</p>
+<h3 id="分区">分区</h3>
+<p>分表存在的问题是需要服务端修改，引入中间件来屏蔽分库分表带来的差异</p>
+<p>分区相当于mysql层的分表，对服务端是透明的，服务端不需要做任何修改</p>
+<p>而且分区的扩容和缩容很容易，直接增加分区，删除分区即可，对数据完整性没影响</p>
+<p>所以不存在单机负载问题的情况下，可以用分区来代替分表，简化服务端的更改</p>
+<p>参考<a target="_blank" rel="noopener" href="http://haitian299.github.io/2016/05/26/mysql-partitioning/">MySQL分区与传统的分库分表</a></p>
+<h3 id="mysql-repication">mysql repication</h3>
+<p>主从复制备份，读写分离</p>
+<h3 id="mysql-fabric">mysql fabric</h3>
+<p>在replication的基础上，提供故障检测和自动Failover、请求路由和分片（sharding）功能</p>
+<h3 id="mysql-cluster">mysql cluster</h3>
+<p>面向大规模数据的存储解决方案，Cluster的架构思想与Hadoop非常类似，它设计的前提是“认为每个Node都是易于出错的”、集群规模巨大、多租户，所以它提供了数据备份机制、自动迁移、自动Failover等特性，来保证可用性、健壮性。它的核心特性为：数据集并不是存储某个特定的MySQL实例上，而是被分布在多个Data Nodes中，即一个table的数据可能被分散在多个物理节点上，任何数据都会在多个Data Nodes上冗余备份。任何一个数据变更操作，都将在一组Data Nodes上同步以保证数据的一致性。</p>
+<h3 id="DUAL表">DUAL表</h3>
+<p>Mysql里面很多内置函数的用法如下：</p>
+<figure class="highlight tcl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select rand();</span><br><span class="line">+-------------------+</span><br><span class="line">| rand()            |</span><br><span class="line">+-------------------+</span><br><span class="line">| <span class="number">0.783871779017031</span> |</span><br><span class="line">+-------------------+</span><br><span class="line"><span class="number">1</span> row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select last_insert_id();</span><br><span class="line">+------------------+</span><br><span class="line">| last_insert_id() |</span><br><span class="line">+------------------+</span><br><span class="line">|                <span class="number">0</span> |</span><br><span class="line">+------------------+</span><br><span class="line"><span class="number">1</span> row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select sysdate();</span><br><span class="line">+---------------------+</span><br><span class="line">| sysdate()           |</span><br><span class="line">+---------------------+</span><br><span class="line">| <span class="number">2020</span><span class="number">-05</span><span class="number">-19</span> <span class="number">01</span>:<span class="number">54</span>:<span class="number">25</span> |</span><br><span class="line">+---------------------+</span><br><span class="line"><span class="number">1</span> row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<p>其实他们都等同于如下语句：</p>
+<figure class="highlight tcl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select rand() from dual;</span><br><span class="line">+--------------------+</span><br><span class="line">| rand()             |</span><br><span class="line">+--------------------+</span><br><span class="line">| <span class="number">0.7727739147588367</span> |</span><br><span class="line">+--------------------+</span><br><span class="line"><span class="number">1</span> row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select last_insert_id() from dual;</span><br><span class="line">+------------------+</span><br><span class="line">| last_insert_id() |</span><br><span class="line">+------------------+</span><br><span class="line">|                <span class="number">0</span> |</span><br><span class="line">+------------------+</span><br><span class="line"><span class="number">1</span> row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select sysdate() from dual;</span><br><span class="line">+---------------------+</span><br><span class="line">| sysdate()           |</span><br><span class="line">+---------------------+</span><br><span class="line">| <span class="number">2020</span><span class="number">-05</span><span class="number">-19</span> <span class="number">01</span>:<span class="number">56</span>:<span class="number">36</span> |</span><br><span class="line">+---------------------+</span><br><span class="line"><span class="number">1</span> row in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure>
+<p>DUAL表是一张虚拟表，纯粹是为了满足 select from where这一语法习惯而设置的。</p>
+<p>实际应用中可以用于，条件查询不存在则插入的操作：</p>
+<p>比如新建一个角色表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">-- ----------------------------</span><br><span class="line">-- Table structure for role</span><br><span class="line">-- ----------------------------</span><br><span class="line">DROP TABLE IF EXISTS `role`;</span><br><span class="line">CREATE TABLE `role` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `name` varchar(255) DEFAULT NULL,</span><br><span class="line">  `no` int(11) NOT NULL,</span><br><span class="line">  `type` int(11) DEFAULT NULL,</span><br><span class="line">  `remark` varchar(255) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`seqid`,`no`) USING BTREE</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</span><br></pre></td></tr></table></figure>
+<p>条件插入语句可以如下：</p>
+<p>先select * from role where name=‘xxoo’;判断是否存在，不存在，再insert into role (id, name, no, type, remark ) values (…);</p>
+<p>使用DUAL表一条语句搞定：</p>
+<p>insert into role  (id, name, no, type, remark ) select 123, ‘test-dual’, 456, 1, ‘test-dual’ from dual where not exists (select * from role where name=‘test-dual’);</p>
+<h3 id="日志">日志</h3>
+<p>Mysql日志类型：</p>
+<ol>
+<li>
+<p>redo log： 在事务开始的时候先写redo log，以防发生故障时，在恢复的时候根据redo log进行重做日志，保证数据的一致性</p>
+</li>
+<li>
+<p>undo log：在事务开始前将当前数据库版本生成undo log，用于事务回滚操作</p>
+</li>
+<li>
+<p>bin log：用于主从复制，从库连接到主库，读取bin log进行主从同步。在事务提交的时候会刷新bin log</p>
+</li>
+<li>
+<p>relay log：用于主从复制，从库将主库读到的binlog复制到从库的relay log中，然后回放relay log以达到主从同步</p>
+</li>
+<li>
+<p>error log:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">log-error	= /var/log/mysql/error.log</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>query log</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">general_log_file=/var/log/mysql/query.log</span><br><span class="line">general_log=ON</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>slow query log</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#1. 查看mysql配置文件</span><br><span class="line">mysql --help | grep my.cnf</span><br><span class="line">/etc/my.cnf /etc/mysql/my.cnf /usr/etc/my.cnf ~/.my.cnf</span><br><span class="line"></span><br><span class="line">#2. 修改配置文件：vim /etc/my.cnf</span><br><span class="line">slow_query_log=ON</span><br><span class="line">slow_query_log_file=/var/log/slowmysql.log</span><br><span class="line">long_query_time=10</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="查看某个操作的语法">查看某个操作的语法</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; ? create table</span><br><span class="line">Name: &#x27;CREATE TABLE&#x27;</span><br><span class="line">Description:</span><br><span class="line">Syntax:</span><br><span class="line">CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name</span><br><span class="line">    (create_definition,...)</span><br><span class="line">    [table_options]</span><br><span class="line">    [partition_options]</span><br><span class="line">    </span><br><span class="line">mysql&gt; help prepare</span><br><span class="line">Name: &#x27;PREPARE&#x27;</span><br><span class="line">Description:</span><br><span class="line">Syntax:</span><br><span class="line">PREPARE stmt_name FROM preparable_stmt</span><br></pre></td></tr></table></figure>
+<h3 id="字符集和校对规则">字符集和校对规则</h3>
+<p>字符集指定字符的编码方式。比如Mysql推荐使用的字符集为：utf8mb4</p>
+<p>校对规则制定字符如何排序及比较大小。比如Mysql推荐使用的校对规则为：utf8mb4_unicode_ci （ci结尾表示case insensitive）</p>
+<p>Mysql对字符集的转换处理流程如下：</p>
+<ol>
+<li>客户端请求数据库数据，发送的数据使用character_set_client字符集</li>
+<li>MySQL实例收到客户端发送的数据后，将其转换为character_set_connection字符集</li>
+<li>进行内部操作时，将数据字符集转换为内部操作字符集：</li>
+<li>使用每个数据字段的character set设定值</li>
+<li>若不存在，使用对应数据表的default character set设定值</li>
+<li>若不存在，使用对应数据库的default character set设定值</li>
+<li>若不存在，使用character_set_server设定值</li>
+<li>将操作结果值从内部操作字符集转换为character_set_results</li>
+</ol>
+<p>以防中文显示乱码，将character_set_client、character_set_connection、character_set_results、character_set_server都设置为utf8mb4；</p>
+<p><strong>查看默认字符集和校对规则</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW VARIABLES LIKE &quot;%char%&quot;;</span><br><span class="line">mysql&gt; SHOW VARIABLES LIKE &quot;%coll%&quot;;</span><br></pre></td></tr></table></figure>
+<p><strong>设置字符集和校对规则</strong></p>
+<ol>
+<li>启动mysql时设置：修改配置文件</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">character-set-server=utf8mb4</span><br><span class="line">collation-server=utf8mb4_unicode_ci</span><br><span class="line">[client]</span><br><span class="line">default-character-set=utf8mb4</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>创建数据库时指定</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE myDb</span><br><span class="line">  DEFAULT CHARACTER SET utf8mb4</span><br><span class="line">  DEFAULT COLLATE utf8mb4_unicode_ci;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>创建表时指定</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE myTb () ENGINE=InnoDB DEFAULT CHARSET=utf8mb4</span><br></pre></td></tr></table></figure>
+<p>mysql默认字符集为latin，如果不存储中文字符，使用默认即可，节省内存，如果要存储中文，可以对存储中文的特定字段设置字符集</p>
+<h3 id="SQL注入">SQL注入</h3>
+<p>在输入SQL参数的地方输入了特殊的SQL语句。防止SQL注入：对参数进行检查转义。</p>
+<p>Mybatis的参数引用方式：<code>#&#123;param&#125;</code>和<code>$&#123;param&#125;</code>，其中<code>#&#123;&#125;</code>形式的SQL语句会创建一个预编译语句PreparedStatement，参数会用？占位符来标识，PreparedStatement里会对输入参数进行转义处理。而<code>$&#123;&#125;</code>形式的SQL语句会直接用输入参数进行字符串替换。</p>
+<p>另外PreparedStatement的预编译功能是依赖Mysql数据库服务器的。Mysql的预编译功能如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; prepare selectVodById from &#x27;select * from vods where vodid = ?&#x27;;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line">Statement prepared</span><br><span class="line"></span><br><span class="line">mysql&gt; set @vodId=&#x27;34 or 1 = 1&#x27;;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; execute selectVodById using @vodId\G</span><br></pre></td></tr></table></figure>
+<p>Mysql JDBC Connector驱动从5.0开始默认关闭了服务器预编译功能，就是说PreapredStatement的执行效果和Statement在服务器上是一样的。只有显式开启了服务器预编译功能，PreparedStatement才会被预编译。直接在数据库url中添加useServerPrepStmts=true即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:mysql://localhost:3306/test?useServerPrepStmts=true</span><br></pre></td></tr></table></figure>
+<h3 id="Druid连接池-监控">Druid连接池+监控</h3>
+<p>一： 配置数据库密码加密</p>
+<ol>
+<li>执行命令，生成密码加密后的的privateKey、publicKey和加密后的password</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -cp druid-1.1.17.jar com.alibaba.druid.filter.config.ConfigTools 12345678</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">privateKey:MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAjdRL/KlKXM5TjMHSRZC/Gq45a/DvEBXIRBDUHodCmQrs4HkB4kMsEuYJ5i6ID45XUZw8ibyyCNrcx9FNkj6NSwIDAQABAkEAgbMO+jNmSZB1X1cwD2XbHW8OG+Ps+uywg25QTMqs4H55W+D9rThzDpgWBHbj1o8hupKOm1aoeeZf0itIi8TggQIhANrioKxjzAHRpNTTr5KsJWMRjIzhmn3KZCwpyNkZItoxAiEApeDSq/268bRIEsLapBHYfZA6Sy7M4JJCKPxv6pfFhDsCIQCLZk3BvIUOm3+Ic5CbrrrYzzJd/sgvWJhXb/0UFmgV4QIgHCh2+rU+p8sXtP+Yx+MzodT64EpYgwKw8m4vvV34LIMCIGh979qmx/BZk5ZpsOf4Y3H8V9G8ApTIHUCORs5gbIDn</span></span><br><span class="line"><span class="string">publicKey:MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI3US/ypSlzOU4zB0kWQvxquOWvw7xAVyEQQ1B6HQpkK7OB5AeJDLBLmCeYuiA+OV1GcPIm8sgja3MfRTZI+jUsCAwEAAQ==</span></span><br><span class="line"><span class="string">password:WusbaYnEH4csLTFPt/XFOoQ6oLsPFDV//UVQCW0+gk+r0jx0qvBvZRBH9OVbjV9Wuw8ELRUsWtnQYHXuamkz1g==</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>将publicKey和加密后的password写入配置文件，如下</li>
+</ol>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">	<span class="attr">datasource:</span> </span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">com.mysql.jdbc.Driver</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://127.0.0.1:3306/db?useUnicode=yes&amp;characterEncoding=UTF-8&amp;useSSL=false</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">WusbaYnEH4csLTFPt/XFOoQ6oLsPFDV//UVQCW0+gk+r0jx0qvBvZRBH9OVbjV9Wuw8ELRUsWtnQYHXuamkz1g==</span></span><br><span class="line">    <span class="attr">druid:</span></span><br><span class="line">    	<span class="attr">filter:</span></span><br><span class="line">        <span class="attr">config:</span></span><br><span class="line">          <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    	<span class="attr">connection-properties:</span> <span class="string">config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI3US/ypSlzOU4zB0kWQvxquOWvw7xAVyEQQ1B6HQpkK7OB5AeJDLBLmCeYuiA+OV1GcPIm8sgja3MfRTZI+jUsCAwEAAQ==</span></span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+<p>二：配置监控</p>
+<ol>
+<li>配置文件添加具体的filter，如下</li>
+</ol>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">	<span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">druid:</span></span><br><span class="line">      <span class="attr">stat-view-servlet:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">web-stat-filter:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">filters:</span> <span class="string">stat,wall,slf4j</span>	</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>启动应用，访问/druid/index.html</li>
+</ol>
+<h3 id="GroupBy-Having使用场景">GroupBy+Having使用场景</h3>
+<p>比如员工表employee如下：</p>
+<p>“id”	“name”	“dept”	“salary”	“hire_date”<br>
+“1”	“张三”	“开发部”	“1200000”	“1/10/2019 17:34:05”<br>
+“2”	“李四”	“开发部”	“1500000”	“21/4/2020 17:34:48”<br>
+“3”	“王五”	“设计部”	“900000”	“4/8/2020 17:35:23”<br>
+“4”	“刘坡”	“测试部”	“1500000”	“20/10/2020 17:36:16”<br>
+“5”	“钱八”	“销售部”	“800000”	“1/4/2019 17:36:48”<br>
+“6”	“孙久”	“销售部”	“950000”	“28/4/2020 17:37:29”<br>
+“7”	“麻子”	“设计部”	“1100000”	“15/10/2020 17:38:10”<br>
+“8”	“曹弯”	“开发部”	“2200000”	“20/7/2020 17:39:03”</p>
+<p>查询自2020年以来入职的员工中哪个部门的最低工资是最低的：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> dept, <span class="built_in">min</span>(salary) <span class="keyword">as</span> minimum <span class="keyword">from</span> employee <span class="keyword">where</span> hire_date <span class="operator">&gt;</span> <span class="string">&#x27;2020-01-01&#x27;</span> <span class="keyword">group</span> <span class="keyword">by</span> dept <span class="keyword">having</span> minimum<span class="operator">&gt;</span><span class="number">1000000</span> <span class="keyword">order</span> <span class="keyword">by</span> minimum limit <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+	<div>
+  		
+    		<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-handshake-o"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  		
+	</div>
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>Good for you!</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Qiao.Jian 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/article/maven%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E5%AE%9E%E8%B7%B5/" rel="next" title="maven项目部署实践">
+                <i class="fa fa-chevron-left"></i> maven项目部署实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/article/java%E6%B2%99%E7%AE%B1/" rel="prev" title="java沙箱">
+                java沙箱 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Qiao.Jian"/>
+  
+  <p class="site-author-name" itemprop="name">Qiao.Jian</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+        
+        
+        <a href="/archives/">
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+          
+          
+          <a href="/tags/">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bmysql-%E7%94%A8%E6%88%B7%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%9D%83%E9%99%90"><span class="nav-number">1.</span> <span class="nav-text">查看mysql 用户的连接权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">mysql连接方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB-%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%EF%BC%9AB-%E6%A0%91"><span class="nav-number">3.</span> <span class="nav-text">InnoDB 存储结构：B+树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">4.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Limit%E6%9F%A5%E8%AF%A2"><span class="nav-number">5.</span> <span class="nav-text">Limit查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">6.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%9F%A5%E8%AF%A2"><span class="nav-number">7.</span> <span class="nav-text">事务查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9B%B4%E6%96%B0%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98"><span class="nav-number">8.</span> <span class="nav-text">数据库更新丢失问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E8%AF%BBvs%E5%BD%93%E5%89%8D%E8%AF%BB"><span class="nav-number">9.</span> <span class="nav-text">一致读vs当前读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E7%A9%BA%E8%A1%A8"><span class="nav-number">10.</span> <span class="nav-text">清空表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">11.</span> <span class="nav-text">分库分表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%8C%BA"><span class="nav-number">12.</span> <span class="nav-text">分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-repication"><span class="nav-number">13.</span> <span class="nav-text">mysql repication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-fabric"><span class="nav-number">14.</span> <span class="nav-text">mysql fabric</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-cluster"><span class="nav-number">15.</span> <span class="nav-text">mysql cluster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DUAL%E8%A1%A8"><span class="nav-number">16.</span> <span class="nav-text">DUAL表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97"><span class="nav-number">17.</span> <span class="nav-text">日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9F%90%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="nav-number">18.</span> <span class="nav-text">查看某个操作的语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8C%E6%A0%A1%E5%AF%B9%E8%A7%84%E5%88%99"><span class="nav-number">19.</span> <span class="nav-text">字符集和校对规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="nav-number">20.</span> <span class="nav-text">SQL注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Druid%E8%BF%9E%E6%8E%A5%E6%B1%A0-%E7%9B%91%E6%8E%A7"><span class="nav-number">21.</span> <span class="nav-text">Druid连接池+监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GroupBy-Having%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">22.</span> <span class="nav-text">GroupBy+Having使用场景</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qiao.Jian</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v6.3.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.2.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>
