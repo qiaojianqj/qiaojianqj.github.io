@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+<meta name="google-site-verification" content="FmCBFeBJWlIl9DVnns-1SQgs2lTet7iXquulOgdsOVY" />
+<meta name="baidu-site-verification" content="EyoMwitrw4" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0"/>
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="MySQL 数据库使用与优化全攻略：从表设计到架构调优 在互联网技术栈中，MySQL 作为关系型数据库的代表，承载了海量数据的存储与读写。其性能表现直接决定了系统的响应速度和稳定性。数据库优化并非一蹴而就，而是一个涵盖表设计、索引、SQL、架构、存储引擎的系统性工程。本文将从六大核心维度，系统性地讲解 MySQL 的使用与优化方法论，帮助开发者和架构师在实际生产中解决性能瓶颈，实现数据层的高可用与">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 数据库使用与优化全攻略：从表设计到架构调优">
+<meta property="og:url" content="http://qiaojiande.fun/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL%20%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%8E%E4%BC%98%E5%8C%96%E5%85%A8%E6%94%BB%E7%95%A5%EF%BC%9A%E4%BB%8E%E8%A1%A8%E8%AE%BE%E8%AE%A1%E5%88%B0%E6%9E%B6%E6%9E%84%E8%B0%83%E4%BC%98/index.html">
+<meta property="og:site_name" content="谯剑的小站">
+<meta property="og:description" content="MySQL 数据库使用与优化全攻略：从表设计到架构调优 在互联网技术栈中，MySQL 作为关系型数据库的代表，承载了海量数据的存储与读写。其性能表现直接决定了系统的响应速度和稳定性。数据库优化并非一蹴而就，而是一个涵盖表设计、索引、SQL、架构、存储引擎的系统性工程。本文将从六大核心维度，系统性地讲解 MySQL 的使用与优化方法论，帮助开发者和架构师在实际生产中解决性能瓶颈，实现数据层的高可用与">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-24T15:48:05.534Z">
+<meta property="article:author" content="Qiao.Jian">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="优化">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://qiaojiande.fun/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL%20%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%8E%E4%BC%98%E5%8C%96%E5%85%A8%E6%94%BB%E7%95%A5%EF%BC%9A%E4%BB%8E%E8%A1%A8%E8%AE%BE%E8%AE%A1%E5%88%B0%E6%9E%B6%E6%9E%84%E8%B0%83%E4%BC%98/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>MySQL 数据库使用与优化全攻略：从表设计到架构调优 | 谯剑的小站</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">谯剑的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录...</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br/>
+    
+    首页
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/about/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br/>
+    
+    关于
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/tags/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>
+    
+    标签
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+  
+  
+    
+    
+    
+  
+
+  
+
+  <a href="/archives/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>
+    
+    归档
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/404.html" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br/>
+    
+    公益 404
+  </a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://qiaojiande.fun/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL%20%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BD%BF%E7%94%A8%E4%B8%8E%E4%BC%98%E5%8C%96%E5%85%A8%E6%94%BB%E7%95%A5%EF%BC%9A%E4%BB%8E%E8%A1%A8%E8%AE%BE%E8%AE%A1%E5%88%B0%E6%9E%B6%E6%9E%84%E8%B0%83%E4%BC%98/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Qiao.Jian"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/images/avatar.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谯剑的小站"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL 数据库使用与优化全攻略：从表设计到架构调优
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2026-03-24 00:00:00 / 修改时间：23:48:05" itemprop="dateCreated datePublished" datetime="2026-03-24T00:00:00+08:00">2026-03-24</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br/>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1>MySQL 数据库使用与优化全攻略：从表设计到架构调优</h1>
+<p>在互联网技术栈中，MySQL 作为关系型数据库的代表，承载了海量数据的存储与读写。其性能表现直接决定了系统的响应速度和稳定性。数据库优化并非一蹴而就，而是一个涵盖<strong>表设计、索引、SQL、架构、存储引擎</strong>的系统性工程。本文将从六大核心维度，系统性地讲解 MySQL 的使用与优化方法论，帮助开发者和架构师在实际生产中解决性能瓶颈，实现数据层的高可用与高性能。</p>
+<h1>一、表设计优化：数据存储的基石</h1>
+<p>表结构设计是数据库优化的起点。合理的表设计能减少后续维护成本与性能损耗，核心原则在于<strong>规范性（三范式）与性能（反范式）的权衡</strong>。</p>
+<h2 id="1-1-字段设计原则">1.1 字段设计原则</h2>
+<ol>
+<li>
+<p><strong>尽量使用精确的数据类型</strong>：</p>
+<ul>
+<li>
+<p><strong>整数</strong>：在满足存储范围的前提下，选择最小的类型。例如：用户ID用 <code>INT UNSIGNED</code> (4字节) 而非 <code>BIGINT</code> (8字节)。</p>
+</li>
+<li>
+<p><strong>字符串</strong>：<code>VARCHAR(n)</code> 用于长度可变的字符串，<code>CHAR(n)</code> 用于固定长度（如手机号、身份证）。<code>CHAR</code> 性能略高但更占空间，需权衡。</p>
+</li>
+<li>
+<p><strong>时间</strong>：优先使用 <code>DATETIME</code> (8字节，可存大范围时间) 而非 <code>TIMESTAMP</code> (4字节，有2038年上限)。</p>
+</li>
+<li>
+<p><strong>枚举</strong>：状态类字段（如订单状态、性别）使用 <code>ENUM</code>，可读性强且性能高。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>避免 NULL 值</strong>：</p>
+<ul>
+<li>
+<p>NULL 值会增加索引复杂度，导致查询优化器难以优化。建议将字段设置为 <code>NOT NULL</code>，并使用空字符串 <code>''</code> 或特殊值（如 0）代替 NULL。</p>
+</li>
+<li>
+<p><strong>例外</strong>：如需存储“未知”状态，可保留 NULL，但需谨慎评估。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>使用 <code>TINYINT</code> 替代 <code>BOOLEAN</code></strong>：</p>
+<ul>
+<li>MySQL 中 <code>BOOLEAN</code> 是 <code>TINYINT(1)</code> 的别名。使用 <code>TINYINT</code> 更显式，符合存储习惯。</li>
+</ul>
+</li>
+</ol>
+<h2 id="1-2-表与字段命名规范">1.2 表与字段命名规范</h2>
+<ul>
+<li>
+<p><strong>小写命名</strong>：统一使用小写字母，避免跨系统（Linux vs Windows）大小写敏感问题。</p>
+</li>
+<li>
+<p><strong>下划线命名</strong>：表名和字段名使用下划线（<code>user_info</code>），避免驼峰式（<code>userInfo</code>）导致的解析额外开销。</p>
+</li>
+<li>
+<p><strong>表名后缀</strong>：分表分库时，使用统一后缀（如 <code>order_202401</code>），便于批量管理。</p>
+</li>
+</ul>
+<h2 id="1-3-反范式设计（空间换时间）">1.3 反范式设计（空间换时间）</h2>
+<p>在高并发读场景下，为了减少 <code>JOIN</code> 操作，可适当违反第三范式，<strong>增加冗余字段</strong>。</p>
+<p><strong>示例</strong>：订单表 <code>order</code> 中，直接存储用户名称 <code>user_name</code>，而不是仅存 <code>user_id</code> 再去关联 <code>user</code> 表查询。此举能提升查询速度，代价是增加存储空间和更新复杂度。</p>
+<h1>二、索引优化：提升查询速度的关键</h1>
+<p>索引是 MySQL 中提升查询性能最有效的手段之一。但不合理的索引设计（过多、过长、失效）反而会降低写入性能。</p>
+<h2 id="2-1-索引类型与选择">2.1 索引类型与选择</h2>
+<table>
+<thead>
+<tr>
+<th>索引类型</th>
+<th>适用场景</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>主键索引 (PRIMARY)</strong></td>
+<td>每表必须有，唯一标识记录</td>
+<td>唯一性、最高查询效率</td>
+<td>不可修改、占用空间</td>
+</tr>
+<tr>
+<td><strong>普通索引 (INDEX)</strong></td>
+<td>常用查询条件（<code>WHERE</code> 子句）</td>
+<td>提升查询速度</td>
+<td>写入有开销</td>
+</tr>
+<tr>
+<td><strong>唯一索引 (UNIQUE)</strong></td>
+<td>字段值需唯一（如手机号、邮箱）</td>
+<td>唯一性 + 高查询效率</td>
+<td>写入校验有开销</td>
+</tr>
+<tr>
+<td><strong>联合索引 (Composite)</strong></td>
+<td>多字段联合查询（<code>WHERE a=1 AND b=2</code>）</td>
+<td>覆盖多个查询条件，效率高</td>
+<td>字段顺序敏感，空间占用大</td>
+</tr>
+<tr>
+<td><strong>全文索引 (FULLTEXT)</strong></td>
+<td>文本内容搜索（如文章内容）</td>
+<td>支持复杂文本匹配</td>
+<td>中文支持需插件，数据量大时性能一般</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-2-联合索引设计原则（最左匹配原则）">2.2 联合索引设计原则（最左匹配原则）</h2>
+<p>联合索引的字段顺序至关重要，需遵循<strong>最左匹配原则</strong>：</p>
+<ul>
+<li>
+<p><strong>原则</strong>：查询条件必须包含联合索引的<strong>最左列</strong>，否则索引失效。</p>
+</li>
+<li>
+<p><strong>示例</strong>：建立联合索引 <code>(user_id, order_date, status)</code>。</p>
+<ul>
+<li>
+<p>✅ 有效：<code>WHERE user_id=100</code> / <code>WHERE user_id=100 AND order_date='2024-01-01'</code></p>
+</li>
+<li>
+<p>❌ 失效：<code>WHERE order_date='2024-01-01'</code> (缺少最左列 user_id) / <code>WHERE status=1</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>排序与分组</strong>：联合索引的字段顺序应与 <code>ORDER BY</code> 和 <code>GROUP BY</code> 的字段顺序保持一致，避免 <code>filesort</code> 和 <code>using temporary</code>。</p>
+</li>
+</ul>
+<h2 id="2-3-避免索引失效的常见操作">2.3 避免索引失效的常见操作</h2>
+<p>以下操作会导致索引失效，引发全表扫描，需严格避免：</p>
+<ol>
+<li>
+<p><strong>在索引字段上进行计算或函数调用</strong>：</p>
+<ul>
+<li>
+<p>❌ <code>WHERE YEAR(create_time) = 2024</code> (应改为 <code>WHERE create_time BETWEEN '2024-01-01' AND '2024-12-31'</code>)</p>
+</li>
+<li>
+<p>❌ <code>WHERE id + 1 = 100</code> (应改为 <code>WHERE id = 99</code>)</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>使用 <code>!=</code> 或 <code>&lt;&gt;</code> 操作符</strong>：</p>
+<ul>
+<li>索引无法优化不等于判断，通常会回退为全表扫描。可使用 <code>&gt;</code> 或 <code>&lt;</code> 替代。</li>
+</ul>
+</li>
+<li>
+<p><strong>使用 <code>OR</code> 连接非索引字段</strong>：</p>
+<ul>
+<li>
+<p>❌ <code>WHERE name='张三' OR age=18</code> (若 name 和 age 无联合索引)</p>
+</li>
+<li>
+<p>✅ 方案：为两个字段建立联合索引，或分别建立索引并使用 <code>UNION</code>。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>使用 <code>LIKE '%xxx'</code> 前置模糊查询</strong>：</p>
+<ul>
+<li>左百分号匹配会导致索引失效。仅支持 <code>LIKE 'xxx%'</code> 前缀匹配。</li>
+</ul>
+</li>
+<li>
+<p><strong>类型不匹配</strong>：</p>
+<ul>
+<li>字符串字段不加引号。<code>WHERE phone = 13800138000</code> (phone 是 VARCHAR) 会发生隐式转换，导致索引失效。</li>
+</ul>
+</li>
+</ol>
+<h2 id="2-4-索引维护">2.4 索引维护</h2>
+<ul>
+<li>
+<p><strong>定期清理</strong>：删除不再使用的索引，避免写入性能损耗。</p>
+</li>
+<li>
+<p><strong>避免过度索引</strong>：一张表的索引数量不宜过多（建议不超过5-6个），否则在 <code>INSERT/UPDATE/DELETE</code> 时，索引需要同步更新，开销巨大。</p>
+</li>
+</ul>
+<h1>三、SQL编写优化：减少资源消耗</h1>
+<p>SQL 语句的编写质量直接影响数据库的执行效率。优化 SQL 是日常开发中最直接有效的优化手段。</p>
+<h2 id="3-1-避免-SELECT">3.1 避免 <code>SELECT *</code></h2>
+<ul>
+<li>
+<p><strong>原则</strong>：只查询需要的字段。</p>
+</li>
+<li>
+<p><strong>原因</strong>：<code>SELECT *</code> 会读取所有字段，增加磁盘 I/O 和网络传输开销，且无法使用覆盖索引。</p>
+</li>
+</ul>
+<h2 id="3-2-优化-JOIN-操作">3.2 优化 <code>JOIN</code> 操作</h2>
+<ul>
+<li>
+<p><strong>小表驱动大表</strong>：使用 <code>INNER JOIN</code> 时，小表结果集驱动大表，减少循环次数。</p>
+<ul>
+<li>
+<p>❌ <code>SELECT * FROM big_table b JOIN small_table s ON b.id = s.big_id</code></p>
+</li>
+<li>
+<p>✅ <code>SELECT * FROM small_table s JOIN big_table b ON s.big_id = b.id</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>索引关联字段</strong>：<code>JOIN</code> 的关联字段（<code>ON</code> 后的字段）必须建立索引。这是 <code>JOIN</code> 优化的核心。</p>
+</li>
+<li>
+<p><strong>减少 <code>JOIN</code> 字段</strong>：只保留需要的字段，避免 <code>SELECT *</code>。</p>
+</li>
+</ul>
+<h2 id="3-3-优化-ORDER-BY-与-GROUP-BY">3.3 优化 <code>ORDER BY</code> 与 <code>GROUP BY</code></h2>
+<ul>
+<li>
+<p><strong>避免 <code>filesort</code></strong>：<code>ORDER BY</code> 的字段最好在索引中，且顺序与索引一致。否则 MySQL 会进行额外的排序操作，消耗大量 CPU 和内存。</p>
+</li>
+<li>
+<p><strong>避免 <code>using temporary</code></strong>：<code>GROUP BY</code> 会先创建临时表存储分组结果，再进行排序。优化方式是使用索引覆盖分组字段，或减少分组数据量。</p>
+</li>
+</ul>
+<h2 id="3-4-批量操作替代单条循环">3.4 批量操作替代单条循环</h2>
+<ul>
+<li>
+<p><strong>批量插入/更新</strong>：在大批量插入或更新数据时，使用 <code>INSERT ... VALUES (...), (...), (...)</code> 或 <code>BATCH UPDATE</code>，替代单条 <code>INSERT</code> 或 <code>UPDATE</code>。</p>
+</li>
+<li>
+<p><strong>原因</strong>：减少数据库连接次数和事务提交次数，显著提升效率。</p>
+</li>
+</ul>
+<h2 id="3-5-限制查询结果量">3.5 限制查询结果量</h2>
+<ul>
+<li>
+<p>使用 <code>LIMIT</code> 限制返回行数，特别是对于大表的分页查询。</p>
+</li>
+<li>
+<p><strong>深分页优化</strong>：<code>LIMIT 100000, 20</code> 会先扫描前 100020 行，再丢弃前 100000 行，效率极低。</p>
+<ul>
+<li><strong>优化方案</strong>：使用主键跳读法。<code>SELECT * FROM table WHERE id &gt; 100000 LIMIT 20</code>。</li>
+</ul>
+</li>
+</ul>
+<h1>四、数据库设计与架构优化：应对高并发与海量数据</h1>
+<p>当单表数据量达到千万级或亿级，或并发量极高时，需要从数据库架构层面进行优化。</p>
+<h2 id="4-1-分库分表-Sharding">4.1 分库分表 (Sharding)</h2>
+<p>当单表数据量过大（如 &gt; 1000万行）或单库连接数过高时，采用分库分表。</p>
+<ul>
+<li>
+<p><strong>垂直分库</strong>：按业务模块拆分（如 <code>user_db</code>、<code>order_db</code>），降低单库压力。</p>
+</li>
+<li>
+<p><strong>垂直分表</strong>：将大表的大字段（如 <code>TEXT</code>、<code>BLOB</code>）拆分到子表，通过主键关联。</p>
+</li>
+<li>
+<p><strong>水平分表</strong>：按数据范围或哈希拆分（如按用户 ID 哈希分到 16 个表），解决单表数据量瓶颈。</p>
+</li>
+<li>
+<p><strong>中间件</strong>：使用 Shard-JDBC、MyCat 等中间件，屏蔽分库分表细节。</p>
+</li>
+</ul>
+<h2 id="4-2-读写分离">4.2 读写分离</h2>
+<ul>
+<li>
+<p><strong>原理</strong>：主库（Master）负责写入，从库（Slave）负责读取。通过主从复制（Replication）实现数据同步。</p>
+</li>
+<li>
+<p><strong>实现</strong>：</p>
+<ol>
+<li>
+<p>配置 MySQL 主从复制（基于二进制日志 binlog）。</p>
+</li>
+<li>
+<p>应用层通过中间件（如 MyCat、Shard-JDBC）或自定义数据源，路由读请求到从库，写请求到主库。</p>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>优势</strong>：提升读吞吐量，降低主库压力。</p>
+</li>
+<li>
+<p><strong>注意</strong>：存在主从延迟，对于强一致性业务需特殊处理。</p>
+</li>
+</ul>
+<h2 id="4-3-数据库中间件">4.3 数据库中间件</h2>
+<ul>
+<li>
+<p><strong>分库分表中间件</strong>：Shard-JDBC、MyCat、TDDL。</p>
+</li>
+<li>
+<p><strong>连接池</strong>：使用 Druid、HikariCP 管理数据库连接，避免频繁创建/销毁连接。</p>
+</li>
+<li>
+<p><strong>缓存</strong>：引入 Redis 缓存热点数据，减少数据库查询压力。</p>
+</li>
+</ul>
+<h1>五、存储引擎优化：底层性能的核心</h1>
+<p>MySQL 支持多种存储引擎，<strong>InnoDB</strong> 是目前默认且最常用的引擎。理解并优化 InnoDB 配置是性能调优的关键。</p>
+<h2 id="5-1-InnoDB-核心参数优化">5.1 InnoDB 核心参数优化</h2>
+<ol>
+<li>
+<p><strong><code>innodb_buffer_pool_size</code></strong>：<strong>最重要参数</strong>。</p>
+<ul>
+<li>
+<p>作用：缓存索引和数据页，类似 Redis 的缓存机制。</p>
+</li>
+<li>
+<p>建议：在专用数据库服务器上，可设置为物理内存的 <strong>50% - 70%</strong>。例如：32G 内存机器，设置为 16G - 22G。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>innodb_log_file_size</code></strong>：</p>
+<ul>
+<li>
+<p>作用：设置 redo log 日志文件大小。</p>
+</li>
+<li>
+<p>建议：单个文件大小 1G - 4G。总大小 = 个数 * 单文件大小。过大导致恢复慢，过小导致频繁 checkpoint，性能下降。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>innodb_log_buffer_size</code></strong>：</p>
+<ul>
+<li>
+<p>作用：redo log 缓冲区大小。</p>
+</li>
+<li>
+<p>建议：一般 64M - 256M 足够。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>innodb_flush_log_at_trx_commit</code></strong>：</p>
+<ul>
+<li>
+<p>作用：控制 redo log 刷盘策略，权衡一致性与性能。</p>
+</li>
+<li>
+<p>值：</p>
+<ul>
+<li>
+<p><strong>0</strong>：每秒刷盘，性能最好，但崩溃会丢失1秒数据。</p>
+</li>
+<li>
+<p><strong>1</strong>：每次事务提交都刷盘，<strong>最强一致性</strong>，性能最差。</p>
+</li>
+<li>
+<p><strong>2</strong>：每次提交写入操作系统缓存，每秒刷盘，性能与安全性折中。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>推荐</strong>：核心业务设为 1，非核心或可容忍少量数据丢失的业务设为 2。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>innodb_flush_method</code></strong>：</p>
+<ul>
+<li>
+<p>作用：I/O 缓存模式。</p>
+</li>
+<li>
+<p>建议：设置为 <code>O_DIRECT</code>，绕过操作系统缓存，直接读写磁盘，适合读写分离场景。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="5-2-MyISAM-与-InnoDB-对比">5.2 MyISAM 与 InnoDB 对比</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>InnoDB</th>
+<th>MyISAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>事务支持</strong></td>
+<td>✅ 支持 ACID</td>
+<td>❌ 不支持</td>
+</tr>
+<tr>
+<td><strong>行级锁</strong></td>
+<td>✅ 支持，并发高</td>
+<td>❌ 仅表级锁，并发低</td>
+</tr>
+<tr>
+<td><strong>崩溃恢复</strong></td>
+<td>✅ 强</td>
+<td>❌ 弱，需修复</td>
+</tr>
+<tr>
+<td><strong>全文索引</strong></td>
+<td>✅ (5.6版本后支持)</td>
+<td>✅ 支持</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>绝大多数业务（写多读少、事务性）</td>
+<td>只读、统计类业务</td>
+</tr>
+<tr>
+<td><strong>主流地位</strong></td>
+<td>默认引擎，社区活跃</td>
+<td>历史引擎，逐渐淘汰</td>
+</tr>
+</tbody>
+</table>
+<h1>六、慢 SQL 分析与排查：定位性能瓶颈</h1>
+<p>慢 SQL 是系统性能的“隐形杀手”。如何快速发现、分析并优化慢 SQL，是 DBA 和开发者的必备技能。</p>
+<h2 id="6-1-开启慢查询日志-Slow-Query-Log">6.1 开启慢查询日志 (Slow Query Log)</h2>
+<p>这是排查慢 SQL 最基础也是最重要的手段。</p>
+<ol>
+<li>
+<p><strong>配置参数</strong>：</p>
+<ul>
+<li>
+<p><code>slow_query_log = 1</code> (开启)</p>
+</li>
+<li>
+<p><code>slow_query_log_file = /var/lib/mysql/your-slow.log</code> (日志文件路径)</p>
+</li>
+<li>
+<p><code>long_query_time = 1</code> (定义慢查询阈值，单位秒，建议 0.5 - 1)</p>
+</li>
+<li>
+<p><code>log_queries_not_using_indexes = ON</code> (记录未使用索引的查询，辅助排查)</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>作用</strong>：数据库会自动将执行时间超过阈值的 SQL 写入日志文件。</p>
+</li>
+</ol>
+<h2 id="6-2-使用-EXPLAIN-分析执行计划">6.2 使用 <code>EXPLAIN</code> 分析执行计划</h2>
+<p><code>EXPLAIN</code> 关键字可以模拟优化器执行 SQL 查询，返回执行计划。这是分析单条 SQL 性能的神器。</p>
+<p><strong>核心字段解读</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+<th>优化关注点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>id</strong></td>
+<td>执行顺序</td>
+<td>数字越大越先执行</td>
+</tr>
+<tr>
+<td><strong>select_type</strong></td>
+<td>查询类型</td>
+<td>SIMPLE (简单查询), DERIVED (派生表), SUBQUERY (子查询) 等</td>
+</tr>
+<tr>
+<td><strong>table</strong></td>
+<td>访问的表</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>type</strong></td>
+<td><strong>访问类型</strong> (最重要)</td>
+<td>从好到坏：<code>system</code> &gt; <code>const</code> &gt; <code>eq_ref</code> &gt; <code>ref</code> &gt; <code>range</code> &gt; <code>index</code> &gt; <code>ALL</code>  <strong><code>ALL</code> 是全表扫描，需优化</strong></td>
+</tr>
+<tr>
+<td><strong>possible_keys</strong></td>
+<td>可能用到的索引</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>key</strong></td>
+<td><strong>实际使用的索引</strong></td>
+<td>为空则未使用索引，需优化</td>
+</tr>
+<tr>
+<td><strong>key_len</strong></td>
+<td>使用的索引长度</td>
+<td>越短越好，说明索引使用充分</td>
+</tr>
+<tr>
+<td><strong>ref</strong></td>
+<td>索引列的匹配条件</td>
+<td>常量(<code>const</code>)还是字段(<code>field</code>)</td>
+</tr>
+<tr>
+<td><strong>rows</strong></td>
+<td>预估扫描行数</td>
+<td>越少越好</td>
+</tr>
+<tr>
+<td><strong>Extra</strong></td>
+<td>额外信息</td>
+<td><strong><code>Using filesort</code></strong> (需排序，无索引)、<strong><code>Using temporary</code></strong> (需临时表，如group by) 均需优化</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-3-常用分析工具">6.3 常用分析工具</h2>
+<ol>
+<li>
+<p><strong><code>mysqldumpslow</code></strong>：MySQL 自带的慢查询日志分析工具。</p>
+<ul>
+<li>示例：<code>mysqldumpslow -s t -t 10 slow.log</code> (按时间排序，取前10条)。</li>
+</ul>
+</li>
+<li>
+<p><strong><code>pt-query-digest</code></strong> (Percona Toolkit 工具集)：<strong>更强大的分析工具</strong>。</p>
+<ul>
+<li>能生成详细的分析报告，统计 SQL 类型、执行时间、锁定时间等，精准定位瓶颈。</li>
+</ul>
+</li>
+<li>
+<p><strong>数据库可视化工具</strong>：Navicat、DataGrip 等内置的性能分析面板，可直接查看 <code>EXPLAIN</code> 结果和慢查询日志。</p>
+</li>
+</ol>
+<h2 id="6-4-排查与优化流程">6.4 排查与优化流程</h2>
+<ol>
+<li>
+<p><strong>开启监控</strong>：长期开启慢查询日志，定期分析。</p>
+</li>
+<li>
+<p><strong>定位高频/耗时 SQL</strong>：从慢查询日志或工具报告中，找出执行次数多、单次耗时久的 SQL。</p>
+</li>
+<li>
+<p><strong><code>EXPLAIN</code> 分析</strong>：对目标 SQL 使用 <code>EXPLAIN</code>，查看执行计划，定位索引失效、全表扫描等问题。</p>
+</li>
+<li>
+<p><strong>优化调整</strong>：根据分析结果，优化 SQL 语句（如避免索引失效操作）、调整索引（如添加联合索引）、优化表结构（如分表）。</p>
+</li>
+<li>
+<p><strong>验证效果</strong>：优化后重新执行 SQL，查看执行时间和执行计划，确认优化生效。</p>
+</li>
+</ol>
+<h1>七、总结</h1>
+<p>MySQL 优化是一个系统性、持续性的过程，核心在于“权衡”——在性能、一致性、可维护性之间找到最适配业务的平衡点。从表设计的基础优化，到索引和 SQL 的细节调优，再到架构层面的分库分表、读写分离，每一步都需要结合业务场景和数据量灵活调整。</p>
+<p>日常开发中，应养成良好的编码习惯（如规范 SQL 编写、合理设计索引），定期监控慢 SQL 和数据库性能，提前发现并解决瓶颈。对于高并发、海量数据场景，需从架构层面进行升级，结合中间件和缓存技术，实现 MySQL 数据库的高可用、高性能运行，为系统稳定提供坚实的数据支撑。</p>
+<blockquote>
+<p>（注：文档部分内容可能由 AI 生成）</p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+	<div>
+  		
+    		<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-handshake-o"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  		
+	</div>
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>Good for you!</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Qiao.Jian 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+          
+            <a href="/tags/%E4%BC%98%E5%8C%96/" rel="tag"># 优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/%E6%8A%80%E6%9C%AF/%E4%BB%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%88%B0%20Agent%E3%80%81MCP%E3%80%81Skill%EF%BC%9AAI%20%E8%83%BD%E5%8A%9B%E4%BD%93%E7%B3%BB%E6%BC%94%E8%BF%9B%E5%85%A8%E8%A7%A3%E6%9E%90/" rel="next" title="从大模型到 Agent、MCP、Skill：AI 能力体系演进全解析">
+                <i class="fa fa-chevron-left"></i> 从大模型到 Agent、MCP、Skill：AI 能力体系演进全解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Java/Java%E9%94%81%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E4%B8%8E%E5%B9%B6%E5%8F%91%E4%BC%98%E5%8C%96%E5%85%A8%E6%80%BB%E7%BB%93/" rel="prev" title="Java锁相关知识与并发优化全总结">
+                Java锁相关知识与并发优化全总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Qiao.Jian"/>
+  
+  <p class="site-author-name" itemprop="name">Qiao.Jian</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+        
+        
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+          
+          
+          <a href="/tags/">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">MySQL 数据库使用与优化全攻略：从表设计到架构调优</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">一、表设计优化：数据存储的基石</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E5%AD%97%E6%AE%B5%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 字段设计原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E8%A1%A8%E4%B8%8E%E5%AD%97%E6%AE%B5%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 表与字段命名规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E5%8F%8D%E8%8C%83%E5%BC%8F%E8%AE%BE%E8%AE%A1%EF%BC%88%E7%A9%BA%E9%97%B4%E6%8D%A2%E6%97%B6%E9%97%B4%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 反范式设计（空间换时间）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">二、索引优化：提升查询速度的关键</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E7%B4%A2%E5%BC%95%E7%B1%BB%E5%9E%8B%E4%B8%8E%E9%80%89%E6%8B%A9"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 索引类型与选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99%EF%BC%88%E6%9C%80%E5%B7%A6%E5%8C%B9%E9%85%8D%E5%8E%9F%E5%88%99%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 联合索引设计原则（最左匹配原则）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 避免索引失效的常见操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E7%B4%A2%E5%BC%95%E7%BB%B4%E6%8A%A4"><span class="nav-number">3.4.</span> <span class="nav-text">2.4 索引维护</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">三、SQL编写优化：减少资源消耗</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E9%81%BF%E5%85%8D-SELECT"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 避免 SELECT *</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-%E4%BC%98%E5%8C%96-JOIN-%E6%93%8D%E4%BD%9C"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 优化 JOIN 操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E4%BC%98%E5%8C%96-ORDER-BY-%E4%B8%8E-GROUP-BY"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 优化 ORDER BY 与 GROUP BY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C%E6%9B%BF%E4%BB%A3%E5%8D%95%E6%9D%A1%E5%BE%AA%E7%8E%AF"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 批量操作替代单条循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-%E9%99%90%E5%88%B6%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E9%87%8F"><span class="nav-number">4.5.</span> <span class="nav-text">3.5 限制查询结果量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">四、数据库设计与架构优化：应对高并发与海量数据</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8-Sharding"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 分库分表 (Sharding)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 读写分离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 数据库中间件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">五、存储引擎优化：底层性能的核心</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-InnoDB-%E6%A0%B8%E5%BF%83%E5%8F%82%E6%95%B0%E4%BC%98%E5%8C%96"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 InnoDB 核心参数优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-MyISAM-%E4%B8%8E-InnoDB-%E5%AF%B9%E6%AF%94"><span class="nav-number">6.2.</span> <span class="nav-text">5.2 MyISAM 与 InnoDB 对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">六、慢 SQL 分析与排查：定位性能瓶颈</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E5%BC%80%E5%90%AF%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97-Slow-Query-Log"><span class="nav-number">7.1.</span> <span class="nav-text">6.1 开启慢查询日志 (Slow Query Log)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-%E4%BD%BF%E7%94%A8-EXPLAIN-%E5%88%86%E6%9E%90%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-number">7.2.</span> <span class="nav-text">6.2 使用 EXPLAIN 分析执行计划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-%E5%B8%B8%E7%94%A8%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="nav-number">7.3.</span> <span class="nav-text">6.3 常用分析工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-4-%E6%8E%92%E6%9F%A5%E4%B8%8E%E4%BC%98%E5%8C%96%E6%B5%81%E7%A8%8B"><span class="nav-number">7.4.</span> <span class="nav-text">6.4 排查与优化流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">七、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qiao.Jian</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v6.3.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.2.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+<meta name="google-site-verification" content="FmCBFeBJWlIl9DVnns-1SQgs2lTet7iXquulOgdsOVY" />
+<meta name="baidu-site-verification" content="EyoMwitrw4" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0"/>
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="Java JVM基础知识与线上实践全总结 JVM（Java Virtual Machine，Java虚拟机）是Java语言跨平台特性的核心，负责将Java字节码解释或编译为底层机器指令，同时管理内存、垃圾回收、线程调度等核心功能。掌握JVM基础知识、GC算法演进、线上参数配置及问题排查，是Java后端开发工程师必备的核心能力。本文将系统梳理相关知识点，结合线上实践场景，为开发者提供全面的参考。 一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java JVM基础知识与线上实践全总结">
+<meta property="og:url" content="http://qiaojiande.fun/Java/Java%20JVM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%8E%E7%BA%BF%E4%B8%8A%E5%AE%9E%E8%B7%B5%E5%85%A8%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="谯剑的小站">
+<meta property="og:description" content="Java JVM基础知识与线上实践全总结 JVM（Java Virtual Machine，Java虚拟机）是Java语言跨平台特性的核心，负责将Java字节码解释或编译为底层机器指令，同时管理内存、垃圾回收、线程调度等核心功能。掌握JVM基础知识、GC算法演进、线上参数配置及问题排查，是Java后端开发工程师必备的核心能力。本文将系统梳理相关知识点，结合线上实践场景，为开发者提供全面的参考。 一">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-24T15:47:26.428Z">
+<meta property="article:author" content="Qiao.Jian">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://qiaojiande.fun/Java/Java%20JVM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%8E%E7%BA%BF%E4%B8%8A%E5%AE%9E%E8%B7%B5%E5%85%A8%E6%80%BB%E7%BB%93/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>Java JVM基础知识与线上实践全总结 | 谯剑的小站</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">谯剑的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录...</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br/>
+    
+    首页
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/about/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br/>
+    
+    关于
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/tags/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>
+    
+    标签
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+  
+  
+    
+    
+    
+  
+
+  
+
+  <a href="/archives/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>
+    
+    归档
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/404.html" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br/>
+    
+    公益 404
+  </a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://qiaojiande.fun/Java/Java%20JVM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%8E%E7%BA%BF%E4%B8%8A%E5%AE%9E%E8%B7%B5%E5%85%A8%E6%80%BB%E7%BB%93/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Qiao.Jian"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/images/avatar.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谯剑的小站"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java JVM基础知识与线上实践全总结
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2026-03-24 00:00:00 / 修改时间：23:47:26" itemprop="dateCreated datePublished" datetime="2026-03-24T00:00:00+08:00">2026-03-24</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br/>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1>Java JVM基础知识与线上实践全总结</h1>
+<p>JVM（Java Virtual Machine，Java虚拟机）是Java语言跨平台特性的核心，负责将Java字节码解释或编译为底层机器指令，同时管理内存、垃圾回收、线程调度等核心功能。掌握JVM基础知识、GC算法演进、线上参数配置及问题排查，是Java后端开发工程师必备的核心能力。本文将系统梳理相关知识点，结合线上实践场景，为开发者提供全面的参考。</p>
+<h1>一、Java JVM基础知识</h1>
+<h2 id="1-1-JVM整体架构">1.1 JVM整体架构</h2>
+<p>JVM架构主要分为三大模块：类加载子系统、运行时数据区、执行引擎，辅以垃圾回收系统，各模块协同工作完成字节码的执行与资源管理。</p>
+<ul>
+<li>
+<p><strong>类加载子系统</strong>：负责将.class文件（字节码）加载到JVM中，核心流程包括加载、验证、准备、解析、初始化5个阶段。加载阶段通过类加载器（Bootstrap ClassLoader、Extension ClassLoader、Application ClassLoader）查找类资源；验证阶段确保字节码符合JVM规范，避免恶意代码；准备阶段为类变量分配内存并设置默认初始值；解析阶段将符号引用转换为直接引用；初始化阶段执行类构造器<clinit>方法，完成类的初始化。</p>
+</li>
+<li>
+<p><strong>运行时数据区</strong>：JVM在运行时划分的内存区域，也是GC的核心作用区域，分为以下5部分：</p>
+<ul>
+<li>
+<p>程序计数器（Program Counter Register）：线程私有，记录当前线程执行的字节码行号，无GC（不会OutOfMemoryError）。</p>
+</li>
+<li>
+<p>虚拟机栈（VM Stack）：线程私有，存储栈帧（方法执行时的上下文），包含局部变量表、操作数栈、动态链接、方法出口等，栈深度不足会抛出StackOverflowError，内存不足会抛出OutOfMemoryError。</p>
+</li>
+<li>
+<p>本地方法栈（Native Method Stack）：线程私有，为Native方法（非Java实现的方法）提供运行环境，与虚拟机栈功能类似，同样会抛出StackOverflowError和OutOfMemoryError。</p>
+</li>
+<li>
+<p>方法区（Method Area）：线程共享，存储类信息、常量、静态变量、即时编译后的代码等，JDK8后用元空间（Metaspace）替代永久代（PermGen），元空间使用本地内存，默认无上限（可通过参数限制），避免了永久代OOM问题。</p>
+</li>
+<li>
+<p>堆（Heap）：线程共享，JVM中最大的内存区域，用于存储对象实例和数组，是垃圾回收（GC）的主要区域。堆可分为年轻代（Young Generation）、老年代（Old Generation），部分垃圾收集器（如G1）会打破这种划分。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>执行引擎</strong>：将加载到JVM中的字节码转换为机器指令执行，主要有两种执行方式：解释执行（逐行解释字节码，启动快、执行慢）和即时编译（JIT，将热点代码编译为机器码，执行快、启动慢），JVM会根据代码执行频率动态切换两种方式，平衡启动速度和执行效率。</p>
+</li>
+<li>
+<p><strong>垃圾回收系统（GC）</strong>：负责回收堆和方法区中不再使用的对象，释放内存资源，避免内存泄漏，核心是“判断对象是否存活”和“回收存活对象占用的内存”。</p>
+</li>
+</ul>
+<h2 id="1-2-核心概念补充">1.2 核心概念补充</h2>
+<ul>
+<li>
+<p><strong>对象存活判断</strong>：JVM采用“可达性分析算法”判断对象是否存活，以GC Roots为起点，遍历对象引用链，若对象无法通过任何GC Roots到达，则判定为可回收对象。GC Roots包括：虚拟机栈中局部变量表引用的对象、本地方法栈中Native方法引用的对象、方法区中静态变量和常量引用的对象、活跃线程引用的对象。</p>
+</li>
+<li>
+<p><strong>内存溢出（OOM）与内存泄漏</strong>：内存溢出是指JVM没有足够的内存分配给新对象；内存泄漏是指对象不再使用，但仍被GC Roots引用，无法被回收，长期积累会导致OOM。</p>
+</li>
+<li>
+<p><strong>分代回收思想</strong>：基于“对象存活时间不同”的特点，将堆分为年轻代和老年代，年轻代对象存活时间短、回收频繁，老年代对象存活时间长、回收频率低，不同代采用不同的GC算法，提升回收效率。</p>
+</li>
+</ul>
+<h1>二、GC算法的演进</h1>
+<p>GC算法的核心目标是：高效回收可回收对象，减少GC停顿时间（STW，Stop The World），避免影响应用正常运行。随着JDK版本的迭代，GC算法不断优化，从早期的串行回收，逐步演进到并行、并发回收，兼顾回收效率和应用可用性。</p>
+<h2 id="2-1-基础GC算法（早期）">2.1 基础GC算法（早期）</h2>
+<h3 id="2-1-1-标记-清除算法（Mark-Sweep）">2.1.1 标记-清除算法（Mark-Sweep）</h3>
+<p>最基础的GC算法，分为两个阶段：</p>
+<ol>
+<li>
+<p>标记阶段：遍历所有对象，标记出可回收对象（无法通过GC Roots到达的对象）。</p>
+</li>
+<li>
+<p>清除阶段：遍历堆内存，清除所有被标记的可回收对象，释放内存。</p>
+</li>
+</ol>
+<p><strong>优点</strong>：实现简单，无需移动对象。<br>
+<strong>缺点</strong>：1. 标记和清除过程都需要STW，效率低；2. 清除后会产生大量内存碎片，后续分配大对象时可能因没有连续内存而提前触发GC。</p>
+<h3 id="2-1-2-复制算法（Copying）">2.1.2 复制算法（Copying）</h3>
+<p>为解决标记-清除算法的内存碎片问题而设计，核心是“将堆分为两个大小相等的区域（From区和To区）”，仅使用其中一个区域（From区）：</p>
+<ol>
+<li>
+<p>标记阶段：标记From区中存活的对象。</p>
+</li>
+<li>
+<p>复制阶段：将From区中存活的对象复制到To区，按顺序排列，避免内存碎片。</p>
+</li>
+<li>
+<p>切换阶段：清空From区，将From区和To区角色互换，下一次GC继续使用From区。</p>
+</li>
+</ol>
+<p><strong>优点</strong>：无内存碎片，回收效率高（仅复制存活对象）。<br>
+<strong>缺点</strong>：1. 内存利用率低（仅使用一半内存）；2. 复制大量对象时，STW时间较长。</p>
+<p>适用场景：年轻代（对象存活时间短，存活对象少，复制成本低），目前年轻代默认采用复制算法（优化版：将年轻代分为Eden区和两个Survivor区，比例默认8:1:1，避免内存利用率过低）。</p>
+<h3 id="2-1-3-标记-整理算法（Mark-Compact）">2.1.3 标记-整理算法（Mark-Compact）</h3>
+<p>结合标记-清除和复制算法的优点，解决老年代对象存活时间长、存活对象多的问题，分为三个阶段：</p>
+<ol>
+<li>
+<p>标记阶段：遍历所有对象，标记出存活对象。</p>
+</li>
+<li>
+<p>整理阶段：将所有存活对象向堆的一端移动，按顺序排列。</p>
+</li>
+<li>
+<p>清除阶段：清除堆另一端的可回收对象，释放内存。</p>
+</li>
+</ol>
+<p><strong>优点</strong>：无内存碎片，内存利用率高。<br>
+<strong>缺点</strong>：整理阶段需要移动对象，STW时间较长，效率低于复制算法。</p>
+<p>适用场景：老年代（对象存活时间长，存活对象多，复制成本高，需避免内存碎片）。</p>
+<h2 id="2-2-进阶GC算法（分代回收）">2.2 进阶GC算法（分代回收）</h2>
+<p>分代回收算法本身不是一种独立的GC算法，而是结合“复制算法”和“标记-整理算法”，根据对象存活时间的不同，在年轻代和老年代采用不同的算法，提升整体GC效率。</p>
+<p>核心流程：</p>
+<ol>
+<li>
+<p>年轻代（Eden + 2个Survivor）：采用复制算法。对象优先分配到Eden区，Eden区满后触发Minor GC（年轻代GC），将Eden区和一个Survivor区（From）的存活对象复制到另一个Survivor区（To），清空Eden和From区；多次Minor GC后，存活对象年龄达到阈值（默认15），晋升到老年代。</p>
+</li>
+<li>
+<p>老年代：采用标记-整理算法。老年代内存满后触发Major GC（老年代GC），也叫Full GC，会同时回收年轻代和老年代的可回收对象，STW时间较长，对应用性能影响较大。</p>
+</li>
+</ol>
+<h2 id="2-3-现代GC算法（JDK8及以后主流）">2.3 现代GC算法（JDK8及以后主流）</h2>
+<h3 id="2-3-1-并行GC（Parallel-GC）">2.3.1 并行GC（Parallel GC）</h3>
+<p>JDK8默认的GC算法，属于分代回收算法的优化版，核心是“并行执行GC任务”，减少STW时间。</p>
+<ul>
+<li>
+<p>年轻代：Parallel Scavenge（并行清除），采用复制算法，多个GC线程并行执行标记和复制，提升回收效率。</p>
+</li>
+<li>
+<p>老年代：Parallel Old，采用标记-整理算法，同样支持多线程并行执行，适合CPU核心数多、对吞吐量要求高的场景（如后台服务）。</p>
+</li>
+</ul>
+<p><strong>优点</strong>：吞吐量高（GC时间占总运行时间比例低），适合大数据量、高并发场景。<br>
+<strong>缺点</strong>：Full GC时STW时间仍较长，不适合对响应时间要求高的场景（如接口服务）。</p>
+<h3 id="2-3-2-并发标记清除GC（CMS-GC）">2.3.2 并发标记清除GC（CMS GC）</h3>
+<p>为解决Parallel GC的STW时间过长问题而设计，核心是“并发执行GC任务”，减少STW时间，属于分代回收算法。</p>
+<p>核心流程（老年代）：</p>
+<ol>
+<li>
+<p>初始标记：标记GC Roots直接引用的对象，STW时间短（毫秒级）。</p>
+</li>
+<li>
+<p>并发标记：与应用线程并行执行，遍历GC Roots引用链，标记可回收对象，无STW。</p>
+</li>
+<li>
+<p>重新标记：修正并发标记期间因应用线程运行导致的标记偏差，STW时间短。</p>
+</li>
+<li>
+<p>并发清除：与应用线程并行执行，清除可回收对象，无STW。</p>
+</li>
+</ol>
+<p><strong>优点</strong>：Full GC时STW时间短，适合对响应时间要求高的场景（如接口服务、Web应用）。<br>
+<strong>缺点</strong>：1. 并发标记和清除过程会占用CPU资源，影响应用吞吐量；2. 会产生内存碎片；3. 无法处理浮动垃圾（并发清除期间产生的新垃圾，需下次GC回收）。</p>
+<p>注意：JDK9中CMS GC被标记为废弃，JDK14中正式移除。</p>
+<h3 id="2-3-3-G1-GC（Garbage-First）">2.3.3 G1 GC（Garbage-First）</h3>
+<p>JDK9及以后默认的GC算法，兼顾吞吐量和响应时间，打破了分代回收的固定划分，核心是“区域化分代式”回收。</p>
+<ul>
+<li>
+<p>内存划分：将堆分为多个大小相等的区域（Region），每个Region可动态标记为Eden区、Survivor区、老年代区，无需固定大小和比例，灵活分配内存。</p>
+</li>
+<li>
+<p>核心思想：优先回收垃圾最多的Region（Garbage-First），减少GC时间；采用“标记-复制”算法，无内存碎片；支持并发标记和并行回收，STW时间可预测（通过参数设置最大STW时间）。</p>
+</li>
+<li>
+<p>核心流程：初始标记 → 并发标记 → 最终标记 → 筛选回收（并行执行，STW）。</p>
+</li>
+</ul>
+<p><strong>优点</strong>：兼顾吞吐量和响应时间，无内存碎片，STW时间可控制，适合大内存、高并发场景（如服务器、微服务）。<br>
+<strong>缺点</strong>：内存区域划分和管理复杂，CPU占用较高。</p>
+<h3 id="2-3-4-ZGC、Shenandoah-GC（新一代GC）">2.3.4 ZGC、Shenandoah GC（新一代GC）</h3>
+<p>JDK11及以后推出的新一代GC算法，核心目标是“超低延迟”（STW时间控制在毫秒级以下），适合超大内存（如百GB、TB级）场景。</p>
+<ul>
+<li>
+<p>ZGC：采用“着色指针”和“读屏障”技术，支持并发标记、并发重定位，STW时间不随堆大小增加而增加，适合超大内存场景（如金融、电商核心服务）。</p>
+</li>
+<li>
+<p>Shenandoah GC：与ZGC目标类似，采用“并发整理”算法，无需移动对象即可完成内存整理，STW时间短，适合对延迟敏感的超大内存应用。</p>
+</li>
+</ul>
+<h1>三、线上JVM参数配置</h1>
+<p>线上JVM参数配置的核心目标是：优化内存分配、减少GC停顿、避免OOM、提升应用性能，需结合应用类型（如Web应用、后台服务）、内存大小、并发量等场景灵活调整。以下是常用参数及配置原则，以JDK8（Parallel GC）和JDK11+（G1 GC）为例。</p>
+<h2 id="3-1-核心内存参数（必配）">3.1 核心内存参数（必配）</h2>
+<p>核心内存参数控制堆、元空间、栈的大小，是线上配置的基础，需根据服务器内存大小合理分配（建议堆内存不超过服务器物理内存的50%-70%，避免占用过多内存导致操作系统卡顿）。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例（JDK8）</th>
+<th>示例（JDK11+ G1）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-Xms</td>
+<td>堆初始大小，与-Xmx设置一致，避免堆内存动态扩容导致性能波动</td>
+<td>-Xms4g</td>
+<td>-Xms4g</td>
+</tr>
+<tr>
+<td>-Xmx</td>
+<td>堆最大大小，控制堆内存上限，避免OOM</td>
+<td>-Xmx4g</td>
+<td>-Xmx4g</td>
+</tr>
+<tr>
+<td>-XX:MetaspaceSize</td>
+<td>元空间初始大小（JDK8+，替代永久代）</td>
+<td>-XX:MetaspaceSize=256m</td>
+<td>-XX:MetaspaceSize=256m</td>
+</tr>
+<tr>
+<td>-XX:MaxMetaspaceSize</td>
+<td>元空间最大大小，避免元空间无限增长导致OOM</td>
+<td>-XX:MaxMetaspaceSize=512m</td>
+<td>-XX:MaxMetaspaceSize=512m</td>
+</tr>
+<tr>
+<td>-Xss</td>
+<td>每个线程的虚拟机栈大小，根据线程数调整，避免StackOverflowError</td>
+<td>-Xss1m</td>
+<td>-Xss1m</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-2-GC相关参数（按GC算法分类）">3.2 GC相关参数（按GC算法分类）</h2>
+<h3 id="3-2-1-Parallel-GC（JDK8默认）">3.2.1 Parallel GC（JDK8默认）</h3>
+<p>适合后台服务、吞吐量优先的场景，常用参数：</p>
+<ul>
+<li>
+<p>-XX:+UseParallelGC：启用Parallel GC（年轻代）。</p>
+</li>
+<li>
+<p>-XX:+UseParallelOldGC：启用Parallel Old GC（老年代），与Parallel GC配合使用。</p>
+</li>
+<li>
+<p>-XX:ParallelGCThreads：GC线程数，建议设置为CPU核心数（或核心数-1），避免GC线程占用过多CPU。</p>
+</li>
+<li>
+<p>-XX:MaxGCPauseMillis：设置最大GC停顿时间（毫秒），JVM会自动调整堆大小和GC参数，尽可能满足该要求（优先级低于吞吐量）。</p>
+</li>
+<li>
+<p>-XX:GCTimeRatio：设置GC时间占总运行时间的比例（默认99），公式为1/(1+GCTimeRatio)，如99表示GC时间不超过1%，优先级高于MaxGCPauseMillis。</p>
+</li>
+</ul>
+<h3 id="3-2-2-G1-GC（JDK9-默认）">3.2.2 G1 GC（JDK9+默认）</h3>
+<p>适合Web应用、响应时间优先的场景，常用参数：</p>
+<ul>
+<li>
+<p>-XX:+UseG1GC：启用G1 GC。</p>
+</li>
+<li>
+<p>-XX:G1HeapRegionSize：设置每个Region的大小（1M~32M），默认根据堆大小自动计算，建议设置为2的幂次方。</p>
+</li>
+<li>
+<p>-XX:MaxGCPauseMillis：设置最大GC停顿时间（默认200毫秒），G1会优先回收垃圾多的Region，确保停顿时间不超过该值。</p>
+</li>
+<li>
+<p>-XX:ParallelGCThreads：GC线程数，与CPU核心数匹配。</p>
+</li>
+<li>
+<p>-XX:ConcGCThreads：并发标记线程数，默认是ParallelGCThreads的1/4，可根据CPU负载调整。</p>
+</li>
+<li>
+<p>-XX:InitiatingHeapOccupancyPercent：触发并发标记的堆占用阈值（默认45%），堆占用达到该值时，启动并发标记，避免堆满触发Full GC。</p>
+</li>
+</ul>
+<h3 id="3-2-3-日志相关参数（必配，用于问题排查）">3.2.3 日志相关参数（必配，用于问题排查）</h3>
+<p>线上必须配置GC日志参数，便于后续排查GC问题，常用参数：</p>
+<ul>
+<li>
+<p>-XX:+PrintGCDetails：打印详细GC日志（包含回收前后内存大小、GC时间等）。</p>
+</li>
+<li>
+<p>-XX:+PrintGCTimeStamps：打印GC发生的时间戳（相对于JVM启动时间）。</p>
+</li>
+<li>
+<p>-XX:+PrintGCDateStamps：打印GC发生的具体日期时间（便于定位问题时间点）。</p>
+</li>
+<li>
+<p>-Xloggc:/var/log/java/gc.log：指定GC日志输出路径，避免日志输出到控制台。</p>
+</li>
+<li>
+<p>-XX:+UseGCLogFileRotation：启用GC日志轮转，避免日志文件过大。</p>
+</li>
+<li>
+<p>-XX:NumberOfGCLogFiles=10：日志文件数量（默认1）。</p>
+</li>
+<li>
+<p>-XX:GCLogFileSize=100m：每个日志文件的大小（默认50m）。</p>
+</li>
+</ul>
+<h2 id="3-3-线上配置示例">3.3 线上配置示例</h2>
+<h3 id="示例1：JDK8-Parallel-GC（4核8G服务器，后台服务）">示例1：JDK8 + Parallel GC（4核8G服务器，后台服务）</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar -Xms4g -Xmx4g -Xss1m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m -XX:+UseParallelGC -XX:+UseParallelOldGC -XX:ParallelGCThreads=4 -XX:MaxGCPauseMillis=200 -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:/var/log/java/gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100m app.jar</span><br></pre></td></tr></table></figure>
+<h3 id="示例2：JDK11-G1-GC（8核16G服务器，Web应用）">示例2：JDK11 + G1 GC（8核16G服务器，Web应用）</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar -Xms8g -Xmx8g -Xss1m -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -XX:G1HeapRegionSize=4m -XX:MaxGCPauseMillis=100 -XX:ParallelGCThreads=8 -XX:ConcGCThreads=2 -XX:InitiatingHeapOccupancyPercent=45 -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:/var/log/java/gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100m app.jar</span><br></pre></td></tr></table></figure>
+<h2 id="3-4-配置原则">3.4 配置原则</h2>
+<ul>
+<li>
+<p>堆内存：-Xms与-Xmx保持一致，避免动态扩容；堆大小不超过服务器物理内存的70%，预留内存给操作系统和其他进程。</p>
+</li>
+<li>
+<p>元空间：根据应用依赖的类数量调整，一般设置为256m~1g，避免设置过大浪费内存。</p>
+</li>
+<li>
+<p>GC线程：与CPU核心数匹配，避免过多线程竞争CPU，导致应用性能下降。</p>
+</li>
+<li>
+<p>日志：必须配置GC日志，便于后续问题排查，同时启用日志轮转，避免日志文件过大。</p>
+</li>
+<li>
+<p>调优：线上配置需经过测试，根据GC日志和应用性能监控，逐步调整参数，避免盲目配置。</p>
+</li>
+</ul>
+<h1>四、线上GC问题排查分析（含GC日志分析）</h1>
+<p>线上GC问题主要表现为：GC频繁、GC停顿时间过长、OOM（内存溢出），核心排查思路是“收集日志 → 分析日志 → 定位问题 → 调整参数/优化代码”，其中GC日志是排查的核心依据。</p>
+<h2 id="4-1-排查前准备（收集关键信息）">4.1 排查前准备（收集关键信息）</h2>
+<ul>
+<li>
+<p>GC日志：通过之前配置的-Xloggc参数获取，确保日志完整（包含GC类型、回收前后内存、时间等）。</p>
+</li>
+<li>
+<p>JVM参数：收集应用启动时的JVM参数（确认堆大小、GC算法、日志配置等）。</p>
+</li>
+<li>
+<p>应用监控数据：通过Prometheus、Grafana、JVisualVM等工具，收集应用的CPU、内存、线程、GC次数、GC停顿时间等数据。</p>
+</li>
+<li>
+<p>线程快照（jstack）：当应用卡顿、GC频繁时，通过jstack命令获取线程快照，排查是否有死锁、线程阻塞等问题。</p>
+</li>
+<li>
+<p>内存快照（jmap）：当出现OOM时，通过jmap命令获取内存快照（heap dump），分析内存泄漏的对象。</p>
+</li>
+</ul>
+<h2 id="4-2-GC日志分析方法（核心）">4.2 GC日志分析方法（核心）</h2>
+<p>GC日志包含Minor GC（年轻代GC）、Major GC（老年代GC）、Full GC（全量GC）的详细信息，不同GC算法的日志格式略有差异，但核心信息一致，以下以Parallel GC和G1 GC为例，讲解日志分析要点。</p>
+<h3 id="4-2-1-Parallel-GC日志示例及分析">4.2.1 Parallel GC日志示例及分析</h3>
+<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2026-03-24T10:00:00.123+0800: 123.456: [GC (Allocation Failure) [PSYoungGen: 327680K-&gt;5120K(384000K)] 427680K-&gt;105120K(1024000K), 0.0080000 secs] [Times: user=0.02 sys=0.01, real=0.01 secs]</span><br><span class="line">2026-03-24T10:05:00.456+0800: 423.789: [Full GC (Ergonomics) [PSYoungGen: 384000K-&gt;0K(384000K)] [ParOldGen: 640000K-&gt;620000K(640000K)] 1024000K-&gt;620000K(1024000K), [Metaspace: 256000K-&gt;256000K(512000K)], 0.1200000 secs] [Times: user=0.36 sys=0.03, real=0.12 secs]</span><br></pre></td></tr></table></figure>
+<p>日志核心信息解读：</p>
+<ol>
+<li>
+<p>时间戳：2026-03-24T10:00:00.123+0800（GC发生的具体时间）；123.456（JVM启动后的时间，单位：秒）。</p>
+</li>
+<li>
+<p>GC类型：</p>
+<ul>
+<li>
+<p>GC (Allocation Failure)：Minor GC，触发原因是年轻代分配内存失败（Eden区满）。</p>
+</li>
+<li>
+<p>Full GC (Ergonomics)：Full GC，触发原因是JVM自动优化（Ergonomics），也可能是老年代满、元空间满等。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>内存变化：</p>
+<ul>
+<li>
+<p>PSYoungGen: 327680K-&gt;5120K(384000K)：年轻代回收前320M，回收后5M，年轻代总大小375M。</p>
+</li>
+<li>
+<p>427680K-&gt;105120K(1024000K)：堆内存回收前417.5M，回收后102.656M，堆总大小1000M。</p>
+</li>
+<li>
+<p>ParOldGen: 640000K-&gt;620000K(640000K)：老年代回收前625M，回收后605.468M，老年代总大小625M。</p>
+</li>
+<li>
+<p>Metaspace: 256000K-&gt;256000K(512000K)：元空间无回收，使用250M，总大小500M。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>GC时间：</p>
+<ul>
+<li>
+<p>real=0.01 secs：实际GC时间（STW时间），0.01秒，影响较小。</p>
+</li>
+<li>
+<p>user=0.02 sys=0.01：GC线程占用的CPU时间（user是用户态时间，sys是内核态时间）。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="4-2-2-G1-GC日志示例及分析">4.2.2 G1 GC日志示例及分析</h3>
+<figure class="highlight plaintext"><figcaption><span>text</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">2026-03-24T10:10:00.789+0800: 723.123: [GC pause (G1 Evacuation Pause) (young), 0.0050000 secs]</span><br><span class="line">   [Parallel Time: 4.0 ms, GC Workers: 8]</span><br><span class="line">      [GC Worker Start (ms): 723123.1, 723123.1, 723123.1, 723123.1, 723123.1, 723123.1, 723123.1, 723123.1]</span><br><span class="line">      [Ext Root Scanning (ms): 1.2, 1.1, 1.0, 1.1, 1.0, 1.1, 1.0, 1.1]</span><br><span class="line">      [Update RS (ms): 0.5, 0.4, 0.5, 0.4, 0.5, 0.4, 0.5, 0.4]</span><br><span class="line">      [Processed Buffers: 10, 8, 9, 8, 9, 8, 9, 8]</span><br><span class="line">      [Scan RS (ms): 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]</span><br><span class="line">      [Code Root Scanning (ms): 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]</span><br><span class="line">      [Object Copy (ms): 1.8, 1.9, 1.9, 1.8, 1.9, 1.8, 1.9, 1.8]</span><br><span class="line">      [Termination (ms): 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span><br><span class="line">   [GC Worker Other (ms): 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]</span><br><span class="line">   [GC Worker Total (ms): 3.9, 3.8, 3.8, 3.7, 3.8, 3.7, 3.8, 3.7]</span><br><span class="line">   [GC Worker End (ms): 723127.0, 723126.9, 723126.9, 723126.8, 723126.9, 723126.8, 723126.9, 723126.8]</span><br><span class="line">   [Heap Before GC: 8192.0M-&gt;Heap After GC: 4096.0M(16384.0M)]</span><br><span class="line">   [Young Gen Before GC: 4096.0M-&gt;Young Gen After GC: 2048.0M(8192.0M)]</span><br><span class="line">   [Old Gen Before GC: 4096.0M-&gt;Old Gen After GC: 2048.0M(8192.0M)]</span><br><span class="line"> [Times: user=0.03 sys=0.01, real=0.01 secs]</span><br></pre></td></tr></table></figure>
+<p>G1 GC日志核心信息解读：</p>
+<ol>
+<li>
+<p>GC类型：GC pause (G1 Evacuation Pause) (young)：年轻代GC（Evacuation Pause，复制存活对象）。</p>
+</li>
+<li>
+<p>GC线程：GC Workers: 8（8个GC线程并行执行）。</p>
+</li>
+<li>
+<p>各阶段时间：Ext Root Scanning（根扫描）、Object Copy（对象复制）等阶段的时间，可定位GC耗时瓶颈。</p>
+</li>
+<li>
+<p>内存变化：Heap Before GC（堆回收前）、Heap After GC（堆回收后）、Young Gen（年轻代）、Old Gen（老年代）的内存变化。</p>
+</li>
+<li>
+<p>GC时间：real=0.01 secs（STW时间），G1 GC的停顿时间通常较短，若超过MaxGCPauseMillis，需调整参数。</p>
+</li>
+</ol>
+<h3 id="4-2-3-日志分析工具">4.2.3 日志分析工具</h3>
+<p>手动分析GC日志效率低，可借助工具快速分析，常用工具：</p>
+<ul>
+<li>
+<p>GCViewer：开源工具，可可视化展示GC日志，包括GC次数、GC时间、内存变化等，支持导出图表。</p>
+</li>
+<li>
+<p>GCEasy：在线工具（<a target="_blank" rel="noopener" href="https://gceasy.io/%EF%BC%89%EF%BC%8C%E4%B8%8A%E4%BC%A0GC%E6%97%A5%E5%BF%97%EF%BC%8C%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A%EF%BC%8C%E5%8C%85%E5%90%ABGC%E7%BB%9F%E8%AE%A1%E3%80%81%E7%93%B6%E9%A2%88%E5%88%86%E6%9E%90%E3%80%81%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E3%80%82">https://gceasy.io/），上传GC日志，自动生成分析报告，包含GC统计、瓶颈分析、优化建议。</a></p>
+</li>
+<li>
+<p>JVisualVM：JDK自带工具，可加载GC日志，实时查看GC情况，同时支持线程监控、内存快照分析。</p>
+</li>
+<li>
+<p>Arthas：阿里开源工具，可在线查看GC情况（gc命令）、线程快照、内存使用情况，无需重启应用，适合线上排查。</p>
+</li>
+</ul>
+<h2 id="4-3-常见GC问题及排查方案">4.3 常见GC问题及排查方案</h2>
+<h3 id="4-3-1-问题1：Minor-GC频繁">4.3.1 问题1：Minor GC频繁</h3>
+<p>表现：Minor GC每秒发生多次，每次GC时间较短，但累计GC时间占比高，影响应用吞吐量。</p>
+<p>排查步骤：</p>
+<ol>
+<li>
+<p>查看GC日志：确认Minor GC触发原因（Allocation Failure），查看年轻代内存变化，判断是否年轻代过小。</p>
+</li>
+<li>
+<p>分析应用：是否有大量短期对象频繁创建（如循环创建对象、接口请求中频繁new对象），导致Eden区快速占满。</p>
+</li>
+</ol>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>增大年轻代大小：调整-Xmn参数（年轻代初始大小和最大大小），或调整Eden与Survivor的比例（-XX:SurvivorRatio，默认8:1:1）。</p>
+</li>
+<li>
+<p>优化代码：减少短期对象的创建，使用对象池（如连接池、线程池）复用对象，避免频繁new对象。</p>
+</li>
+<li>
+<p>调整GC线程数：确保GC线程数与CPU核心数匹配，提升Minor GC效率。</p>
+</li>
+</ul>
+<h3 id="4-3-2-问题2：Full-GC频繁-Full-GC时间过长">4.3.2 问题2：Full GC频繁/Full GC时间过长</h3>
+<p>表现：Full GC每分钟发生多次，或每次Full GC时间超过1秒，导致应用卡顿、响应时间变长。</p>
+<p>排查步骤：</p>
+<ol>
+<li>
+<p>查看GC日志：确认Full GC触发原因（老年代满、元空间满、System.gc()调用、GC ergonomics等）。</p>
+</li>
+<li>
+<p>分析内存使用：通过jmap获取内存快照，查看老年代中存活对象的类型和数量，判断是否有内存泄漏，或对象晋升到老年代过快。</p>
+</li>
+<li>
+<p>查看线程快照：通过jstack查看是否有线程阻塞、死锁，导致对象无法被回收。</p>
+</li>
+</ol>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>增大老年代大小：调整-Xmx参数（堆最大大小），或调整年轻代与老年代的比例（分代回收算法）。</p>
+</li>
+<li>
+<p>排查内存泄漏：通过内存快照分析，找到长期被引用、无法回收的对象（如静态集合未清理、缓存未设置过期时间），优化代码释放引用。</p>
+</li>
+<li>
+<p>调整对象晋升阈值：通过-XX:MaxTenuringThreshold调整对象晋升到老年代的年龄（默认15），避免短期对象过早晋升。</p>
+</li>
+<li>
+<p>更换GC算法：若使用Parallel GC，可切换为G1 GC，减少Full GC停顿时间；若内存较大，可使用ZGC/Shenandoah GC。</p>
+</li>
+<li>
+<p>禁止System.gc()：通过-XX:+DisableExplicitGC禁止应用调用System.gc()（避免手动触发Full GC）。</p>
+</li>
+</ul>
+<h3 id="4-3-3-问题3：OOM（内存溢出）">4.3.3 问题3：OOM（内存溢出）</h3>
+<p>表现：应用崩溃，日志中出现OutOfMemoryError，常见类型：Java heap space（堆溢出）、Metaspace（元空间溢出）、StackOverflowError（栈溢出）。</p>
+<p>排查步骤：</p>
+<ol>
+<li>
+<p>确认OOM类型：根据日志中的错误信息，判断是堆溢出、元空间溢出还是栈溢出。</p>
+</li>
+<li>
+<p>收集内存快照：OOM发生时，通过-XX:+HeapDumpOnOutOfMemoryError参数，自动生成内存快照（heap dump），或通过jmap命令手动生成。</p>
+</li>
+<li>
+<p>分析内存快照：使用JVisualVM、MAT（Memory Analyzer Tool）等工具，分析内存快照，找到内存泄漏的对象或占用内存过大的对象。</p>
+</li>
+</ol>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>Java heap space（堆溢出）：增大-Xmx参数；排查内存泄漏，优化代码释放引用；减少大对象的创建（如大数组、大字符串）。</p>
+</li>
+<li>
+<p>Metaspace（元空间溢出）：增大-XX:MaxMetaspaceSize参数；排查是否加载了过多的类（如动态生成类、依赖过多的jar包）。</p>
+</li>
+<li>
+<p>StackOverflowError（栈溢出）：增大-Xss参数；排查是否有递归调用过深（如无限递归），优化代码减少递归深度。</p>
+</li>
+</ul>
+<h2 id="4-4-排查总结">4.4 排查总结</h2>
+<p>线上GC问题排查的核心是“以GC日志为核心，结合监控数据和快照分析”，步骤可总结为：</p>
+<ol>
+<li>
+<p>定位问题：通过应用监控（卡顿、响应慢、崩溃），确定是GC相关问题。</p>
+</li>
+<li>
+<p>收集信息：获取GC日志、JVM参数、线程快照、内存快照。</p>
+</li>
+<li>
+<p>分析日志：使用工具或手动分析GC日志，确定GC类型、触发原因、停顿时间、内存变化。</p>
+</li>
+<li>
+<p>定位根因：结合快照分析，找到内存泄漏、对象创建过多、参数不合理等问题根源。</p>
+</li>
+<li>
+<p>优化解决：调整JVM参数、优化代码、更换GC算法，测试验证优化效果。</p>
+</li>
+</ol>
+<h1>五、总结</h1>
+<p>JVM基础知识是理解GC机制和参数配置的前提，GC算法的演进体现了“高效、低延迟”的核心需求，线上参数配置需结合应用场景灵活调整，而GC问题排查则需要熟练掌握日志分析和工具使用技巧。</p>
+<p>对于Java后端开发者而言，掌握JVM相关知识，不仅能解决线上常见的GC问题、避免OOM，还能优化应用性能，提升系统的稳定性和可用性。实际应用中，需结合具体场景（如应用类型、内存大小、并发量），不断测试、调优，才能找到最适合的JVM配置方案。</p>
+<blockquote>
+<p>（注：文档部分内容可能由 AI 生成）</p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+	<div>
+  		
+    		<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-handshake-o"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  		
+	</div>
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>Good for you!</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Qiao.Jian 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Java/Java%E9%94%81%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E4%B8%8E%E5%B9%B6%E5%8F%91%E4%BC%98%E5%8C%96%E5%85%A8%E6%80%BB%E7%BB%93/" rel="next" title="Java锁相关知识与并发优化全总结">
+                <i class="fa fa-chevron-left"></i> Java锁相关知识与并发优化全总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E6%8A%80%E6%9C%AF/AI%E8%BE%85%E5%8A%A9%E7%BC%96%E7%A8%8B%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E5%B7%A5%E5%85%B7%E5%AF%B9%E6%AF%94%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE/" rel="prev" title="AI辅助编程使用感受及工具对比与使用建议">
+                AI辅助编程使用感受及工具对比与使用建议 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Qiao.Jian"/>
+  
+  <p class="site-author-name" itemprop="name">Qiao.Jian</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+        
+        
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+          
+          
+          <a href="/tags/">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Java JVM基础知识与线上实践全总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">一、Java JVM基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-JVM%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 JVM整体架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E8%A1%A5%E5%85%85"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 核心概念补充</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">二、GC算法的演进</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E5%9F%BA%E7%A1%80GC%E7%AE%97%E6%B3%95%EF%BC%88%E6%97%A9%E6%9C%9F%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 基础GC算法（早期）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95%EF%BC%88Mark-Sweep%EF%BC%89"><span class="nav-number">3.1.1.</span> <span class="nav-text">2.1.1 标记-清除算法（Mark-Sweep）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95%EF%BC%88Copying%EF%BC%89"><span class="nav-number">3.1.2.</span> <span class="nav-text">2.1.2 复制算法（Copying）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-%E6%A0%87%E8%AE%B0-%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95%EF%BC%88Mark-Compact%EF%BC%89"><span class="nav-number">3.1.3.</span> <span class="nav-text">2.1.3 标记-整理算法（Mark-Compact）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E8%BF%9B%E9%98%B6GC%E7%AE%97%E6%B3%95%EF%BC%88%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 进阶GC算法（分代回收）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E7%8E%B0%E4%BB%A3GC%E7%AE%97%E6%B3%95%EF%BC%88JDK8%E5%8F%8A%E4%BB%A5%E5%90%8E%E4%B8%BB%E6%B5%81%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 现代GC算法（JDK8及以后主流）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-%E5%B9%B6%E8%A1%8CGC%EF%BC%88Parallel-GC%EF%BC%89"><span class="nav-number">3.3.1.</span> <span class="nav-text">2.3.1 并行GC（Parallel GC）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-%E5%B9%B6%E5%8F%91%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4GC%EF%BC%88CMS-GC%EF%BC%89"><span class="nav-number">3.3.2.</span> <span class="nav-text">2.3.2 并发标记清除GC（CMS GC）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-G1-GC%EF%BC%88Garbage-First%EF%BC%89"><span class="nav-number">3.3.3.</span> <span class="nav-text">2.3.3 G1 GC（Garbage-First）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-4-ZGC%E3%80%81Shenandoah-GC%EF%BC%88%E6%96%B0%E4%B8%80%E4%BB%A3GC%EF%BC%89"><span class="nav-number">3.3.4.</span> <span class="nav-text">2.3.4 ZGC、Shenandoah GC（新一代GC）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">三、线上JVM参数配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E6%A0%B8%E5%BF%83%E5%86%85%E5%AD%98%E5%8F%82%E6%95%B0%EF%BC%88%E5%BF%85%E9%85%8D%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 核心内存参数（必配）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-GC%E7%9B%B8%E5%85%B3%E5%8F%82%E6%95%B0%EF%BC%88%E6%8C%89GC%E7%AE%97%E6%B3%95%E5%88%86%E7%B1%BB%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 GC相关参数（按GC算法分类）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-Parallel-GC%EF%BC%88JDK8%E9%BB%98%E8%AE%A4%EF%BC%89"><span class="nav-number">4.2.1.</span> <span class="nav-text">3.2.1 Parallel GC（JDK8默认）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-G1-GC%EF%BC%88JDK9-%E9%BB%98%E8%AE%A4%EF%BC%89"><span class="nav-number">4.2.2.</span> <span class="nav-text">3.2.2 G1 GC（JDK9+默认）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-%E6%97%A5%E5%BF%97%E7%9B%B8%E5%85%B3%E5%8F%82%E6%95%B0%EF%BC%88%E5%BF%85%E9%85%8D%EF%BC%8C%E7%94%A8%E4%BA%8E%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%EF%BC%89"><span class="nav-number">4.2.3.</span> <span class="nav-text">3.2.3 日志相关参数（必配，用于问题排查）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E7%BA%BF%E4%B8%8A%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 线上配置示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1%EF%BC%9AJDK8-Parallel-GC%EF%BC%884%E6%A0%B88G%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%8C%E5%90%8E%E5%8F%B0%E6%9C%8D%E5%8A%A1%EF%BC%89"><span class="nav-number">4.3.1.</span> <span class="nav-text">示例1：JDK8 + Parallel GC（4核8G服务器，后台服务）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2%EF%BC%9AJDK11-G1-GC%EF%BC%888%E6%A0%B816G%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%8CWeb%E5%BA%94%E7%94%A8%EF%BC%89"><span class="nav-number">4.3.2.</span> <span class="nav-text">示例2：JDK11 + G1 GC（8核16G服务器，Web应用）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-%E9%85%8D%E7%BD%AE%E5%8E%9F%E5%88%99"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 配置原则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">四、线上GC问题排查分析（含GC日志分析）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E6%8E%92%E6%9F%A5%E5%89%8D%E5%87%86%E5%A4%87%EF%BC%88%E6%94%B6%E9%9B%86%E5%85%B3%E9%94%AE%E4%BF%A1%E6%81%AF%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 排查前准备（收集关键信息）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-GC%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95%EF%BC%88%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 GC日志分析方法（核心）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-1-Parallel-GC%E6%97%A5%E5%BF%97%E7%A4%BA%E4%BE%8B%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-number">5.2.1.</span> <span class="nav-text">4.2.1 Parallel GC日志示例及分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-2-G1-GC%E6%97%A5%E5%BF%97%E7%A4%BA%E4%BE%8B%E5%8F%8A%E5%88%86%E6%9E%90"><span class="nav-number">5.2.2.</span> <span class="nav-text">4.2.2 G1 GC日志示例及分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-3-%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="nav-number">5.2.3.</span> <span class="nav-text">4.2.3 日志分析工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-%E5%B8%B8%E8%A7%81GC%E9%97%AE%E9%A2%98%E5%8F%8A%E6%8E%92%E6%9F%A5%E6%96%B9%E6%A1%88"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 常见GC问题及排查方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-1-%E9%97%AE%E9%A2%981%EF%BC%9AMinor-GC%E9%A2%91%E7%B9%81"><span class="nav-number">5.3.1.</span> <span class="nav-text">4.3.1 问题1：Minor GC频繁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-2-%E9%97%AE%E9%A2%982%EF%BC%9AFull-GC%E9%A2%91%E7%B9%81-Full-GC%E6%97%B6%E9%97%B4%E8%BF%87%E9%95%BF"><span class="nav-number">5.3.2.</span> <span class="nav-text">4.3.2 问题2：Full GC频繁&#x2F;Full GC时间过长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-3-%E9%97%AE%E9%A2%983%EF%BC%9AOOM%EF%BC%88%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%EF%BC%89"><span class="nav-number">5.3.3.</span> <span class="nav-text">4.3.3 问题3：OOM（内存溢出）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-%E6%8E%92%E6%9F%A5%E6%80%BB%E7%BB%93"><span class="nav-number">5.4.</span> <span class="nav-text">4.4 排查总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">五、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qiao.Jian</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v6.3.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.2.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>

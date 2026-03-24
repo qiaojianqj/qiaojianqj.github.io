@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+<meta name="google-site-verification" content="FmCBFeBJWlIl9DVnns-1SQgs2lTet7iXquulOgdsOVY" />
+<meta name="baidu-site-verification" content="EyoMwitrw4" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0"/>
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="AI辅助编程使用感受及工具对比与使用建议 在当前软件开发节奏不断加快、技术栈持续迭代的背景下，AI辅助编程已从“可选工具”成为码农日常开发的“必备搭档”。其核心价值在于解放重复劳动、降低技术门槛、提升开发效率，同时在代码优化、问题排查、规范落地等场景中提供有效支撑。但不同AI工具的定位、优势差异显著，结合自身长期使用经验，本文将从AI编程大模型、AI编程工具、规范驱动开发工具三个维度进行对比，最终">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI辅助编程使用感受及工具对比与使用建议">
+<meta property="og:url" content="http://qiaojiande.fun/%E6%8A%80%E6%9C%AF/AI%E8%BE%85%E5%8A%A9%E7%BC%96%E7%A8%8B%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E5%B7%A5%E5%85%B7%E5%AF%B9%E6%AF%94%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE/index.html">
+<meta property="og:site_name" content="谯剑的小站">
+<meta property="og:description" content="AI辅助编程使用感受及工具对比与使用建议 在当前软件开发节奏不断加快、技术栈持续迭代的背景下，AI辅助编程已从“可选工具”成为码农日常开发的“必备搭档”。其核心价值在于解放重复劳动、降低技术门槛、提升开发效率，同时在代码优化、问题排查、规范落地等场景中提供有效支撑。但不同AI工具的定位、优势差异显著，结合自身长期使用经验，本文将从AI编程大模型、AI编程工具、规范驱动开发工具三个维度进行对比，最终">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-24T15:46:53.124Z">
+<meta property="article:author" content="Qiao.Jian">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="工具">
+<meta property="article:tag" content="编程">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://qiaojiande.fun/%E6%8A%80%E6%9C%AF/AI%E8%BE%85%E5%8A%A9%E7%BC%96%E7%A8%8B%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E5%B7%A5%E5%85%B7%E5%AF%B9%E6%AF%94%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>AI辅助编程使用感受及工具对比与使用建议 | 谯剑的小站</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">谯剑的小站</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录...</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br/>
+    
+    首页
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/about/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br/>
+    
+    关于
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/tags/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>
+    
+    标签
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+  
+  
+    
+    
+    
+  
+
+  
+
+  <a href="/archives/" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>
+    
+    归档
+  </a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+  
+  
+    
+    
+      
+    
+    
+  
+
+  
+
+  <a href="/404.html" rel="section">
+    
+      <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br/>
+    
+    公益 404
+  </a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://qiaojiande.fun/%E6%8A%80%E6%9C%AF/AI%E8%BE%85%E5%8A%A9%E7%BC%96%E7%A8%8B%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E5%B7%A5%E5%85%B7%E5%AF%B9%E6%AF%94%E4%B8%8E%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Qiao.Jian"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/images/avatar.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="谯剑的小站"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">AI辅助编程使用感受及工具对比与使用建议
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2026-03-24 00:00:00 / 修改时间：23:46:53" itemprop="dateCreated datePublished" datetime="2026-03-24T00:00:00+08:00">2026-03-24</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br/>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1>AI辅助编程使用感受及工具对比与使用建议</h1>
+<p>在当前软件开发节奏不断加快、技术栈持续迭代的背景下，AI辅助编程已从“可选工具”成为码农日常开发的“必备搭档”。其核心价值在于解放重复劳动、降低技术门槛、提升开发效率，同时在代码优化、问题排查、规范落地等场景中提供有效支撑。但不同AI工具的定位、优势差异显著，结合自身长期使用经验，本文将从AI编程大模型、AI编程工具、规范驱动开发工具三个维度进行对比，最终给出贴合码农实际需求的AI使用建议，助力高效开发、规避误区。</p>
+<h1>一、AI编程大模型对比：Claude Code vs 国内大模型</h1>
+<p>AI编程大模型是辅助编程的核心底层，直接决定了代码生成、问题解答、逻辑梳理的质量。Claude Code作为海外专注于编程场景的大模型，与国内主流编程大模型（如字节豆包Code、阿里通义千问Code、百度文心一言Code等）在使用体验、功能侧重上差异明显，具体对比如下：</p>
+<h2 id="1-1-使用感受核心差异">1.1 使用感受核心差异</h2>
+<p>Claude Code的核心优势的是“精准性、逻辑性、全场景适配”，而国内大模型的核心优势是“本土化、易用性、场景贴合度”，两者使用体验的差异贯穿开发全流程：</p>
+<h3 id="Claude-Code-使用感受">Claude Code 使用感受</h3>
+<ul>
+<li>
+<p>优势：代码生成精准度高，尤其擅长复杂逻辑、多语言混合编程（如Java+Go+Python联动），能快速理解复杂业务需求并转化为可直接运行的代码；对小众语言、冷门框架的支持更完善，例如Rust、Scala等，无需额外提示即可生成规范代码；文档生成能力突出，能根据代码自动生成详细注释、接口文档，且逻辑连贯、无冗余；问题排查能力强，面对死锁、内存泄漏等复杂Bug，能逐步拆解问题、给出可落地的排查方案，而非泛泛而谈。</p>
+</li>
+<li>
+<p>不足：对国内本土化框架、业务场景的适配不足，例如对微信小程序、支付宝接口、国内云厂商（阿里云、腾讯云）SDK的支持不如国内大模型；响应速度受网络影响较大，海外服务器延迟较高；部分场景下过于“严谨”，对简单需求的响应不够灵活，生成代码可能存在过度设计的情况。</p>
+</li>
+</ul>
+<h3 id="国内大模型（以主流编程大模型为例）使用感受">国内大模型（以主流编程大模型为例）使用感受</h3>
+<ul>
+<li>
+<p>优势：本土化适配极佳，对国内常用框架（SpringBoot、MyBatis、Vue3、uni-app）、业务场景（电商、政务、小程序开发）的支持更精准，能快速生成贴合国内业务的代码；响应速度快，无网络延迟困扰，交互体验更流畅；支持中文指令精准识别，即使是模糊的需求描述（如“写一个电商订单查询接口，用SpringBoot+MySQL”），也能快速理解并生成符合预期的代码；部分模型集成了国内常用工具（如Postman、Navicat）的联动能力，进一步提升开发效率。</p>
+</li>
+<li>
+<p>不足：复杂逻辑编程能力略逊于Claude Code，面对多线程、分布式、底层架构等复杂场景，生成代码可能存在逻辑漏洞，需要人工二次修改；对小众语言、冷门框架的支持不足，部分场景下代码规范性不够，需手动优化；文档生成能力较弱，生成的注释、文档可能存在冗余、逻辑不连贯的问题。</p>
+</li>
+</ul>
+<h2 id="1-2-核心维度对比表">1.2 核心维度对比表</h2>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Claude Code</th>
+<th>国内大模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码生成精准度（复杂场景）</td>
+<td>高，逻辑严谨，可运行性强</td>
+<td>中等，简单场景精准，复杂场景需优化</td>
+</tr>
+<tr>
+<td>本土化适配（国内框架/业务）</td>
+<td>弱，对国内场景支持不足</td>
+<td>强，贴合国内开发场景</td>
+</tr>
+<tr>
+<td>语言支持范围</td>
+<td>广，支持小众、冷门语言</td>
+<td>中等，侧重主流语言（Java、Python、JS等）</td>
+</tr>
+<tr>
+<td>响应速度</td>
+<td>较慢，受网络影响大</td>
+<td>较快，无网络延迟</td>
+</tr>
+<tr>
+<td>文档/注释生成</td>
+<td>优秀，逻辑连贯、详细规范</td>
+<td>中等，存在冗余、逻辑不连贯问题</td>
+</tr>
+<tr>
+<td>Bug排查能力</td>
+<td>强，能拆解复杂问题、给出落地方案</td>
+<td>中等，侧重简单Bug排查，复杂问题需引导</td>
+</tr>
+</tbody>
+</table>
+<h1>二、AI编程工具对比：Trae vs Qoder vs Kiro</h1>
+<p>AI编程工具是大模型的“载体”，聚焦于具体开发场景（如代码生成、调试、重构），三者均为当前主流的AI编程工具，但定位、功能侧重、使用体验差异较大，结合实际使用感受对比如下：</p>
+<h2 id="2-1-Trae-使用感受及核心特点">2.1 Trae 使用感受及核心特点</h2>
+<p>Trae的定位是“轻量、高效、多模态适配”，主打个人开发者和创意开发场景，使用体验偏简洁、灵活，无需复杂配置即可快速上手。</p>
+<ul>
+<li>
+<p>核心优势：自然语言编程体验流畅，能精准识别模糊需求，快速生成符合预期的代码；支持设计稿转代码（多模态交互），上传UI设计图（如Figma、PSD），即可自动生成前端代码（HTML、CSS、Vue），极大提升前端开发效率；支持多语言切换，可快速在Java、Python、JS等主流语言间切换生成代码，适配全栈开发场景；国际版收费亲民，首月3美元，后续每月10美元，性价比高于Qoder，且支持模型选择，可根据需求切换不同底层模型。</p>
+</li>
+<li>
+<p>不足：功能深度不足，面对复杂架构设计、大规模代码重构等场景，支持力度有限；企业级功能缺失，无团队协作、代码审核、权限管理等功能，不适合团队开发；对底层代码、冷门框架的调试支持不足，部分生成代码存在兼容性问题。</p>
+</li>
+</ul>
+<h2 id="2-2-Qoder-使用感受及核心特点">2.2 Qoder 使用感受及核心特点</h2>
+<p>Qoder是阿里推出的独立Coding终端产品，定位是“专业、企业级、高性能”，主打企业开发者和大规模项目开发，使用体验偏专业、严谨，功能全面但学习成本略高。</p>
+<ul>
+<li>
+<p>核心优势：代码生成质量高，尤其擅长企业级项目开发（如微服务、分布式系统），能生成规范、可复用的代码模块；集成了阿里生态工具（如阿里云SDK、钉钉接口），适配国内企业级业务场景；代码调试、重构能力强，能自动识别代码中的冗余、漏洞，给出优化建议，且支持批量重构；虽然不开放模型选择，但官方宣称“机选比人选好、比人选快”，实际使用中模型适配度较高，能满足不同场景需求。</p>
+</li>
+<li>
+<p>不足：收费较高，Pro用户每月20美元，Pro+用户每月60美元，接近海外领先AI编程工具Cursor的收费水准，个人开发者性价比不高；学习成本高，功能模块多，新手需要一定时间适应；灵活性不足，无法手动切换底层模型，部分简单场景下响应不够高效。</p>
+</li>
+</ul>
+<h2 id="2-3-Kiro-使用感受及核心特点">2.3 Kiro 使用感受及核心特点</h2>
+<p>Kiro的定位是“全能、便捷、全栈适配”，兼顾个人开发者和中小团队，主打“一站式AI编程解决方案”，功能均衡，使用体验介于Trae和Qoder之间。</p>
+<ul>
+<li>
+<p>核心优势：功能全面，覆盖代码生成、调试、注释、文档生成、Bug排查等全流程开发场景，无需切换多个工具；支持全栈开发，前端（Vue、React）、后端（Java、Python）、数据库（MySQL、Redis）代码生成均能适配，且规范度高；支持代码实时优化，在编写代码过程中，能实时提示语法错误、逻辑漏洞，并给出修改建议，类似“AI编程助手”；支持团队协作基础功能，可共享代码片段、协同调试，适合中小团队使用；收费适中，兼顾个人和团队需求，性价比高于Qoder。</p>
+</li>
+<li>
+<p>不足：多模态交互能力弱于Trae，不支持设计稿转代码；复杂场景（如分布式事务、高并发）的代码生成能力略逊于Qoder和Claude Code；部分功能存在冗余，新手可能出现功能混淆的情况。</p>
+</li>
+</ul>
+<h2 id="2-4-核心维度对比表">2.4 核心维度对比表</h2>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Trae</th>
+<th>Qoder</th>
+<th>Kiro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位</td>
+<td>个人/创意开发者，轻量高效</td>
+<td>企业级开发者，专业严谨</td>
+<td>个人/中小团队，全能便捷</td>
+</tr>
+<tr>
+<td>核心优势</td>
+<td>多模态（设计稿转代码）、灵活、性价比高</td>
+<td>企业级场景适配、代码质量高、集成阿里生态</td>
+<td>全流程适配、全栈支持、团队协作基础功能</td>
+</tr>
+<tr>
+<td>收费水平</td>
+<td>低（国际版首月3美元，后续10美元/月）</td>
+<td>高（Pro 20美元/月，Pro+ 60美元/月）</td>
+<td>中（兼顾个人与团队，性价比适中）</td>
+</tr>
+<tr>
+<td>模型选择</td>
+<td>支持手动选择</td>
+<td>不支持，机选模型</td>
+<td>支持手动选择</td>
+</tr>
+<tr>
+<td>团队协作</td>
+<td>无</td>
+<td>支持企业级协作</td>
+<td>支持基础协作</td>
+</tr>
+<tr>
+<td>学习成本</td>
+<td>低，快速上手</td>
+<td>高，功能复杂</td>
+<td>中，功能均衡易适应</td>
+</tr>
+</tbody>
+</table>
+<h1>三、规范驱动开发工具对比：Spec-Kit vs OpenSpec</h1>
+<p>规范驱动开发（SDD）是提升代码质量、降低维护成本的关键，Spec-Kit和OpenSpec均为当前主流的规范驱动开发AI工具，核心作用是通过AI辅助生成规范、校验代码、落地开发标准，但两者的定位、功能侧重、使用场景差异明显，结合实际使用感受对比如下：</p>
+<h2 id="3-1-Spec-Kit-使用感受及核心特点">3.1 Spec-Kit 使用感受及核心特点</h2>
+<p>Spec-Kit的定位是“轻量、易用、快速落地规范”，主打中小团队和快速迭代项目，核心优势是“低门槛、高适配”，无需复杂配置即可快速接入现有开发流程。</p>
+<ul>
+<li>
+<p>核心优势：规范生成灵活，支持自定义规范模板（如代码命名规范、注释规范、接口规范），可适配不同团队的开发习惯；AI校验能力强，能实时校验代码是否符合规范，给出具体修改建议（如“变量命名应采用小驼峰式”“接口注释缺失参数说明”），且支持批量校验，提升规范落地效率；集成便捷，可快速集成到VS Code、IntelliJ IDEA等常用开发工具，不影响现有开发流程；支持多语言规范适配，Java、Python、JS等主流语言均能覆盖，且规范库可手动更新。</p>
+</li>
+<li>
+<p>不足：企业级规范支持不足，对复杂项目（如微服务、分布式系统）的规范定制能力有限；无规范可视化、报告生成功能，难以统计团队规范落地情况；AI自动生成规范的灵活性不足，部分场景下规范过于僵化，需手动调整。</p>
+</li>
+</ul>
+<h2 id="3-2-OpenSpec-使用感受及核心特点">3.2 OpenSpec 使用感受及核心特点</h2>
+<p>OpenSpec的定位是“企业级、全面、可定制”，主打大型团队和复杂项目，核心优势是“规范体系完善、可扩展性强”，能满足企业级规范驱动开发的全场景需求。</p>
+<ul>
+<li>
+<p>核心优势：规范体系完善，内置多种行业标准规范（如Java开发规范、RESTful接口规范、安全开发规范），可直接复用，无需从零定制；支持复杂规范定制，能根据企业业务特点、技术栈，定制专属规范体系（如电商项目接口规范、金融项目安全规范）；具备规范可视化、报告生成功能，可实时统计团队规范落地率、问题分布，便于团队管理和优化；支持团队协作，可共享规范模板、分配规范审核权限，适配大型团队的规范管理需求；集成能力强，可与CI/CD工具（Jenkins、GitLab CI）联动，实现规范校验自动化，融入开发全流程。</p>
+</li>
+<li>
+<p>不足：学习成本高，规范体系复杂，新手需要一定时间适应；配置复杂，接入现有开发流程需要专业人员调试；收费较高，适合企业级用户，个人开发者和中小团队性价比不高；轻量场景适配不足，简单项目使用会显得冗余。</p>
+</li>
+</ul>
+<h2 id="3-3-核心维度对比表">3.3 核心维度对比表</h2>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Spec-Kit</th>
+<th>OpenSpec</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位</td>
+<td>中小团队、快速迭代项目，轻量易用</td>
+<td>大型团队、复杂项目，企业级全面适配</td>
+</tr>
+<tr>
+<td>核心优势</td>
+<td>低门槛、集成便捷、批量校验、自定义模板</td>
+<td>规范体系完善、可定制性强、可视化、团队协作</td>
+</tr>
+<tr>
+<td>规范定制能力</td>
+<td>中等，支持基础自定义，复杂定制不足</td>
+<td>高，支持企业级专属规范体系定制</td>
+</tr>
+<tr>
+<td>集成能力</td>
+<td>强，快速集成常用开发工具</td>
+<td>极强，支持CI/CD联动，自动化校验</td>
+</tr>
+<tr>
+<td>团队协作</td>
+<td>弱，无协作功能</td>
+<td>强，支持权限管理、规范共享</td>
+</tr>
+<tr>
+<td>学习成本/配置复杂度</td>
+<td>低，无需复杂配置，快速上手</td>
+<td>高，配置复杂，需专业人员调试</td>
+</tr>
+<tr>
+<td>性价比</td>
+<td>高，适合个人/中小团队</td>
+<td>中，适合企业级用户</td>
+</tr>
+</tbody>
+</table>
+<h1>四、码农使用AI辅助编程的核心建议</h1>
+<p>结合上述三组工具对比和长期使用经验，AI辅助编程的核心是“借工具提效，不依赖工具失能”，核心建议围绕“工具选型、使用场景、避坑指南”三个维度，贴合码农日常开发实际，兼顾效率与能力提升：</p>
+<h2 id="4-1-工具选型建议：按需选择，拒绝“一刀切”">4.1 工具选型建议：按需选择，拒绝“一刀切”</h2>
+<ul>
+<li>
+<p>AI大模型选择：个人开发、复杂逻辑编程（如多语言联动、底层架构），优先选择Claude Code；国内业务、主流框架开发（如SpringBoot、小程序），优先选择国内大模型（如字节豆包Code）；建议两者结合使用，复杂场景用Claude Code，日常开发用国内大模型，兼顾效率与适配性。</p>
+</li>
+<li>
+<p>AI编程工具选择：个人前端开发、创意开发（需设计稿转代码），优先选择Trae；企业级项目、微服务开发，优先选择Qoder；中小团队、全栈开发，优先选择Kiro；个人开发者重点考虑性价比，避免选择高收费工具。</p>
+</li>
+<li>
+<p>规范驱动工具选择：中小团队、快速迭代项目，优先选择Spec-Kit，低门槛快速落地规范；大型团队、复杂项目，优先选择OpenSpec，实现规范体系化、自动化管理；个人开发可简化规范工具使用，重点依托编程工具的内置规范提示即可。</p>
+</li>
+</ul>
+<h2 id="4-2-核心使用场景建议：聚焦提效，规避无效使用">4.2 核心使用场景建议：聚焦提效，规避无效使用</h2>
+<ol>
+<li>
+<p>优先用AI处理“重复劳动”：如基础代码生成（CRUD接口、简单工具类）、注释/文档生成、格式优化、简单Bug排查，将精力聚焦于复杂逻辑、业务设计、架构优化等核心工作，真正实现“解放双手”。</p>
+</li>
+<li>
+<p>合理用AI解决“技术盲区”：遇到陌生语言、冷门框架、不熟悉的API时，用AI快速生成示例代码、解释核心用法，避免盲目查文档浪费时间；但需注意，AI给出的示例代码可能存在兼容性问题，需手动验证。</p>
+</li>
+<li>
+<p>谨慎用AI处理“核心逻辑”：分布式事务、高并发、安全校验等核心业务逻辑，AI生成的代码仅作为参考，需手动审核、测试，避免因AI逻辑漏洞导致线上问题；严禁直接将AI生成的核心代码部署上线，必须经过本地调试、代码审核。</p>
+</li>
+<li>
+<p>用AI辅助“规范落地”：借助Spec-Kit、OpenSpec等工具，让AI实时校验代码规范，培养良好的编码习惯；同时，可让AI生成规范模板，统一团队编码风格，降低代码维护成本。</p>
+</li>
+</ol>
+<h2 id="4-3-避坑指南：拒绝依赖，守住码农核心能力">4.3 避坑指南：拒绝依赖，守住码农核心能力</h2>
+<ul>
+<li>
+<p>拒绝“复制粘贴式”使用AI：AI生成的代码需理解其逻辑、优化其细节，不能直接复制粘贴，否则会导致自身编码能力退化，遇到问题无法独立排查；建议每次使用AI生成代码后，手动梳理逻辑、优化规范，加深对技术的理解。</p>
+</li>
+<li>
+<p>警惕AI的“错误输出”：AI并非万能，可能会生成错误代码、错误逻辑（尤其是复杂场景），需养成“先验证、后使用”的习惯，本地调试通过后再融入项目，避免线上Bug。</p>
+</li>
+<li>
+<p>不依赖AI解决“所有问题”：AI的核心作用是“辅助”，而非“替代”，核心架构设计、业务逻辑梳理、线上故障排查等核心能力，仍需自身积累，不能过度依赖AI，否则会丧失核心竞争力。</p>
+</li>
+<li>
+<p>保护代码安全：使用AI编程工具时，严禁上传公司核心代码、敏感数据（如数据库密码、接口密钥），避免数据泄露；优先选择支持本地部署、数据加密的AI工具，尤其是企业级开发场景。</p>
+</li>
+</ul>
+<h2 id="4-4-总结：AI是“助手”，不是“对手”">4.4 总结：AI是“助手”，不是“对手”</h2>
+<p>AI辅助编程的核心价值是“提升效率、降低门槛、优化质量”，但最终决定开发能力的仍是码农自身的技术积累和逻辑思维。建议码农以“工具赋能”为核心，合理选择AI工具、聚焦核心场景、规避使用误区，让AI成为日常开发的“好搭档”，而非“依赖品”。同时，持续提升自身核心能力，结合AI工具的优势，实现“效率与能力”的双重提升，在快速迭代的开发环境中保持竞争力。</p>
+<blockquote>
+<p>（注：文档部分内容可能由 AI 生成）</p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+	<div>
+  		
+    		<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-handshake-o"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+  		
+	</div>
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div>Good for you!</div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="Qiao.Jian 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/AI/" rel="tag"># AI</a>
+          
+            <a href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag"># 工具</a>
+          
+            <a href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag"># 编程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Java/Java%20JVM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%8E%E7%BA%BF%E4%B8%8A%E5%AE%9E%E8%B7%B5%E5%85%A8%E6%80%BB%E7%BB%93/" rel="next" title="Java JVM基础知识与线上实践全总结">
+                <i class="fa fa-chevron-left"></i> Java JVM基础知识与线上实践全总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.png"
+      alt="Qiao.Jian"/>
+  
+  <p class="site-author-name" itemprop="name">Qiao.Jian</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+        
+        
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+          
+          
+          <a href="/tags/">
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">AI辅助编程使用感受及工具对比与使用建议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">一、AI编程大模型对比：Claude Code vs 国内大模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E6%A0%B8%E5%BF%83%E5%B7%AE%E5%BC%82"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 使用感受核心差异</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Claude-Code-%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97"><span class="nav-number">2.1.1.</span> <span class="nav-text">Claude Code 使用感受</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BD%E5%86%85%E5%A4%A7%E6%A8%A1%E5%9E%8B%EF%BC%88%E4%BB%A5%E4%B8%BB%E6%B5%81%E7%BC%96%E7%A8%8B%E5%A4%A7%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BE%8B%EF%BC%89%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97"><span class="nav-number">2.1.2.</span> <span class="nav-text">国内大模型（以主流编程大模型为例）使用感受</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%A0%B8%E5%BF%83%E7%BB%B4%E5%BA%A6%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 核心维度对比表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">二、AI编程工具对比：Trae vs Qoder vs Kiro</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Trae-%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 Trae 使用感受及核心特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Qoder-%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 Qoder 使用感受及核心特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Kiro-%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 Kiro 使用感受及核心特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E6%A0%B8%E5%BF%83%E7%BB%B4%E5%BA%A6%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="nav-number">3.4.</span> <span class="nav-text">2.4 核心维度对比表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">三、规范驱动开发工具对比：Spec-Kit vs OpenSpec</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Spec-Kit-%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 Spec-Kit 使用感受及核心特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-OpenSpec-%E4%BD%BF%E7%94%A8%E6%84%9F%E5%8F%97%E5%8F%8A%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 OpenSpec 使用感受及核心特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E6%A0%B8%E5%BF%83%E7%BB%B4%E5%BA%A6%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 核心维度对比表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">四、码农使用AI辅助编程的核心建议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E5%B7%A5%E5%85%B7%E9%80%89%E5%9E%8B%E5%BB%BA%E8%AE%AE%EF%BC%9A%E6%8C%89%E9%9C%80%E9%80%89%E6%8B%A9%EF%BC%8C%E6%8B%92%E7%BB%9D%E2%80%9C%E4%B8%80%E5%88%80%E5%88%87%E2%80%9D"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 工具选型建议：按需选择，拒绝“一刀切”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E6%A0%B8%E5%BF%83%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%E5%BB%BA%E8%AE%AE%EF%BC%9A%E8%81%9A%E7%84%A6%E6%8F%90%E6%95%88%EF%BC%8C%E8%A7%84%E9%81%BF%E6%97%A0%E6%95%88%E4%BD%BF%E7%94%A8"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 核心使用场景建议：聚焦提效，规避无效使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97%EF%BC%9A%E6%8B%92%E7%BB%9D%E4%BE%9D%E8%B5%96%EF%BC%8C%E5%AE%88%E4%BD%8F%E7%A0%81%E5%86%9C%E6%A0%B8%E5%BF%83%E8%83%BD%E5%8A%9B"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 避坑指南：拒绝依赖，守住码农核心能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-%E6%80%BB%E7%BB%93%EF%BC%9AAI%E6%98%AF%E2%80%9C%E5%8A%A9%E6%89%8B%E2%80%9D%EF%BC%8C%E4%B8%8D%E6%98%AF%E2%80%9C%E5%AF%B9%E6%89%8B%E2%80%9D"><span class="nav-number">5.4.</span> <span class="nav-text">4.4 总结：AI是“助手”，不是“对手”</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qiao.Jian</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v6.3.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.2.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>
